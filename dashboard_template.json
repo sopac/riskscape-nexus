@@ -1,0 +1,1509 @@
+{
+    "layouts": {
+        "md": [
+            {
+                "h": 4,
+                "i": "e4f74ee0-c55c-11ee-abd5-e3d7e1de3168",
+                "w": 4,
+                "x": 0,
+                "y": 0,
+                "moved": false,
+                "static": false
+            },
+            {
+                "h": 2,
+                "i": "ec011b70-c55d-11ee-abd5-e3d7e1de3168",
+                "w": 2,
+                "x": 4,
+                "y": 0,
+                "moved": false,
+                "static": false
+            },
+            {
+                "h": 1,
+                "i": "316d43f0-c603-11ee-b6ed-834edbebba7e",
+                "w": 1,
+                "x": 5,
+                "y": 4,
+                "moved": false,
+                "static": false
+            },
+            {
+                "h": 1,
+                "i": "ec3ec2a0-c60b-11ee-b6ed-834edbebba7e",
+                "w": 1,
+                "x": 4,
+                "y": 4,
+                "moved": false,
+                "static": false
+            },
+            {
+                "h": 2,
+                "i": "c2774e50-c60c-11ee-b6ed-834edbebba7e",
+                "w": 2,
+                "x": 4,
+                "y": 2,
+                "moved": false,
+                "static": false
+            },
+            {
+                "h": 3,
+                "i": "b2e4e2c0-c61d-11ee-b6ed-834edbebba7e",
+                "w": 4,
+                "x": 0,
+                "y": 4,
+                "moved": false,
+                "static": false
+            },
+            {
+                "h": 2,
+                "i": "5ff83e40-c6c7-11ee-b038-93b98ea0ec0d",
+                "w": 2,
+                "x": 4,
+                "y": 5,
+                "moved": false,
+                "static": false
+            }
+        ],
+        "xxs": [
+            {
+                "h": 4,
+                "i": "e4f74ee0-c55c-11ee-abd5-e3d7e1de3168",
+                "w": 1,
+                "x": 0,
+                "y": 0,
+                "moved": false
+            },
+            {
+                "h": 2,
+                "i": "ec011b70-c55d-11ee-abd5-e3d7e1de3168",
+                "w": 1,
+                "x": 0,
+                "y": 9,
+                "moved": false
+            },
+            {
+                "h": 1,
+                "i": "316d43f0-c603-11ee-b6ed-834edbebba7e",
+                "w": 1,
+                "x": 0,
+                "y": 5,
+                "moved": false
+            },
+            {
+                "h": 1,
+                "i": "ec3ec2a0-c60b-11ee-b6ed-834edbebba7e",
+                "w": 1,
+                "x": 0,
+                "y": 6,
+                "moved": false
+            },
+            {
+                "h": 1,
+                "i": "c2774e50-c60c-11ee-b6ed-834edbebba7e",
+                "w": 1,
+                "x": 0,
+                "y": 7,
+                "moved": false
+            },
+            {
+                "h": 1,
+                "i": "b2e4e2c0-c61d-11ee-b6ed-834edbebba7e",
+                "w": 1,
+                "x": 0,
+                "y": 8,
+                "moved": false
+            },
+            {
+                "h": 1,
+                "i": "5ff83e40-c6c7-11ee-b038-93b98ea0ec0d",
+                "w": 1,
+                "x": 0,
+                "y": 4,
+                "moved": false
+            }
+        ]
+    },
+    "widgets": [
+        {
+            "id": "e4f74ee0-c55c-11ee-abd5-e3d7e1de3168",
+            "url": false,
+            "maps": [
+                {
+                    "bbox": {
+                        "crs": "EPSG:3857",
+                        "bounds": {
+                            "maxx": -18285228.879446965,
+                            "maxy": -1158036.9686206097,
+                            "minx": -18607793.138810407,
+                            "miny": -1338122.607260485
+                        },
+                        "rotation": 0
+                    },
+                    "name": "Cook Islands Riskscape",
+                    "size": {
+                        "width": 1055,
+                        "height": 589
+                    },
+                    "zoom": 9,
+                    "mapId": "d2c17160-c55c-11ee-abd5-e3d7e1de3168",
+                    "units": "m",
+                    "center": {
+                        "x": -165.70782778179316,
+                        "y": -11.140817711062443,
+                        "crs": "EPSG:4326"
+                    },
+                    "groups": [
+                        {
+                            "id": "Default",
+                            "title": "Default",
+                            "expanded": true
+                        }
+                    ],
+                    "layers": [
+                        {
+                            "id": "mapnik__0",
+                            "name": "mapnik",
+                            "type": "osm",
+                            "group": "background",
+                            "title": "Open Street Map",
+                            "hidden": false,
+                            "source": "osm",
+                            "dimensions": [],
+                            "singleTile": false,
+                            "visibility": true,
+                            "hideLoading": false,
+                            "useForElevation": false,
+                            "handleClickOnLayer": false
+                        },
+                        {
+                            "id": "OpenTopoMap__1",
+                            "name": "OpenTopoMap",
+                            "type": "tileprovider",
+                            "group": "background",
+                            "title": "OpenTopoMap",
+                            "hidden": false,
+                            "source": "OpenTopoMap",
+                            "provider": "OpenTopoMap",
+                            "dimensions": [],
+                            "singleTile": false,
+                            "visibility": false,
+                            "hideLoading": false,
+                            "useForElevation": false,
+                            "handleClickOnLayer": false
+                        },
+                        {
+                            "id": "s2cloudless",
+                            "url": "https://maps.geosolutionsgroup.com/geoserver/wms",
+                            "name": "s2cloudless:s2cloudless",
+                            "type": "wms",
+                            "group": "background",
+                            "title": "Sentinel-2 cloudless - https://s2maps.eu",
+                            "format": "image/jpeg",
+                            "hidden": false,
+                            "thumbURL": "https://geonode.pacificdata.org/static/mapstorestyle/img/s2cloudless-s2cloudless.png",
+                            "dimensions": [],
+                            "singleTile": false,
+                            "visibility": false,
+                            "hideLoading": false,
+                            "useForElevation": false,
+                            "handleClickOnLayer": false
+                        },
+                        {
+                            "id": "none",
+                            "name": "empty",
+                            "type": "empty",
+                            "group": "background",
+                            "title": "Empty Background",
+                            "hidden": false,
+                            "source": "ol",
+                            "dimensions": [],
+                            "singleTile": false,
+                            "visibility": false,
+                            "hideLoading": false,
+                            "useForElevation": false,
+                            "handleClickOnLayer": false
+                        },
+                        {
+                            "id": "1b223493-93fb-4fdc-ba88-c53d790cfcb3",
+                            "url": "https://geonode.pacificdata.org/geoserver/ows",
+                            "bbox": {
+                                "crs": "EPSG:4326",
+                                "bounds": {
+                                    "maxx": -161.62335675,
+                                    "maxy": -15.43856166,
+                                    "minx": -161.62355675,
+                                    "miny": -15.438761659999999
+                                }
+                            },
+                            "name": "geonode:1",
+                            "type": "wms",
+                            "style": "geonode:1",
+                            "title": "cook-islands-national-loss-curve",
+                            "format": "image/png",
+                            "hidden": false,
+                            "params": {},
+                            "search": {
+                                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                                "type": "wfs"
+                            },
+                            "opacity": 0.2,
+                            "tileSize": 512,
+                            "dimensions": [],
+                            "singleTile": false,
+                            "visibility": false,
+                            "featureInfo": {
+                                "format": "TEMPLATE",
+                                "template": "<div style=\"overflow-x:hidden\"><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">ogc_fid:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['ogc_fid']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">scenario:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['scenario']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">percentile:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['percentile']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">year:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['year']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">slr:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['slr']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">total_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['total_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">building_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['building_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">crops_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['crops_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">infrastructure_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['infrastructure_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">average_annual_population_exposed:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['average_annual_population_exposed']}</div></div></div>"
+                            },
+                            "hideLoading": false,
+                            "extendedParams": {
+                                "pk": "537",
+                                "mapLayer": {
+                                    "dataset": {
+                                        "pk": "537",
+                                        "doi": null,
+                                        "poc": [
+                                            {
+                                                "pk": 1000,
+                                                "link": "https://geonode.pacificdata.org/api/v2/users/1000",
+                                                "email": "sachindras@spc.int",
+                                                "avatar": "https://www.gravatar.com/avatar/d177c7c36a76ce5f43b088f55ba80f59/?s=240",
+                                                "is_staff": true,
+                                                "username": "admin",
+                                                "last_name": "",
+                                                "first_name": "",
+                                                "is_superuser": true
+                                            }
+                                        ],
+                                        "date": "2024-02-07T01:49:00Z",
+                                        "link": "https://geonode.pacificdata.org/api/v2/datasets/537",
+                                        "name": "1",
+                                        "srid": "EPSG:4326",
+                                        "uuid": "e0bfe298-62de-4012-9fc1-91fbf1dd10da",
+                                        "group": null,
+                                        "links": [
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=e0bfe298-62de-4012-9fc1-91fbf1dd10da&outputschema=http%3A%2F%2Fwww.w3.org%2F2005%2FAtom&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "Atom",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=e0bfe298-62de-4012-9fc1-91fbf1dd10da&outputschema=http%3A%2F%2Fgcmd.gsfc.nasa.gov%2FAboutus%2Fxml%2Fdif%2F&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "DIF",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=e0bfe298-62de-4012-9fc1-91fbf1dd10da&outputschema=http%3A%2F%2Fwww.opengis.net%2Fcat%2Fcsw%2F2.0.2&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "Dublin Core",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=e0bfe298-62de-4012-9fc1-91fbf1dd10da&outputschema=urn%3Aoasis%3Anames%3Atc%3Aebxml-regrep%3Axsd%3Arim%3A3.0&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "ebRIM",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=e0bfe298-62de-4012-9fc1-91fbf1dd10da&outputschema=http%3A%2F%2Fwww.opengis.net%2Fcat%2Fcsw%2Fcsdgm&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "FGDC",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=e0bfe298-62de-4012-9fc1-91fbf1dd10da&outputschema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "ISO",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/showmetadata/xsl/537",
+                                                "mime": "text/xml",
+                                                "name": "ISO with XSL",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows?service=WMS&request=GetLegendGraphic&format=image/png&WIDTH=20&HEIGHT=20&LAYER=geonode:1&STYLE=1&version=1.3.0&sld_version=1.1.0&legend_options=fontAntiAliasing:true;fontSize:12;forceLabels:on",
+                                                "mime": "image/png",
+                                                "name": "Legend",
+                                                "extension": "png",
+                                                "link_type": "image"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows?service=WMS&request=GetMap&layers=geonode%3A1&format=image%2Fjpeg&height=550&width=550&srs=EPSG%3A4326&bbox=-161.6235568%2C-15.4387617%2C-161.6233567%2C-15.4385617",
+                                                "mime": "image/jpeg",
+                                                "name": "JPEG",
+                                                "extension": "jpg",
+                                                "link_type": "image"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows?service=WMS&request=GetMap&layers=geonode%3A1&format=application%2Fpdf&height=550&width=550&srs=EPSG%3A4326&bbox=-161.6235568%2C-15.4387617%2C-161.6233567%2C-15.4385617",
+                                                "mime": "application/pdf",
+                                                "name": "PDF",
+                                                "extension": "pdf",
+                                                "link_type": "image"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows?service=WMS&request=GetMap&layers=geonode%3A1&format=image%2Fpng&height=550&width=550&srs=EPSG%3A4326&bbox=-161.6235568%2C-15.4387617%2C-161.6233567%2C-15.4385617",
+                                                "mime": "image/png",
+                                                "name": "PNG",
+                                                "extension": "png",
+                                                "link_type": "image"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                                                "mime": "text/html",
+                                                "name": "OGC WMS: geonode Service",
+                                                "extension": "html",
+                                                "link_type": "OGC:WMS"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                                                "mime": "text/html",
+                                                "name": "OGC WFS: geonode Service",
+                                                "extension": "html",
+                                                "link_type": "OGC:WFS"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/uploaded/thumbs/dataset-e0bfe298-62de-4012-9fc1-91fbf1dd10da-thumb-62f89752-ab73-4cbd-8459-5596d794025a.jpg",
+                                                "mime": "image/png",
+                                                "name": "Thumbnail",
+                                                "extension": "png",
+                                                "link_type": "image"
+                                            }
+                                        ],
+                                        "owner": {
+                                            "pk": 1000,
+                                            "link": "https://geonode.pacificdata.org/api/v2/users/1000",
+                                            "email": "sachindras@spc.int",
+                                            "perms": [
+                                                "add_resource"
+                                            ],
+                                            "avatar": "https://www.gravatar.com/avatar/d177c7c36a76ce5f43b088f55ba80f59/?s=240",
+                                            "is_staff": true,
+                                            "username": "admin",
+                                            "last_name": "",
+                                            "first_name": "",
+                                            "is_superuser": true
+                                        },
+                                        "perms": [
+                                            "view_resourcebase",
+                                            "delete_resourcebase",
+                                            "change_dataset_data",
+                                            "change_resourcebase",
+                                            "change_resourcebase_metadata",
+                                            "publish_resourcebase",
+                                            "download_resourcebase",
+                                            "change_dataset_style",
+                                            "change_resourcebase_permissions"
+                                        ],
+                                        "ptype": "gxp_wmscsource",
+                                        "state": "PROCESSED",
+                                        "store": "geonode_data",
+                                        "title": "cook-islands-national-loss-curve",
+                                        "extent": {
+                                            "srid": "EPSG:4326",
+                                            "coords": [
+                                                -161.62355675,
+                                                -15.438761659999999,
+                                                -161.62335675,
+                                                -15.43856166
+                                            ]
+                                        },
+                                        "rating": "0",
+                                        "styles": [
+                                            {
+                                                "pk": 539,
+                                                "name": "1",
+                                                "sld_url": "https://geonode.pacificdata.org/geoserver/rest/workspaces/geonode/styles/1.sld",
+                                                "sld_title": "Red Square Point",
+                                                "workspace": "geonode"
+                                            }
+                                        ],
+                                        "charset": "UTF-8",
+                                        "created": "2024-02-07T01:49:28.178726Z",
+                                        "edition": null,
+                                        "license": {
+                                            "identifier": "not_specified"
+                                        },
+                                        "purpose": "",
+                                        "regions": [],
+                                        "subtype": "vector",
+                                        "abstract": "<p>cook-islands-national-loss-curve</p>",
+                                        "category": null,
+                                        "favorite": false,
+                                        "featured": false,
+                                        "has_time": false,
+                                        "keywords": [],
+                                        "language": "eng",
+                                        "alternate": "geonode:1",
+                                        "custodian": [],
+                                        "date_type": "publication",
+                                        "embed_url": "https://geonode.pacificdata.org/datasets/geonode:1/embed",
+                                        "is_mosaic": false,
+                                        "processed": true,
+                                        "processor": [],
+                                        "publisher": [],
+                                        "tkeywords": [],
+                                        "workspace": "geonode",
+                                        "detail_url": "https://geonode.pacificdata.org/catalogue/#/dataset/537",
+                                        "originator": [],
+                                        "sourcetype": "LOCAL",
+                                        "time_regex": null,
+                                        "attribution": null,
+                                        "distributor": [],
+                                        "is_approved": true,
+                                        "is_copyable": true,
+                                        "raw_purpose": "",
+                                        "share_count": "0",
+                                        "bbox_polygon": {
+                                            "type": "Polygon",
+                                            "coordinates": [
+                                                [
+                                                    [
+                                                        -161.62355675,
+                                                        -15.43876166
+                                                    ],
+                                                    [
+                                                        -161.62355675,
+                                                        -15.43856166
+                                                    ],
+                                                    [
+                                                        -161.62335675,
+                                                        -15.43856166
+                                                    ],
+                                                    [
+                                                        -161.62335675,
+                                                        -15.43876166
+                                                    ],
+                                                    [
+                                                        -161.62355675,
+                                                        -15.43876166
+                                                    ]
+                                                ]
+                                            ]
+                                        },
+                                        "download_url": "https://geonode.pacificdata.org/datasets/geonode:1/dataset_download",
+                                        "is_published": true,
+                                        "last_updated": "2024-02-07T01:50:29.564245Z",
+                                        "raw_abstract": "cook-islands-national-loss-curve",
+                                        "default_style": {
+                                            "pk": 539,
+                                            "name": "1",
+                                            "sld_url": "https://geonode.pacificdata.org/geoserver/rest/workspaces/geonode/styles/1.sld",
+                                            "sld_title": "Red Square Point",
+                                            "workspace": "geonode"
+                                        },
+                                        "download_urls": [
+                                            {
+                                                "url": "/datasets/geonode:1/dataset_download",
+                                                "default": true,
+                                                "ajax_safe": true
+                                            }
+                                        ],
+                                        "has_elevation": false,
+                                        "metadata_only": false,
+                                        "popular_count": "0",
+                                        "resource_type": "dataset",
+                                        "resource_user": [],
+                                        "thumbnail_url": "https://geonode.pacificdata.org/uploaded/thumbs/dataset-e0bfe298-62de-4012-9fc1-91fbf1dd10da-thumb-62f89752-ab73-4cbd-8459-5596d794025a.jpg",
+                                        "elevation_regex": null,
+                                        "ll_bbox_polygon": {
+                                            "type": "Polygon",
+                                            "coordinates": [
+                                                [
+                                                    [
+                                                        -161.62355675,
+                                                        -15.43876166
+                                                    ],
+                                                    [
+                                                        -161.62355675,
+                                                        -15.43856166
+                                                    ],
+                                                    [
+                                                        -161.62335675,
+                                                        -15.43856166
+                                                    ],
+                                                    [
+                                                        -161.62335675,
+                                                        -15.43876166
+                                                    ],
+                                                    [
+                                                        -161.62355675,
+                                                        -15.43876166
+                                                    ]
+                                                ]
+                                            ]
+                                        },
+                                        "metadata_author": [
+                                            {
+                                                "pk": 1000,
+                                                "link": "https://geonode.pacificdata.org/api/v2/users/1000",
+                                                "email": "sachindras@spc.int",
+                                                "avatar": "https://www.gravatar.com/avatar/d177c7c36a76ce5f43b088f55ba80f59/?s=240",
+                                                "is_staff": true,
+                                                "username": "admin",
+                                                "last_name": "",
+                                                "first_name": "",
+                                                "is_superuser": true
+                                            }
+                                        ],
+                                        "constraints_other": "",
+                                        "resource_provider": [],
+                                        "temporal_extent_end": null,
+                                        "polymorphic_ctype_id": "64",
+                                        "maintenance_frequency": null,
+                                        "raw_constraints_other": "",
+                                        "restriction_code_type": null,
+                                        "temporal_extent_start": null,
+                                        "data_quality_statement": "",
+                                        "principal_investigator": [],
+                                        "supplemental_information": "<p>No information provided</p>",
+                                        "raw_data_quality_statement": "",
+                                        "featureinfo_custom_template": "<div style=\"overflow-x:hidden\"><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">ogc_fid:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['ogc_fid']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">scenario:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['scenario']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">percentile:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['percentile']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">year:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['year']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">slr:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['slr']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">total_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['total_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">building_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['building_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">crops_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['crops_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">infrastructure_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['infrastructure_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">average_annual_population_exposed:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['average_annual_population_exposed']}</div></div></div>",
+                                        "spatial_representation_type": null,
+                                        "raw_supplemental_information": "No information provided"
+                                    }
+                                },
+                                "defaultStyle": {
+                                    "name": "geonode:1",
+                                    "title": "Red Square Point"
+                                }
+                            },
+                            "useForElevation": false,
+                            "handleClickOnLayer": false
+                        },
+                        {
+                            "id": "42e040d0-cf1d-416e-8db9-3bf602967ce6",
+                            "url": "https://geonode.pacificdata.org/geoserver/ows",
+                            "bbox": {
+                                "crs": "EPSG:4326",
+                                "bounds": {
+                                    "maxx": -157.3215106,
+                                    "maxy": -8.9166612,
+                                    "minx": -165.9249043,
+                                    "miny": -21.959211
+                                }
+                            },
+                            "name": "geonode:cook_islands_regional_summary",
+                            "type": "wms",
+                            "style": "geonode:cook_islands_regional_summary",
+                            "title": "Exposure summary per region",
+                            "format": "image/png",
+                            "hidden": false,
+                            "params": {},
+                            "search": {
+                                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                                "type": "wfs"
+                            },
+                            "opacity": 0.61,
+                            "tileSize": 512,
+                            "dimensions": [],
+                            "singleTile": false,
+                            "visibility": true,
+                            "description": "Output from Riskscape software.",
+                            "featureInfo": {
+                                "format": "TEMPLATE",
+                                "template": "<div style=\"overflow-x:hidden\"><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">ogc_fid:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['ogc_fid']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">region.region:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['region.region']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">region.id:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['region.id']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">scenario:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['scenario']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">percentile:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['percentile']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.year:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.year']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.total_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.total_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.building_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.building_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.crops_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.crops_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.infrastructure_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.infrastructure_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.average_annual_population_exposed:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.average_annual_population_exposed']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.year:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.year']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.total_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.total_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.building_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.building_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.crops_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.crops_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.infrastructure_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.infrastructure_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.average_annual_population_exposed:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.average_annual_population_exposed']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.year:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.year']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.total_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.total_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.building_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.building_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.crops_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.crops_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.infrastructure_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.infrastructure_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.average_annual_population_exposed:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.average_annual_population_exposed']}</div></div></div>"
+                            },
+                            "hideLoading": false,
+                            "extendedParams": {
+                                "pk": "536",
+                                "mapLayer": {
+                                    "dataset": {
+                                        "pk": "536",
+                                        "doi": null,
+                                        "poc": [
+                                            {
+                                                "pk": 1000,
+                                                "link": "https://geonode.pacificdata.org/api/v2/users/1000",
+                                                "email": "sachindras@spc.int",
+                                                "avatar": "https://www.gravatar.com/avatar/d177c7c36a76ce5f43b088f55ba80f59/?s=240",
+                                                "is_staff": true,
+                                                "username": "admin",
+                                                "last_name": "",
+                                                "first_name": "",
+                                                "is_superuser": true
+                                            }
+                                        ],
+                                        "date": "2024-02-07T01:47:00Z",
+                                        "link": "https://geonode.pacificdata.org/api/v2/datasets/536",
+                                        "name": "cook_islands_regional_summary",
+                                        "srid": "EPSG:4326",
+                                        "uuid": "807c17ee-66de-4011-8404-39af2cc5422d",
+                                        "group": null,
+                                        "links": [
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=807c17ee-66de-4011-8404-39af2cc5422d&outputschema=http%3A%2F%2Fwww.w3.org%2F2005%2FAtom&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "Atom",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=807c17ee-66de-4011-8404-39af2cc5422d&outputschema=http%3A%2F%2Fgcmd.gsfc.nasa.gov%2FAboutus%2Fxml%2Fdif%2F&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "DIF",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=807c17ee-66de-4011-8404-39af2cc5422d&outputschema=http%3A%2F%2Fwww.opengis.net%2Fcat%2Fcsw%2F2.0.2&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "Dublin Core",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=807c17ee-66de-4011-8404-39af2cc5422d&outputschema=urn%3Aoasis%3Anames%3Atc%3Aebxml-regrep%3Axsd%3Arim%3A3.0&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "ebRIM",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=807c17ee-66de-4011-8404-39af2cc5422d&outputschema=http%3A%2F%2Fwww.opengis.net%2Fcat%2Fcsw%2Fcsdgm&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "FGDC",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/catalogue/csw?request=GetRecordById&service=CSW&version=2.0.2&id=807c17ee-66de-4011-8404-39af2cc5422d&outputschema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd&elementsetname=full",
+                                                "mime": "text/xml",
+                                                "name": "ISO",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/showmetadata/xsl/536",
+                                                "mime": "text/xml",
+                                                "name": "ISO with XSL",
+                                                "extension": "xml",
+                                                "link_type": "metadata"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows?service=WMS&request=GetMap&layers=geonode%3Acook_islands_regional_summary&format=image%2Fjpeg&height=550&width=550&srs=EPSG%3A4326&bbox=-165.9249043%2C-21.9592110%2C-157.3215106%2C-8.9166612",
+                                                "mime": "image/jpeg",
+                                                "name": "JPEG",
+                                                "extension": "jpg",
+                                                "link_type": "image"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows?service=WMS&request=GetMap&layers=geonode%3Acook_islands_regional_summary&format=application%2Fpdf&height=550&width=550&srs=EPSG%3A4326&bbox=-165.9249043%2C-21.9592110%2C-157.3215106%2C-8.9166612",
+                                                "mime": "application/pdf",
+                                                "name": "PDF",
+                                                "extension": "pdf",
+                                                "link_type": "image"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows?service=WMS&request=GetMap&layers=geonode%3Acook_islands_regional_summary&format=image%2Fpng&height=550&width=550&srs=EPSG%3A4326&bbox=-165.9249043%2C-21.9592110%2C-157.3215106%2C-8.9166612",
+                                                "mime": "image/png",
+                                                "name": "PNG",
+                                                "extension": "png",
+                                                "link_type": "image"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                                                "mime": "text/html",
+                                                "name": "OGC WMS: geonode Service",
+                                                "extension": "html",
+                                                "link_type": "OGC:WMS"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                                                "mime": "text/html",
+                                                "name": "OGC WFS: geonode Service",
+                                                "extension": "html",
+                                                "link_type": "OGC:WFS"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/geoserver/ows?service=WMS&request=GetLegendGraphic&format=image/png&WIDTH=20&HEIGHT=20&LAYER=geonode:cook_islands_regional_summary&STYLE=cook_islands_regional_summary&version=1.3.0&sld_version=1.1.0&legend_options=fontAntiAliasing:true;fontSize:12;forceLabels:on",
+                                                "mime": "image/png",
+                                                "name": "Legend",
+                                                "extension": "png",
+                                                "link_type": "image"
+                                            },
+                                            {
+                                                "url": "https://geonode.pacificdata.org/uploaded/thumbs/dataset-807c17ee-66de-4011-8404-39af2cc5422d-thumb-c3b8cf5c-39b3-4a1a-9f3d-a4f42c26d533.jpg",
+                                                "mime": "image/png",
+                                                "name": "Thumbnail",
+                                                "extension": "png",
+                                                "link_type": "image"
+                                            }
+                                        ],
+                                        "owner": {
+                                            "pk": 1000,
+                                            "link": "https://geonode.pacificdata.org/api/v2/users/1000",
+                                            "email": "sachindras@spc.int",
+                                            "perms": [
+                                                "add_resource"
+                                            ],
+                                            "avatar": "https://www.gravatar.com/avatar/d177c7c36a76ce5f43b088f55ba80f59/?s=240",
+                                            "is_staff": true,
+                                            "username": "admin",
+                                            "last_name": "",
+                                            "first_name": "",
+                                            "is_superuser": true
+                                        },
+                                        "perms": [
+                                            "view_resourcebase",
+                                            "delete_resourcebase",
+                                            "change_dataset_data",
+                                            "change_resourcebase",
+                                            "change_resourcebase_metadata",
+                                            "publish_resourcebase",
+                                            "download_resourcebase",
+                                            "change_dataset_style",
+                                            "change_resourcebase_permissions"
+                                        ],
+                                        "ptype": "gxp_wmscsource",
+                                        "state": "PROCESSED",
+                                        "store": "geonode_data",
+                                        "title": "cook-islands-regional-summary",
+                                        "extent": {
+                                            "srid": "EPSG:4326",
+                                            "coords": [
+                                                -165.9249043,
+                                                -21.959211,
+                                                -157.3215106,
+                                                -8.9166612
+                                            ]
+                                        },
+                                        "rating": "0",
+                                        "styles": [
+                                            {
+                                                "pk": 538,
+                                                "name": "cook_islands_regional_summary",
+                                                "sld_url": "https://geonode.pacificdata.org/geoserver/rest/workspaces/geonode/styles/cook_islands_regional_summary.sld",
+                                                "sld_title": "Default Polygon",
+                                                "workspace": "geonode"
+                                            }
+                                        ],
+                                        "charset": "UTF-8",
+                                        "created": "2024-02-07T01:47:18.753781Z",
+                                        "edition": null,
+                                        "license": {
+                                            "identifier": "not_specified"
+                                        },
+                                        "purpose": "",
+                                        "regions": [],
+                                        "subtype": "vector",
+                                        "abstract": "",
+                                        "category": null,
+                                        "favorite": false,
+                                        "featured": false,
+                                        "has_time": false,
+                                        "keywords": [],
+                                        "language": "eng",
+                                        "alternate": "geonode:cook_islands_regional_summary",
+                                        "custodian": [],
+                                        "date_type": "publication",
+                                        "embed_url": "https://geonode.pacificdata.org/datasets/geonode:cook_islands_regional_summary/embed",
+                                        "is_mosaic": false,
+                                        "processed": true,
+                                        "processor": [],
+                                        "publisher": [],
+                                        "tkeywords": [],
+                                        "workspace": "geonode",
+                                        "detail_url": "https://geonode.pacificdata.org/catalogue/#/dataset/536",
+                                        "originator": [],
+                                        "sourcetype": "LOCAL",
+                                        "time_regex": null,
+                                        "attribution": null,
+                                        "distributor": [],
+                                        "is_approved": true,
+                                        "is_copyable": true,
+                                        "raw_purpose": "",
+                                        "share_count": "0",
+                                        "bbox_polygon": {
+                                            "type": "Polygon",
+                                            "coordinates": [
+                                                [
+                                                    [
+                                                        -165.9249043,
+                                                        -21.959211
+                                                    ],
+                                                    [
+                                                        -165.9249043,
+                                                        -8.9166612
+                                                    ],
+                                                    [
+                                                        -157.3215106,
+                                                        -8.9166612
+                                                    ],
+                                                    [
+                                                        -157.3215106,
+                                                        -21.959211
+                                                    ],
+                                                    [
+                                                        -165.9249043,
+                                                        -21.959211
+                                                    ]
+                                                ]
+                                            ]
+                                        },
+                                        "download_url": "https://geonode.pacificdata.org/datasets/geonode:cook_islands_regional_summary/dataset_download",
+                                        "is_published": true,
+                                        "last_updated": "2024-02-07T01:51:25.177053Z",
+                                        "raw_abstract": "",
+                                        "default_style": {
+                                            "pk": 538,
+                                            "name": "cook_islands_regional_summary",
+                                            "sld_url": "https://geonode.pacificdata.org/geoserver/rest/workspaces/geonode/styles/cook_islands_regional_summary.sld",
+                                            "sld_title": "Default Polygon",
+                                            "workspace": "geonode"
+                                        },
+                                        "download_urls": [
+                                            {
+                                                "url": "/datasets/geonode:cook_islands_regional_summary/dataset_download",
+                                                "default": true,
+                                                "ajax_safe": true
+                                            }
+                                        ],
+                                        "has_elevation": false,
+                                        "metadata_only": false,
+                                        "popular_count": "0",
+                                        "resource_type": "dataset",
+                                        "resource_user": [],
+                                        "thumbnail_url": "https://geonode.pacificdata.org/uploaded/thumbs/dataset-807c17ee-66de-4011-8404-39af2cc5422d-thumb-c3b8cf5c-39b3-4a1a-9f3d-a4f42c26d533.jpg",
+                                        "elevation_regex": null,
+                                        "ll_bbox_polygon": {
+                                            "type": "Polygon",
+                                            "coordinates": [
+                                                [
+                                                    [
+                                                        -165.9249043,
+                                                        -21.959211
+                                                    ],
+                                                    [
+                                                        -165.9249043,
+                                                        -8.9166612
+                                                    ],
+                                                    [
+                                                        -157.3215106,
+                                                        -8.9166612
+                                                    ],
+                                                    [
+                                                        -157.3215106,
+                                                        -21.959211
+                                                    ],
+                                                    [
+                                                        -165.9249043,
+                                                        -21.959211
+                                                    ]
+                                                ]
+                                            ]
+                                        },
+                                        "metadata_author": [
+                                            {
+                                                "pk": 1000,
+                                                "link": "https://geonode.pacificdata.org/api/v2/users/1000",
+                                                "email": "sachindras@spc.int",
+                                                "avatar": "https://www.gravatar.com/avatar/d177c7c36a76ce5f43b088f55ba80f59/?s=240",
+                                                "is_staff": true,
+                                                "username": "admin",
+                                                "last_name": "",
+                                                "first_name": "",
+                                                "is_superuser": true
+                                            }
+                                        ],
+                                        "constraints_other": "",
+                                        "resource_provider": [],
+                                        "temporal_extent_end": null,
+                                        "polymorphic_ctype_id": "64",
+                                        "maintenance_frequency": null,
+                                        "raw_constraints_other": "",
+                                        "restriction_code_type": null,
+                                        "temporal_extent_start": null,
+                                        "data_quality_statement": "",
+                                        "principal_investigator": [],
+                                        "supplemental_information": "<p>No information provided</p>",
+                                        "raw_data_quality_statement": "",
+                                        "featureinfo_custom_template": "<div style=\"overflow-x:hidden\"><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">ogc_fid:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['ogc_fid']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">region.region:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['region.region']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">region.id:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['region.id']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">scenario:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['scenario']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">percentile:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['percentile']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.year:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.year']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.total_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.total_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.building_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.building_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.crops_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.crops_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.infrastructure_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.infrastructure_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">first.average_annual_population_exposed:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['first.average_annual_population_exposed']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.year:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.year']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.total_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.total_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.building_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.building_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.crops_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.crops_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.infrastructure_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.infrastructure_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">last.average_annual_population_exposed:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['last.average_annual_population_exposed']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.year:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.year']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.total_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.total_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.building_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.building_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.crops_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.crops_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.infrastructure_aal:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.infrastructure_aal']}</div></div><div class=\"row\"><div class=\"col-xs-6\" style=\"font-weight: bold; word-wrap: break-word;\">change.average_annual_population_exposed:</div>                             <div class=\"col-xs-6\" style=\"word-wrap: break-word;\">${properties['change.average_annual_population_exposed']}</div></div></div>",
+                                        "spatial_representation_type": null,
+                                        "raw_supplemental_information": "No information provided"
+                                    }
+                                },
+                                "defaultStyle": {
+                                    "name": "geonode:cook_islands_regional_summary",
+                                    "title": "Default Polygon"
+                                }
+                            },
+                            "useForElevation": false,
+                            "handleClickOnLayer": false
+                        },
+                        {
+                            "id": "geonode:buildings_impact__fcac32a0-c5ff-11ee-b6ed-834edbebba7e",
+                            "url": "https://geonode.pacificdata.org/geoserver/ows",
+                            "bbox": {
+                                "crs": "EPSG:4326",
+                                "bounds": {
+                                    "maxx": -157.321798,
+                                    "maxy": -8.954643,
+                                    "minx": -165.84628399,
+                                    "miny": -21.271801
+                                }
+                            },
+                            "name": "geonode:buildings_impact",
+                            "type": "wms",
+                            "links": [],
+                            "style": "",
+                            "title": {
+                                "fr-FR": "",
+                                "default": "Buildings impacted"
+                            },
+                            "params": {},
+                            "search": {
+                                "url": "https://geonode.pacificdata.org/geoserver/wfs",
+                                "type": "wfs"
+                            },
+                            "allowedSRS": {},
+                            "dimensions": [],
+                            "visibility": true,
+                            "description": "Output from Riskscape software.",
+                            "tooltipOptions": "title"
+                        },
+                        {
+                            "id": "geonode:admin1_regional_impact__6e621650-c61c-11ee-b6ed-834edbebba7e",
+                            "url": "https://geonode.pacificdata.org/geoserver/ows",
+                            "bbox": {
+                                "crs": "EPSG:4326",
+                                "bounds": {
+                                    "maxx": -157.1089326,
+                                    "maxy": -8.7150148,
+                                    "minx": -166.1318843,
+                                    "miny": -22.1599634
+                                }
+                            },
+                            "name": "geonode:admin1_regional_impact",
+                            "type": "wms",
+                            "links": [],
+                            "title": "admin1_regional_impact",
+                            "params": {},
+                            "search": {
+                                "url": "https://geonode.pacificdata.org/geoserver/wfs",
+                                "type": "wfs"
+                            },
+                            "allowedSRS": {},
+                            "dimensions": [],
+                            "visibility": false,
+                            "description": ""
+                        }
+                    ],
+                    "maxExtent": [
+                        -20037508.34,
+                        -20037508.34,
+                        20037508.34,
+                        20037508.34
+                    ],
+                    "mapOptions": {},
+                    "projection": "EPSG:3857",
+                    "resolution": 305.748113140705,
+                    "backgrounds": [],
+                    "extraParams": {
+                        "pk": "538"
+                    },
+                    "mapInfoControl": true,
+                    "mapStateSource": "e4f74ee0-c55c-11ee-abd5-e3d7e1de3168"
+                }
+            ],
+            "layer": false,
+            "title": "Cook Islands Coastal Sea level Rise Risk",
+            "yAxis": true,
+            "legend": false,
+            "mapSync": false,
+            "dataGrid": {
+                "h": 1,
+                "w": 1,
+                "x": 0,
+                "y": 0
+            },
+            "cartesian": true,
+            "widgetType": "map",
+            "description": "Cook Islands Coastal Sea level Rise Risk",
+            "selectedMapId": "d2c17160-c55c-11ee-abd5-e3d7e1de3168",
+            "mapStateSource": "__base_map__"
+        },
+        {
+            "id": "ec011b70-c55d-11ee-abd5-e3d7e1de3168",
+            "url": "https://geonode.pacificdata.org/geoserver/ows",
+            "type": "line",
+            "layer": {
+                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                "bbox": {
+                    "crs": "EPSG:4326",
+                    "bounds": {
+                        "maxx": -161.62335675,
+                        "maxy": -15.43856166,
+                        "minx": -161.62355675,
+                        "miny": -15.438761659999999
+                    }
+                },
+                "name": "geonode:1",
+                "type": "wms",
+                "links": [],
+                "title": "cook-islands-national-loss-curve",
+                "params": {},
+                "search": {
+                    "url": "https://geonode.pacificdata.org/geoserver/wfs",
+                    "type": "wfs"
+                },
+                "allowedSRS": {},
+                "dimensions": [],
+                "visibility": true,
+                "description": "cook-islands-national-loss-curve"
+            },
+            "panel": true,
+            "title": "National Annual Loss for Buildings",
+            "yAxis": true,
+            "filter": {
+                "hits": false,
+                "filterType": "OGC",
+                "ogcVersion": "1.1.0",
+                "pagination": null,
+                "groupFields": [
+                    {
+                        "id": 1,
+                        "index": 0,
+                        "logic": "OR"
+                    }
+                ],
+                "sortOptions": null,
+                "filterFields": [
+                    {
+                        "type": "string",
+                        "rowId": 1707271648075,
+                        "value": "ssp585 (medium confidence) p50",
+                        "groupId": 1,
+                        "loading": false,
+                        "options": {
+                            "scenario": []
+                        },
+                        "operator": "=",
+                        "attribute": "scenario",
+                        "exception": null,
+                        "fieldOptions": {
+                            "currentPage": 1,
+                            "valuesCount": 0
+                        },
+                        "openAutocompleteMenu": false
+                    }
+                ],
+                "spatialField": {
+                    "method": null,
+                    "geometry": null,
+                    "attribute": "geometry",
+                    "operation": "INTERSECTS"
+                },
+                "featureTypeName": "geonode:1",
+                "crossLayerFilter": null
+            },
+            "legend": false,
+            "formula": "",
+            "mapSync": false,
+            "options": {
+                "aggregateFunction": "Max",
+                "groupByAttributes": "year",
+                "aggregationAttribute": "building_aal"
+            },
+            "dataGrid": {
+                "h": 1,
+                "w": 1,
+                "x": 0,
+                "y": 0
+            },
+            "geomProp": "geometry",
+            "cartesian": true,
+            "xAxisOpts": {
+                "type": null
+            },
+            "yAxisOpts": {
+                "type": "-",
+                "format": "",
+                "tickPrefix": "",
+                "tickSuffix": ""
+            },
+            "widgetType": "chart",
+            "yAxisLabel": "",
+            "description": "Following IPCC scenario: SSP245 (medium confidence)",
+            "autoColorOptions": {
+                "base": 190,
+                "name": "global.colors.blue",
+                "range": 20
+            }
+        },
+        {
+            "id": "316d43f0-c603-11ee-b6ed-834edbebba7e",
+            "url": "https://geonode.pacificdata.org/geoserver/ows",
+            "layer": {
+                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                "bbox": {
+                    "crs": "EPSG:4326",
+                    "bounds": {
+                        "maxx": -157.321798,
+                        "maxy": -8.954643,
+                        "minx": -165.84628399,
+                        "miny": -21.271801
+                    }
+                },
+                "name": "geonode:buildings_impact",
+                "type": "wms",
+                "links": [],
+                "title": "buildings_impact",
+                "params": {},
+                "search": {
+                    "url": "https://geonode.pacificdata.org/geoserver/wfs",
+                    "type": "wfs"
+                },
+                "allowedSRS": {},
+                "dimensions": [],
+                "visibility": true,
+                "description": ""
+            },
+            "title": "SLR 0m Building Exposed",
+            "yAxis": true,
+            "filter": {
+                "hits": false,
+                "filterType": "OGC",
+                "ogcVersion": "1.1.0",
+                "pagination": null,
+                "groupFields": [
+                    {
+                        "id": 1,
+                        "index": 0,
+                        "logic": "OR"
+                    }
+                ],
+                "sortOptions": null,
+                "filterFields": [
+                    {
+                        "type": "number",
+                        "rowId": 1707346282533,
+                        "value": 0,
+                        "groupId": 1,
+                        "operator": ">",
+                        "attribute": "slr_0cm_ari100.depth",
+                        "exception": null,
+                        "fieldOptions": {
+                            "currentPage": 1,
+                            "valuesCount": 0
+                        }
+                    }
+                ],
+                "spatialField": {
+                    "method": null,
+                    "geometry": null,
+                    "attribute": "geometry",
+                    "operation": "INTERSECTS"
+                },
+                "featureTypeName": "geonode:buildings_impact",
+                "crossLayerFilter": null
+            },
+            "legend": false,
+            "mapSync": false,
+            "options": {
+                "seriesOptions": [
+                    {
+                        "uom": ""
+                    }
+                ],
+                "aggregateFunction": "Count",
+                "aggregationAttribute": "slr_0cm_ari100.depth"
+            },
+            "dataGrid": {
+                "h": 1,
+                "w": 1,
+                "x": 0,
+                "y": 0
+            },
+            "geomProp": "geometry",
+            "cartesian": true,
+            "widgetType": "counter",
+            "description": "Buildings exposed at 0 m sea level rise"
+        },
+        {
+            "id": "ec3ec2a0-c60b-11ee-b6ed-834edbebba7e",
+            "url": "https://geonode.pacificdata.org/geoserver/ows",
+            "layer": {
+                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                "bbox": {
+                    "crs": "EPSG:4326",
+                    "bounds": {
+                        "maxx": -157.321798,
+                        "maxy": -8.954643,
+                        "minx": -165.84628399,
+                        "miny": -21.271801
+                    }
+                },
+                "name": "geonode:buildings_impact",
+                "type": "wms",
+                "links": [],
+                "title": "buildings_impact",
+                "params": {},
+                "search": {
+                    "url": "https://geonode.pacificdata.org/geoserver/wfs",
+                    "type": "wfs"
+                },
+                "allowedSRS": {},
+                "dimensions": [],
+                "visibility": true,
+                "description": ""
+            },
+            "title": "SLR 1.5m Building Exposed",
+            "yAxis": true,
+            "filter": {
+                "hits": false,
+                "filterType": "OGC",
+                "ogcVersion": "1.1.0",
+                "pagination": null,
+                "groupFields": [
+                    {
+                        "id": 1,
+                        "index": 0,
+                        "logic": "OR"
+                    }
+                ],
+                "sortOptions": null,
+                "filterFields": [
+                    {
+                        "type": "number",
+                        "rowId": 1707346458919,
+                        "value": 0,
+                        "groupId": 1,
+                        "operator": ">",
+                        "attribute": "slr_150cm_ari100.depth",
+                        "exception": null,
+                        "fieldOptions": {
+                            "currentPage": 1,
+                            "valuesCount": 0
+                        }
+                    }
+                ],
+                "spatialField": {
+                    "method": null,
+                    "geometry": null,
+                    "attribute": "geometry",
+                    "operation": "INTERSECTS"
+                },
+                "featureTypeName": "geonode:buildings_impact",
+                "crossLayerFilter": null
+            },
+            "legend": false,
+            "mapSync": false,
+            "options": {
+                "aggregateFunction": "Count",
+                "aggregationAttribute": "slr_150cm_ari100.depth"
+            },
+            "dataGrid": {
+                "h": 1,
+                "w": 1,
+                "x": 0,
+                "y": 0
+            },
+            "geomProp": "geometry",
+            "cartesian": true,
+            "widgetType": "counter",
+            "description": "Buildings exposed at 1.5m sea level rise"
+        },
+        {
+            "id": "c2774e50-c60c-11ee-b6ed-834edbebba7e",
+            "url": "https://geonode.pacificdata.org/geoserver/ows",
+            "type": "bar",
+            "layer": {
+                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                "bbox": {
+                    "crs": "EPSG:4326",
+                    "bounds": {
+                        "maxx": -157.3215106,
+                        "maxy": -8.9166612,
+                        "minx": -165.9249043,
+                        "miny": -21.959211
+                    }
+                },
+                "name": "geonode:cook_islands_coastal_slr_risk_regional_summary",
+                "type": "wms",
+                "links": [],
+                "title": "cook_islands_coastal_slr_risk_regional_summary",
+                "params": {},
+                "search": {
+                    "url": "https://geonode.pacificdata.org/geoserver/wfs",
+                    "type": "wfs"
+                },
+                "allowedSRS": {},
+                "dimensions": [],
+                "visibility": true,
+                "description": ""
+            },
+            "panel": true,
+            "title": "Building AAL change: 2020-2150 (Log scale)",
+            "yAxis": true,
+            "legend": false,
+            "mapSync": false,
+            "options": {
+                "aggregateFunction": "None",
+                "groupByAttributes": "region.region",
+                "aggregationAttribute": "change.building_aal"
+            },
+            "dataGrid": {
+                "h": 1,
+                "w": 1,
+                "x": 0,
+                "y": 0
+            },
+            "geomProp": "geometry",
+            "cartesian": true,
+            "yAxisOpts": {
+                "type": "log"
+            },
+            "widgetType": "chart",
+            "autoColorOptions": {
+                "base": 30,
+                "name": "global.colors.brown",
+                "range": 4,
+                "classification": [
+                    {
+                        "id": "a1bb40c2-c5ff-11ee-b6ed-834edbebba7e",
+                        "color": "#A578D3",
+                        "title": "",
+                        "value": "",
+                        "unique": ""
+                    }
+                ],
+                "defaultCustomColor": "#0888A1",
+                "rangeClassification": [
+                    {
+                        "id": "a1bb40c3-c5ff-11ee-b6ed-834edbebba7e",
+                        "max": 0,
+                        "min": 0,
+                        "color": "#F9F4B0",
+                        "title": ""
+                    }
+                ]
+            }
+        },
+        {
+            "id": "b2e4e2c0-c61d-11ee-b6ed-834edbebba7e",
+            "url": "https://geonode.pacificdata.org/geoserver/ows",
+            "layer": {
+                "url": "https://geonode.pacificdata.org/geoserver/ows",
+                "bbox": {
+                    "crs": "EPSG:4326",
+                    "bounds": {
+                        "maxx": -157.3215106,
+                        "maxy": -8.9166612,
+                        "minx": -165.9249043,
+                        "miny": -21.959211
+                    }
+                },
+                "name": "geonode:ck_admin1_regional_impact_v2_c7a164027ed484a0759d00ea69523ad4",
+                "type": "wms",
+                "links": [],
+                "title": "ck_admin1_regional_impact_v2",
+                "params": {},
+                "search": {
+                    "url": "https://geonode.pacificdata.org/geoserver/wfs",
+                    "type": "wfs"
+                },
+                "allowedSRS": {},
+                "dimensions": [],
+                "visibility": true,
+                "description": ""
+            },
+            "title": "Building exposure information per island",
+            "yAxis": true,
+            "legend": false,
+            "mapSync": false,
+            "options": {
+                "propertyName": [
+                    {
+                        "name": "region",
+                        "title": "Island"
+                    },
+                    {
+                        "name": "slr_0cm_ari100.buildings.exposed_count",
+                        "title": "0m - count"
+                    },
+                    {
+                        "name": "slr_0cm_ari100.buildings.loss",
+                        "title": "0m - loss"
+                    },
+                    {
+                        "name": "slr_50cm_ari100.buildings.loss",
+                        "title": "0.5m - loss"
+                    },
+                    {
+                        "name": "slr_50cm_ari100.buildings.exposed_count",
+                        "title": "0.5m - count"
+                    },
+                    {
+                        "name": "slr_100cm_ari100.buildings.loss",
+                        "title": "1.0m - loss"
+                    },
+                    {
+                        "name": "slr_100cm_ari100.buildings.exposed_count",
+                        "title": "1.0m - count"
+                    },
+                    {
+                        "name": "slr_150cm_ari100.buildings.loss",
+                        "title": "1.5m - loss"
+                    },
+                    {
+                        "name": "slr_150cm_ari100.buildings.exposed_count",
+                        "title": "1.5m - count"
+                    }
+                ],
+                "columnSettings": {
+                    "region": {
+                        "width": 106
+                    },
+                    "slr_0cm_ari100.buildings.loss": {
+                        "width": 116.19999694824219
+                    }
+                }
+            },
+            "dataGrid": {
+                "h": 1,
+                "w": 1,
+                "x": 0,
+                "y": 0
+            },
+            "geomProp": "geometry",
+            "cartesian": true,
+            "widgetType": "table",
+            "description": "Building exposure per SLR showing the count of building exposued and the building loss in US$",
+            "sortOptions": {
+                "sortBy": "slr_0cm_ari100.buildings.loss",
+                "sortOrder": "DESC"
+            }
+        },
+        {
+            "id": "5ff83e40-c6c7-11ee-b038-93b98ea0ec0d",
+            "url": false,
+            "text": "<p>Exposed Cook Island buildings at SLR 0m, 0.5m, 1m and 1.5m for ARI 100 year.</p>\n<p></p>\n<img src=\"https://object-storage.nz-hlz-1.catalystcloud.io/v1/AUTH_3458c7e192ac4b5880c337b21b3c06fb/catweb_prod/original_images/riskscape-sized.jpg\" alt=\"undefined\" style=\"height: 150px; width: 100%; display: block; margin: 0 auto 0 auto;\" />\n<p></p>\n",
+            "layer": false,
+            "title": "About",
+            "yAxis": true,
+            "legend": false,
+            "mapSync": false,
+            "dataGrid": {
+                "h": 1,
+                "w": 1,
+                "x": 0,
+                "y": 0
+            },
+            "cartesian": true,
+            "widgetType": "text"
+        }
+    ]
+}
