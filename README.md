@@ -1,11 +1,11 @@
 # Riskscape Nexus Integration
 
-Utility scripts designed to run a automated scheduled tasks the performs the following - 
+Utility scripts designed to run as automated scheduled tasks that performs the following - 
 
-1. Download and store a project model runs most recent outputs via the Riskscape Platform API
+1. Download and store a project model run outputs most recent outputs via the Riskscape Platform API
 2. Upload and register that regional-summary, national-loss-curves, buildings-impact and admin-regional-impact spatial outputs
 3. Generate a PDF with SLR and Annual Avergae Loss and Upload to Nexus Documents
-4. Generate/update a Dashboard updating updating template in GeoApps base resource table 
+4. Generate/update a Dashboard by injecting template in GeoApps base resource table 
 
 #### Usage
 
