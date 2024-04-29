@@ -2,6 +2,8 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+import warnings
+warnings.filterwarnings('ignore') 
 
 load_dotenv()
 organisation = "partner-2"
@@ -17,12 +19,12 @@ api_url = RISKSCAPE_API
 # authenication token
 token_url = f"{api_url}/token"
 auth = {"usernameOrEmail": "sachindras", "password": "Daemon21!@"}
-response = requests.post(token_url, json=auth)
+response = requests.post(token_url, json=auth, verify=False)
 token = response.text
 
 # project information
 url = f"{api_url}/users/by-username/{RISKSCAPE_USERNAME}/projects/all"
-response = requests.get(url, headers={"rs-api-token": token})
+response = requests.get(url, headers={"rs-api-token": token}, verify=False)
 project_text = response.text
 # print(project_text)
 projects = json.loads(project_text)

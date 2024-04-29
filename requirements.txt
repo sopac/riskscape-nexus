@@ -2,4 +2,9 @@ requests
 python-dotenv
 numpy
 pandas
+geopandas
 matplotlib
+setuptools
+greppo
+numpy==1.22.4
+
