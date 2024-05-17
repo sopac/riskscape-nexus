@@ -1,13 +1,14 @@
 import requests
 import json
-import os
+import os, sys
 from dotenv import load_dotenv
 import warnings
 warnings.filterwarnings('ignore') 
 
 load_dotenv()
 #project_name = "cook-islands"
-project_name = "rsmc-tcwc"
+#project_name = "rsmc-tcwc"
+project_name = "vanuatu"
 
 organisation = "partner"
 api_url = "https://riskscape.nz/api"
@@ -35,7 +36,7 @@ response = requests.get(url, headers={"rs-api-token": token}, verify=False)
 project_text = response.text
 #print(project_text)
 project = json.loads(project_text)
-print(project)
+#print(project)
 id = project["id"]
 
 # recent runs
@@ -43,57 +44,66 @@ url = f"{api_url}/projects/by-id/{str(id)}/runs/recent"
 response = requests.get(url, headers={"rs-api-token": token}, verify=False)
 model_run_text = response.text
 model_run = json.loads(model_run_text)
-# print(model_run)
-model_name = model_run["list"][0]["externalModelId"]
-print(model_name)
+print(model_run['totalSize'])
+#sys.exit() 
 
-#create data directories
-data_dir_path = "data/" + project_name
-if not os.path.exists(data_dir_path):
-    os.makedirs(data_dir_path)
+limit = int(model_run['totalSize'])
 
-#download spatial model outputs
-for output in model_run["list"][0]["outputs"]:
-    if output["mediaType"] == "application/geo+json":
-        print(output)
-        output_name = output["name"]
-        output_url = api_url + output["uri"].replace("/api", "") + "/download"
-        print(output_url)
-        # download
-        file_name = (
-            #project_name
-            #+ "_" +
-            model_name.lower()
-            + "_"
-            + output_name.lower()
-            + ".geojson"
-        )
-        file_name = file_name.replace("_", "-")
-        print(file_name)
-        response = requests.get(output_url, headers={"rs-api-token": token}, verify=False)
-        # print(response.text)
-        with open("data/" + project_name + "/" + file_name, mode="wb") as file:
-            file.write(response.content)
+for i in range(0, limit - 0): #multi-model downloads
 
-#download tabular model outputs
-for output in model_run["list"][0]["outputs"]:
-    if output["mediaType"] == "text/csv":
-        print(output)
-        output_name = output["name"]
-        output_url = api_url + output["uri"].replace("/api", "") + "/download"
-        print(output_url)
-        # download
-        file_name = (
-            #project_name
-            #+ "_" +
-            model_name.lower()
-            + "_"
-            + output_name.lower()
-            + ".csv"
-        )
-        file_name = file_name.replace("_", "-")
-        print(file_name)
-        response = requests.get(output_url, headers={"rs-api-token": token}, verify=False)
-        # print(response.text)
-        with open("data/" + project_name + "/" + file_name, mode="wb") as file:
-            file.write(response.content)
+    model_name = model_run["list"][i]["externalModelId"]
+    print(model_name)
+
+    #create data directories
+    data_dir_path = "data/" + project_name
+    if not os.path.exists(data_dir_path):
+        os.makedirs(data_dir_path)
+
+    #download spatial model outputs
+    for output in model_run["list"][i]["outputs"]:
+        if output["mediaType"] == "application/geo+json":
+            print(output)
+            output_name = output["name"]
+            output_url = api_url + output["uri"].replace("/api", "") + "/download"
+            print(output_url)
+            # download
+            file_name = (
+                #project_name
+                #+ "_" +
+                model_name.lower()
+                + "_"
+                + output_name.lower()
+                + ".geojson"
+            )
+            file_name = file_name.replace("_", "-")
+            print(file_name)
+            response = requests.get(output_url, headers={"rs-api-token": token}, verify=False)
+            # print(response.text)
+            with open("data/" + project_name + "/" + file_name, mode="wb") as file:
+                file.write(response.content)
+
+    #download tabular model outputs
+    for output in model_run["list"][i]["outputs"]:
+        if output["mediaType"] == "text/csv":
+            print(output)
+            output_name = output["name"]
+            output_url = api_url + output["uri"].replace("/api", "") + "/download"
+            print(output_url)
+            # download
+            file_name = (
+                #project_name
+                #+ "_" +
+                model_name.lower()
+                + "_"
+                + output_name.lower()
+                + ".csv"
+            )
+            file_name = file_name.replace("_", "-")
+            print(file_name)
+            response = requests.get(output_url, headers={"rs-api-token": token}, verify=False)
+            # print(response.text)
+            with open("data/" + project_name + "/" + file_name, mode="wb") as file:
+                file.write(response.content)
+
+
+print("Project/Model Run Outputs Downloaded.")

@@ -1,0 +1,605 @@
+input('coastal_hazard_maps', name: 'event') as hazard_input
+ ->
+group(by: { event.group as event_group },
+     select: {
+        *,
+        to_lookup_table(key: { event.SLR, event.Return_Period }, value: { event.coverage }, options: { unique: true }) as coverage_table
+   })
+ ->
+join_exposures_and_events.rhs
+
+#
+# Input: SLR projections
+#
+input(bookmark('IPCC_projections', { location: 'ipcc_ar6_sea_level_projection_psmsl_id_1841.csv' }))
+ ->
+filter(switch(scenario, default: false, cases: [{ in: ['ssp245 (medium confidence)'], return: true }]) and
+       switch(percentile, default: false, cases: [{ in: [50], return: true }]))
+ ->
+# the projections come in as a list, due to the shape of the input data
+unnest(projections)
+ ->
+select({ scenario as Scenario, percentile as Percentile, projections.* }) as SLR_projections
+ ->
+group(select: {
+        to_lookup_table(key: { Scenario, Percentile, Year }, value: SLR, options: { unique: true }) as SLR_table
+      })
+ ->
+select({ *, [2020, 2030, 2040, 2050, 2060, 2070, 2080, 2090, 2100, 2110, 2120, 2130, 2140, 2150] as Year, ['ssp245 (medium confidence)'] as Scenario, [50] as Percentile })
+ ->
+unnest(Percentile)
+ ->
+unnest(Scenario)
+ ->
+unnest(Year)
+ ->
+select({
+          *,
+          # this maps a given year to an interpolated SLR
+          create_continuous(
+              # the assumption here is we will have projected SLR data-points for all these hard-coded years
+              # in the cc_projection CSV file. We can then use them to interpolate to get the requested $years
+              [2020, 2030, 2040, 2050, 2060, 2070, 2080, 2090, 2100, 2110, 2120, 2130, 2140, 2150],
+              x -> lookup(SLR_table, { Scenario, Percentile, int(x) as Year })
+          ) as SLR_curve,
+})
+ ->
+join_years_of_interest.rhs
+
+#
+# Input Exposures
+#
+input(bookmark('Household_Population'), name: 'exposure') as input_population
+->
+select({ *, 'Population' as InputType })
+->
+union() as all_exposures
+
+input(bookmark('PCRAFI_Buildings'), name: 'exposure') as input_buildings
+->
+select({ *, 'Building' as InputType })
+->
+all_exposures
+
+input(bookmark('Evacuation_Centres'), name: 'exposure') as input_evac_centres
+->
+select({ *, 'Evacuation Centre' as InputType })
+->
+all_exposures
+
+input(bookmark('Health_Facilities'), name: 'exposure') as input_health_facilities
+->
+select({ *, 'Health Facility' as InputType })
+->
+all_exposures
+
+input(bookmark('Schools'), name: 'exposure') as input_schools
+->
+select({ *, 'School' as InputType })
+->
+all_exposures
+
+input(bookmark('Roads'), name: 'exposure') as input_roads
+ ->
+select({ *,  'Road' as InputType })
+ ->
+all_exposures
+
+input(bookmark('Crops'), name: 'exposure') as input_crops
+ ->
+select({ *,  'Crop' as InputType })
+ ->
+all_exposures
+
+input(bookmark('Airports'), name: 'exposure') as input_airports
+ ->
+select({ *,  'Airport' as InputType, true as infrastructure })
+ ->
+all_exposures
+
+input(bookmark('Ports'), name: 'exposure') as input_ports
+ ->
+select({ *,  'Port' as InputType, true as infrastructure })
+ ->
+all_exposures
+
+input(bookmark('Power'), name: 'exposure') as input_power
+ ->
+select({ *,  'Power' as InputType, true as infrastructure })
+ ->
+all_exposures
+
+input(bookmark('Telecom_Towers'), name: 'exposure') as input_telecom
+ ->
+select({ *,  'Telecommunication' as InputType, true as infrastructure })
+ ->
+all_exposures
+
+input(bookmark('Water'), name: 'exposure') as input_water
+ ->
+select({ *,  'Water' as InputType, true as infrastructure })
+ ->
+all_exposures
+
+input(bookmark('Bridges'), name: 'exposure') as input_bridges
+ ->
+select({ *,  'Bridge' as InputType, true as infrastructure })
+ ->
+all_exposures
+
+#
+# Geoprocessing & Sampling
+#
+all_exposures
+ ->
+# we have tonnes of hazard maps organized into localities, e.g. island groups.
+# Find the group of .tif files that relate to this exposure, so we only have a single
+# hazard/impact per exposure. In other words, this exposure should only
+# fall within the bounds of one group of hazard maps and we can ignore the other hazard maps
+select({ *, sample_one(exposure.geom, to_coverage(bookmark('coastal_hazard_maps_bounds.gpkg')), buffer-distance: 5000.0) as hazard_index }) as sample_hazard_group
+ ->
+# can't really do anything with exposures that fall outside the hazard maps
+filter(is_not_null(hazard_index))
+ ->
+# strip nullability (the previous step already removes any possibility it is null)
+select({ *, if_null(hazard_index.group, '') as group })
+ ->
+# reproject to a metric CRS to make measure/segment operations quicker for polygons/lines.
+select({ *, reproject(exposure.geom, if_null(hazard_index.CRS, 'EPSG:32758')) as geom }) as reproject
+ ->
+select({ *, switch(InputType, default: false, cases: [{ in: ['Road', 'Port', 'Airport'], return: true }]) as can_segment })
+ ->
+# segment any lines/polygons by a fixed distance (not by a grid).
+# If any part of segment is exposed, then the whole segment is exposed.
+select({ *, measure(geom) as orig_size, segment(geom, 10) as geom }) as segment
+ ->
+# NB: don't segment buildings or other discrete assets
+select({ *, if_then_else(can_segment, geom, [ exposure.geom ]) as geom })
+ ->
+unnest(geom)
+ ->
+select({ *, measure(geom) as size }) as measure
+ ->
+# NB: use scale_factor=1.0 for points, so we don't end up with NaN
+select({ *, if_then_else(can_segment and size > 0, size / orig_size, 1.0) as scale_factor })
+ ->
+select({
+         *,
+         merge(exposure, {
+                           geom,
+                           exposure.Value * scale_factor as Value,
+                           InputType as Asset,
+                           if_null(infrastructure, false) as Infrastructure,
+                           round(size, 2) as Size
+                         }) as exposure
+       })
+ ->
+# join up each exposure to the group of hazard maps that it falls within
+join(hazard_index.group = event_group) as join_exposures_and_events
+ ->
+# we have a tonne of data to crunch, so we want to get rid of what we can as quick as possible.
+# If an exposure is unexposed to the 2m ARI250 event, then it shouldn't be exposed
+# to any other events. We can ignore it without sampling the other 146 hazard maps
+select({ *, lookup(coverage_table, { SLR: 2.0, Return_Period: 250 }) as worst_case_coverage })
+ ->
+filter(is_not_null(sample_one(geom, worst_case_coverage))) as filter_unexposed
+ ->
+select({
+         *,
+         sample_one(exposure, to_coverage(bookmark(bookmark('Area_Councils'))), 10000) as map_region,
+         sample_one(exposure, to_coverage(bookmark(bookmark('Provinces'))), 10000) as table_region,
+       }) as exposures_and_regions
+
+#
+# Losses for projected SLR
+#
+exposures_and_regions
+ ->
+# add in the Return Periods we're interested in
+select({ *, [1, 5, 10, 25, 50, 100, 250 ] as Return_Period, { 0.0 as Depth, 0.0 as Loss } as Zero_Loss })
+ ->
+unnest(Return_Period)
+ ->
+# build a RP+SLR=>loss curve for each affected exposure
+select({
+         *,
+         # this maps a given SLR to an expected loss (for this particular return period)
+         create_continuous(
+             [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0],
+             x -> if_null(
+                    max(
+                      map(
+                          sample(exposure, lookup(coverage_table, { x as SLR, Return_Period })),
+                          h -> h.sampled
+                      )
+                   ), 0.0)
+         ) as depth_curve,
+         1 - exp(0 - (1/float(Return_Period))) as Exceedance_Probability,
+       })
+ ->
+ select({
+     *,
+     create_continuous(
+      [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0],
+      x -> map(apply_continuous(depth_curve, x), depth -> {
+           Depth: depth,
+           Loss: Flood_Loss(exposure, depth).Direct_Loss
+      })
+    ) as loss_curve,
+   }) as per_exposure_loss_curve
+ ->
+join(on: true) as join_years_of_interest
+ ->
+# the user-specified year might not exactly match the cc_projection data.
+# If that's the case we use interpolation to work out the SLR (rounded to nearest cm)
+select({ *, apply_continuous(SLR_curve, Year) as SLR })
+ ->
+# sanity-check we don't exceed what we have SLR data for
+filter(is_not_null(SLR) and SLR >= 0.0 and SLR <= 2.0)
+ ->
+# SLR is guaranteed to be non-null at this point, but this keeps RS type-checking happy
+select({ *, if_null(SLR, 0.0) as SLR })
+ ->
+# use interpolation to work out the impact/loss based on the projected SLR
+select({ *, apply_continuous(loss_curve, SLR) as Impact })
+ ->
+select({
+         *,
+         # the asset might not have been exposed at this particular RP
+         # Use a min_depth here, so we don't overcount when interpolating between a zero depth
+         # and a negligibly small depth, e.g. interpolating between 0.0 and 0.02 might produce
+         # an interpolated depth of 0.002, which we don't really care about.
+         if_then_else(Impact.Depth >= 0.01, Impact, Zero_Loss) as Impact,
+         round(SLR, 3) as SLR
+      })
+ ->
+select({
+     *,
+     Impact.Depth > 0 as Exposed
+})
+ ->
+select({
+         *,
+         Impact.Loss as Total_Loss,
+         if_then_else(exposure.Infrastructure, 'Infrastructure', exposure.Asset) as Asset_Type,
+         if_then_else(exposure.Asset = 'Building', Impact.Loss, 0.0) as Building_Loss,
+         if_then_else(exposure.Asset = 'Road', Impact.Loss, 0.0) as Road_Loss,
+         if_then_else(exposure.Infrastructure, Impact.Loss, 0.0) as Infrastructure_Loss,
+         if_then_else(exposure.Asset = 'Crop', Impact.Loss, 0.0) as Crop_Loss,
+         if_then_else(exposure.Asset = 'Building' and Exposed, exposure.Value, 0.0) as Exposed_Building_Value,
+         if_then_else(exposure.Asset = 'Road' and Exposed, exposure.Value, 0.0) as Exposed_Road_Value,
+         if_then_else(exposure.Infrastructure and Exposed, exposure.Value, 0.0) as Exposed_Infrastructure_Value,
+         if_then_else(exposure.Asset = 'Crop' and Exposed, exposure.Value, 0.0) as Exposed_Crop_Value,
+         if_then_else(exposure.Asset = 'Population' and Exposed, exposure.Value, 0.0) as Exposed_Population,
+         if_then_else(exposure.Asset != 'Population' and Exposed, exposure.Value, 0.0) as Exposed_Total_Value,
+         if_then_else(exposure.Asset = 'Road' and Exposed, exposure.Size / 1000, 0.0) as Exposed_Road_km,
+      }) as projected_SLR_event_impact_table
+
+#
+# Reporting: Regional impact
+#
+projected_SLR_event_impact_table
+ ->
+# we create a dummy 'National' region here and duplicate each row of data, so that
+# we can produce the regional and national results in a single 'group' step
+# (which avoids duplicating complicated pipeline steps)
+select({
+        *,
+        [{ null_of('text') as ID, null_of('text') as Region, 'National' as Level },
+         { table_region.ID, table_region.Region, 'Admin1' as Level },
+         { map_region.ID, map_region.Region, 'Admin2' as Level }] as Region,
+         round(Exceedance_Probability, 4) as Exceedance_Probability
+      })
+ ->
+unnest(Region)
+ ->
+group(by: { Region, Scenario, Percentile, Year, SLR, Return_Period, Exceedance_Probability },
+      select: {
+          *,
+          count(Asset_Type = 'Building' and Exposed) as Exposed_Buildings,
+          count(Building_Loss > 0) as Damaged_Buildings,
+          count(Asset_Type = 'Building' and exposure.UseType = 'Residential' and Exposed) as Exposed_Residential_Buildings,
+          count(Asset_Type = 'Building' and exposure.UseType != 'Residential' and Exposed) as Exposed_Nonresidential_Buildings,
+  
+          round(sum(Building_Loss)) as Building_Loss,
+          round(sum(if_then_else(exposure.UseType = 'Residential', Building_Loss, 0.0))) as Residential_Building_Loss,
+          round(sum(if_then_else(exposure.UseType != 'Residential', Building_Loss, 0.0))) as Nonresidential_Building_Loss,
+  
+          round(sum(Exposed_Building_Value)) as Exposed_Building_Value,
+  
+          # Population
+          round(sum(Exposed_Population)) as Exposed_Population,
+          count(Asset_Type = 'Population' and Exposed) as Exposed_Households,
+  
+          # Roads
+          round(sum(Exposed_Road_km), 2) as Exposed_Road_km,
+          round(sum(Road_Loss)) as Road_Loss,
+          round(sum(Exposed_Road_Value)) as Exposed_Road_Value,
+  
+          # infrastructure
+          round(sum(Infrastructure_Loss)) as Infrastructure_Loss,
+          round(sum(Exposed_Infrastructure_Value)) as Exposed_Infrastructure_Value,
+          count(Asset_Type = 'Infrastructure' and Exposed) as Exposed_Infrastructure,
+  
+          # crops
+          round(sum(Crop_Loss)) as Crop_Loss,
+          round(sum(Exposed_Crop_Value)) as Total_Crop_Value,
+  
+          # exposed schools, health, etc
+          count(Asset_Type = 'Evacuation Centre' and Exposed) as Exposed_Evacuation_Centres,
+          count(Asset_Type = 'Health Exposedity' and Exposed) as Exposed_Health_Facilties,
+          count(Asset_Type = 'School' and Exposed) as Exposed_Schools,
+  
+          round(sum(Exposed_Total_Value)) as Total_Exposed_Value,
+          round(sum(Total_Loss)) as Total_Loss,
+  
+          bucket_range(pick: Impact.Depth,
+                range: [ 0.5, 1.0, 1.5, 2.0 ],
+                select: {
+                count(Asset_Type = 'Building' and Exposed) as Buildings,
+                round(if_null(
+                      sum(Exposed_Population),
+                      0.0)) as Population,
+          }) as Depth,
+      }) as aggregate_impact
+ ->
+filter(Region.Level = 'Admin1')
+ ->
+select({ Region.ID as Region_ID, *, Region.Region as Region }) as regional_event_impact
+ ->
+sort([ Region, Scenario, Percentile, Year, SLR, Return_Period])
+ ->
+save('regional-impact', format: 'csv')
+
+#
+# Reporting the results - total/national event-loss table
+#
+aggregate_impact
+ ->
+filter(Region.Level = 'National') as national_event_impact
+ ->
+select({ *, 'National' as Region })
+ ->
+sort([Scenario, Percentile, Year, SLR, Return_Period])
+ ->
+save('event-impact', format: 'csv')
+
+#
+# National AAL
+#
+aggregate_impact
+ ->
+group(by: { Region, Scenario, Percentile, Year, SLR },
+      select: {
+            *,
+            round(aal_trapz(loss: Total_Loss, ep: Exceedance_Probability), 2) as Total_AAL,
+            round(aal_trapz(loss: Building_Loss, ep: Exceedance_Probability), 2) as Building_AAL,
+            round(aal_trapz(loss: Crop_Loss, ep: Exceedance_Probability), 2) as Crops_AAL,
+            round(aal_trapz(loss: Road_Loss, ep: Exceedance_Probability), 2) as Road_AAL,
+            round(aal_trapz(loss: Infrastructure_Loss, ep: Exceedance_Probability), 2) as Infrastructure_AAL,
+            round(aal_trapz(loss: Exposed_Population, ep: Exceedance_Probability), 2) as Average_Annual_Population_Exposed
+      }) as aggregate_aal
+ ->
+filter(Region.Level = 'National')
+ ->
+select({ *, 'National' as Region })          
+ ->
+sort([Scenario, Percentile, Year, SLR])
+ ->
+save('average-loss', format: 'csv')
+
+#
+# Regional AAL (by year)
+#
+aggregate_aal
+ ->
+filter(Region.Level = 'Admin1')
+ ->
+select({ Region.ID as Region_ID, *, Region.Region as Region })
+ ->
+sort([Region, Scenario, Percentile, Year, SLR])
+ ->
+save('regional-average-loss', format: 'csv')
+
+#
+# Regional summary
+#
+aggregate_aal
+ ->
+filter(Region.Level = 'Admin2')
+ ->
+# spatial output means we need to condense down to a single row of data per region
+# (currently there is an AAL row for each year x each SSP scenario x each SSP percentile)
+# As these are all parameters, we can bucket() by them easily. So instead, just pick
+# an arbitrary SSP scenario/percentile. This will work best if the user only selects one at a time
+filter(Scenario = 'ssp245 (medium confidence)' and Percentile = 50)
+ ->
+group(by: { Region, Scenario, Percentile },
+      select: {
+            *,
+            bucket(by: Year,
+                   pick: b -> b = Year,
+                   select: {
+                        # we should only end up with one result per bucket
+                        max(Year) as Year,
+                        max(Total_AAL) as Total_AAL,
+                        max(Building_AAL) as Building_AAL,
+                        max(Crops_AAL) as Crops_AAL,
+                        max(Road_AAL) as Road_AAL,
+                        max(Infrastructure_AAL) as Infrastructure_AAL,
+                        max(Average_Annual_Population_Exposed) as Average_Annual_Population_Exposed
+                    },
+                    buckets: {
+                        First: min([2020, 2030, 2040, 2050, 2060, 2070, 2080, 2090, 2100, 2110, 2120, 2130, 2140, 2150]), Last: max([2020, 2030, 2040, 2050, 2060, 2070, 2080, 2090, 2100, 2110, 2120, 2130, 2140, 2150])
+                    }) as Bin
+      }) as regional_summary
+ ->
+# add back in the map geometry (we had to drop it earlier to keep RS types happy)
+join(on: map_region.Region = Region.Region) as join_map_region
+ ->
+select({ map_region.*, Scenario, Percentile, Bin.First, Bin.Last, (Bin.Last - Bin.First) as Change })
+ ->
+save('regional-summary', format: 'geojson')
+
+input(bookmark('Area_Councils'), name: 'map_region') as input_admin2_regions
+ ->
+join_map_region.rhs
+
+join_years_of_interest
+ ->
+filter(Return_Period = 100
+       # this just makes sure we get a single row of exposure data here
+       and Year = min([2020, 2030, 2040, 2050, 2060, 2070, 2080, 2090, 2100, 2110, 2120, 2130, 2140, 2150]) and Percentile = mode([50]) and Scenario = mode(['ssp245 (medium confidence)']))
+ ->
+# use interpolation to work out the impact/loss based on the projected SLR
+select({ *,
+         apply_continuous(loss_curve, 0.0) as Impact_0cm,
+         apply_continuous(loss_curve, 0.5) as Impact_50cm,
+         apply_continuous(loss_curve, 1.0) as Impact_100cm,
+         apply_continuous(loss_curve, 1.5) as Impact_150cm
+       })
+ ->       
+select({
+         exposure,
+         map_region,
+         if_then_else(Impact_0cm.Depth >= 0.01, Impact_0cm, Zero_Loss) as Impact_0cm,
+         if_then_else(Impact_50cm.Depth >= 0.01, Impact_50cm, Zero_Loss) as Impact_50cm,
+         if_then_else(Impact_100cm.Depth >= 0.01, Impact_100cm, Zero_Loss) as Impact_100cm,
+         if_then_else(Impact_150cm.Depth >= 0.01, Impact_150cm, Zero_Loss) as Impact_150cm
+       })
+ ->
+# only include exposed assets in the results
+filter(Impact_150cm.Depth > 0) as fixed_SLR_impacts
+ ->
+filter(exposure.Asset = 'Building')
+ ->
+select({
+         exposure.*,
+         { round(Impact_0cm.Depth, 3) as Depth, Impact_0cm.Loss } as SLR_0cm_ARI100,
+         { round(Impact_50cm.Depth, 3) as Depth, Impact_50cm.Loss} as SLR_50cm_ARI100,
+         { round(Impact_100cm.Depth, 3) as Depth, Impact_100cm.Loss } as SLR_100cm_ARI100,
+         { round(Impact_150cm.Depth, 3) as Depth, Impact_150cm.Loss } as SLR_150cm_ARI100,
+       })
+ ->
+save('buildings-impact', format: 'geojson')
+
+fixed_SLR_impacts
+ ->
+filter(exposure.Asset = 'Road')
+ ->
+select({
+         exposure.*,
+         { round(Impact_0cm.Depth, 3) as Depth, Impact_0cm.Loss } as SLR_0cm_ARI100,
+         { round(Impact_50cm.Depth, 3) as Depth, Impact_50cm.Loss} as SLR_50cm_ARI100,
+         { round(Impact_100cm.Depth, 3) as Depth, Impact_100cm.Loss } as SLR_100cm_ARI100,
+         { round(Impact_150cm.Depth, 3) as Depth, Impact_150cm.Loss } as SLR_150cm_ARI100,
+       })
+ ->
+save('road-impact', format: 'geojson')
+
+fixed_SLR_impacts
+ ->
+select({
+         *,
+         Impact_0cm.Depth > 0 as Exposed_0cm,
+         Impact_50cm.Depth > 0 as Exposed_50cm,
+         Impact_100cm.Depth > 0 as Exposed_100cm,
+         Impact_150cm.Depth > 0 as Exposed_150cm,
+         if_then_else(exposure.Infrastructure, 'Infrastructure', exposure.Asset) as Asset_Type,
+       })
+ ->
+group(by: map_region,
+      select: {
+            map_region.*,
+            bucket(by: Asset_Type,
+                   pick: b -> b = Asset_Type or (b = 'Total' and Asset_Type != 'Population'),
+                   select: {
+                        round(if_null(sum(Impact_0cm.Loss), 0.0)) as Loss,
+                        count(Exposed_0cm) as Exposed_Count,
+                        round(if_null(sum(if_then_else(Exposed_0cm, exposure.Value, 0.0)), 0.0)) as Exposed_Value
+                   },
+                   buckets: {
+                        Buildings: 'Building', Crops: 'Crop', Roads: 'Road', Infrastructure: 'Infrastructure',
+                        Population: 'Population', Total: 'Total'
+                   }) as SLR_0cm_ARI100,            
+            bucket(by: Asset_Type,
+                    pick: b -> b = Asset_Type or (b = 'Total' and Asset_Type != 'Population'),
+                    select: {
+                        round(if_null(sum(Impact_50cm.Loss), 0.0)) as Loss,
+                        count(Exposed_50cm) as Exposed_Count,
+                        round(if_null(sum(if_then_else(Exposed_50cm, exposure.Value, 0.0)), 0.0)) as Exposed_Value
+                   },
+                   buckets: {
+                        Buildings: 'Building', Crops: 'Crop', Roads: 'Road', Infrastructure: 'Infrastructure',
+                        Population: 'Population', Total: 'Total'
+                   }) as SLR_50cm_ARI100,
+            bucket(by: Asset_Type,
+                    pick: b -> b = Asset_Type or (b = 'Total' and Asset_Type != 'Population'),
+                    select: {
+                        round(if_null(sum(Impact_100cm.Loss), 0.0)) as Loss,
+                        count(Exposed_100cm) as Exposed_Count,
+                        round(if_null(sum(if_then_else(Exposed_100cm, exposure.Value, 0.0)), 0.0)) as Exposed_Value
+                   },
+                   buckets: {
+                        Buildings: 'Building', Crops: 'Crop', Roads: 'Road', Infrastructure: 'Infrastructure',
+                        Population: 'Population', Total: 'Total'
+                   }) as SLR_100cm_ARI100,
+            bucket(by: Asset_Type,
+                    pick: b -> b = Asset_Type or (b = 'Total' and Asset_Type != 'Population'),
+                    select: {
+                        round(if_null(sum(Impact_150cm.Loss), 0.0)) as Loss,
+                        count(Exposed_150cm) as Exposed_Count,
+                        round(if_null(sum(if_then_else(Exposed_150cm, exposure.Value, 0.0)), 0.0)) as Exposed_Value
+                   },
+                   buckets: {
+                        Buildings: 'Building', Crops: 'Crop', Roads: 'Road', Infrastructure: 'Infrastructure',
+                        Population: 'Population', Total: 'Total'
+                   }) as SLR_150cm_ARI100
+    })
+ ->
+save('regional-impact-ARI100', format: 'geojson') 
+
+# map the 50cm/100cm/150cm increments back to the SSP/year that they will occur in (for context)
+SLR_projections
+ ->
+group(by: { Scenario, Percentile },
+      select: {
+        *,
+        to_lookup_table(key: Year, value: SLR, options: { unique: true }) as SLR_table
+      })
+ ->
+select({
+        *,
+        create_continuous(
+            [2020, 2030, 2040, 2050, 2060, 2070, 2080, 2090, 2100, 2110, 2120, 2130, 2140, 2150],
+            x -> lookup(SLR_table, int(x))
+        ) as SLR_curve
+      })
+ ->
+select({
+         *,
+         map(range(2020, 2150), y -> if_then_else(apply_continuous(SLR_curve, y) >= 0.5, y, null_of('integer'))) as year_50cm_exceeded,
+         map(range(2020, 2150), y -> if_then_else(apply_continuous(SLR_curve, y) >= 1.0, y, null_of('integer'))) as year_100cm_exceeded,
+         map(range(2020, 2150), y -> if_then_else(apply_continuous(SLR_curve, y) >= 1.5, y, null_of('integer'))) as year_150cm_exceeded
+      })
+ ->
+select({
+        Scenario,
+        Percentile,
+        min(year_50cm_exceeded) as SLR_50cm,
+        min(year_100cm_exceeded) as SLR_100cm,
+        min(year_150cm_exceeded) as SLR_150cm,
+      })
+ ->
+select({
+        *,
+        # centroid(bounds(bookmark($regions))) as geom,
+        if_then_else(is_null(SLR_50cm), 'N/A', str(SLR_50cm)) as SLR_50cm,
+        if_then_else(is_null(SLR_100cm), 'N/A', str(SLR_100cm)) as SLR_100cm,
+        if_then_else(is_null(SLR_150cm), 'N/A', str(SLR_150cm)) as SLR_150cm,
+      })
+ ->
+sort([SLR_50cm])
+ ->
+#save('year-SLR-exceeded', format: 'geojson')
+save('year-SLR-exceeded', format: 'csv')

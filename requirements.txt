@@ -4,7 +4,11 @@ numpy
 pandas
 geopandas
 matplotlib
-setuptools
-greppo
-numpy==1.22.4
+#setuptools
+#greppo
+#numpy==1.22.4
+dash
+dash-bootstrap-components
+dash-leaflet
+openpyxl
 
