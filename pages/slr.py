@@ -284,7 +284,7 @@ layout = html.Div(
                             df_regional_average_loss,
                             x="Region",
                             y=[
-                                "Total_AAL",
+                                #"Total_AAL",
                                 "Building_AAL",
                                 "Crops_AAL",
                                 "Road_AAL",
