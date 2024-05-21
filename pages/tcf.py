@@ -205,21 +205,22 @@ layout = html.Div(
                                 ),
                                 style={"height": "30vh"},
                             ),
-                            html.B("Exposed Value by Windspeed"),
+                            html.B("Exposed Building Value by Windspeed"),
                             dcc.Graph(
                                 figure=px.bar(
                                     df_total_exposed_by_windspeed,
                                     x="Danger",
                                     y=[
-                                        #"Total_Buildings",
-                                        #"Total_Population",
+                                        # "Total_Buildings",
+                                        # "Total_Population",
                                         "Building_Value",
                                     ],
                                     barmode="group",
-                                ),  # .update_layout(
-                                #   xaxis_title="Maximum Windspeed (KM/ph)",
-                                #   yaxis_title="Population Exposed.",
-                                # ),
+                                    color="Danger",
+                                ).update_layout(
+                                    xaxis_title="Windspeed",
+                                    yaxis_title="Exposed Building Value (USD)",
+                                ),
                                 style={"height": "40vh"},
                             ),
                         ]
