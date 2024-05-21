@@ -174,7 +174,7 @@ layout = html.Div(
                                     gdf_regional_exposure,
                                     x="max_kmph",
                                     y="Buildings",
-                                    histfunc="avg",
+                                    histfunc="sum",
                                     color='max_kmph',
                                 ).update_layout(
                                     xaxis_title="Maximum Windspeed (KM/ph)",
@@ -189,7 +189,7 @@ layout = html.Div(
                                     gdf_regional_exposure,
                                     x="max_kmph",
                                     y="Population",
-                                    histfunc="avg",
+                                    histfunc="sum",
                                     color='max_kmph',
                                 ).update_layout(
                                     xaxis_title="Maximum Windspeed (KM/ph)",
