@@ -7,6 +7,7 @@ import pandas as pd
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
 import json
+from collections import OrderedDict
 
 dash.register_page(__name__)
 
@@ -16,6 +17,7 @@ project_name = "vanuatu"
 gdf_regional_summary = gpd.read_file(
     "data/" + project_name + "/" + "full-probabilistic-slr-regional-summary.geojson"
 )
+gdf_regional_summary.sort_values(by=["Region"], inplace=True)
 
 gdf_regional_impact = gpd.read_file(
     "data/"
@@ -59,6 +61,9 @@ def get_info(feature=None):
     if not feature:
         return header + [html.P("N/A")]
     id = feature["id"]
+    print(id)
+    # print(feature)
+    # print("\r\n")
     # r = gdf_regional_summary.iloc[[int(id)]]["Region"].values[0]
 
     return header + [
@@ -216,7 +221,7 @@ layout = html.Div(
         dbc.Row(
             [
                 dbc.Col(html.B("Impact By Island")),
-                dbc.Col(html.B("AAL Change By Island")),
+                dbc.Col(html.B("AAL Change By Island (ssp245)")),
             ]
         ),
         dbc.Row(
@@ -284,10 +289,10 @@ layout = html.Div(
                                 "Crops_AAL",
                                 "Road_AAL",
                                 "Infrastructure_AAL",
-                                "Average_Annual_Population_Exposed",
+                                # "Average_Annual_Population_Exposed",
                             ],
                             histfunc="avg",
-                        ),
+                        ).update_layout(xaxis_title="Province", yaxis_title="Avg. Loss USD"),
                     )
                 ),
                 dbc.Col(
@@ -302,10 +307,10 @@ layout = html.Div(
                                 "Crops_AAL",
                                 "Road_AAL",
                                 "Infrastructure_AAL",
-                                "Average_Annual_Population_Exposed",
+                                # "Average_Annual_Population_Exposed",
                             ],
                             markers=True,
-                        ),
+                        ).update_layout(xaxis_title="Year", yaxis_title="Loss USD"),
                         style={"height": "40vh"},
                     )
                 ),
@@ -324,14 +329,18 @@ def info_hover(feature):
 
 
 @callback(Output("map-region-impact", "data"), Input("region-select", "value"))
-def update_graph(value):
+def update_map(value):
     if value == None:
         gdf_regional_impact_filtered = gdf_regional_impact
     else:
         gdf_regional_impact_filtered = gdf_regional_impact[
             gdf_regional_impact["Region"] == value
         ]
-    data = json.loads(gdf_regional_impact_filtered["geometry"].to_json())
+    data = json.loads(
+        gdf_regional_impact_filtered["geometry"].to_json(),
+        object_pairs_hook=OrderedDict,
+    )
+
     return data
 
 
@@ -353,10 +362,8 @@ def update_graph_regional_summary(value):
             "Change.Crops_AAL",
             "Change.Road_AAL",
             "Change.Infrastructure_AAL",
-            "Change.Population_Exposed",
+            # "Change.Population_Exposed",
         ],
         barmode="group",
-        # text_auto=False,
-        # labels=["Total", "Building"],
-    )
+    ).update_layout(xaxis_title="Island", yaxis_title="Loss USD")
     return figure
