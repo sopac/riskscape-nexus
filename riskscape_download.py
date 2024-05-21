@@ -7,8 +7,8 @@ warnings.filterwarnings('ignore')
 
 load_dotenv()
 #project_name = "cook-islands"
-#project_name = "rsmc-tcwc"
-project_name = "vanuatu"
+project_name = "rsmc-tcwc"
+#project_name = "vanuatu"
 
 organisation = "partner"
 api_url = "https://riskscape.nz/api"
@@ -62,10 +62,10 @@ for i in range(0, limit - 0): #multi-model downloads
     #download spatial model outputs
     for output in model_run["list"][i]["outputs"]:
         if output["mediaType"] == "application/geo+json":
-            print(output)
+            #print(output)
             output_name = output["name"]
             output_url = api_url + output["uri"].replace("/api", "") + "/download"
-            print(output_url)
+            #print(output_url)
             # download
             file_name = (
                 #project_name
@@ -85,10 +85,10 @@ for i in range(0, limit - 0): #multi-model downloads
     #download tabular model outputs
     for output in model_run["list"][i]["outputs"]:
         if output["mediaType"] == "text/csv":
-            print(output)
+            #print(output)
             output_name = output["name"]
             output_url = api_url + output["uri"].replace("/api", "") + "/download"
-            print(output_url)
+            #print(output_url)
             # download
             file_name = (
                 #project_name

@@ -14,16 +14,16 @@ app.layout = html.Div([
     html.H3(children='Riskscape Dashboards', style={'textAlign':'center'}),
     html.Div([
         html.Span(
-             dcc.Link("Sea Level Rise | ", href="/slr", style={'textDecoration':'none'})
+             dcc.Link("Sea Level Rise (SLR) | ", href="/slr", style={'textDecoration':'none'})
         ),
         html.Span(
-             dcc.Link("Tropical Cyclone Forecast | ", href="/tcf", style={'textDecoration':'none'})
+             dcc.Link("Tropical Cyclone Forecast (REF) | ", href="/tcf", style={'textDecoration':'none'})
         ),
         html.Span(
-             dcc.Link("Fluvial-Pluvial Flood | ", href="/fpf", style={'textDecoration':'none'})
+             dcc.Link("Fluvial-Pluvial Flood (FPF) | ", href="/fpf", style={'textDecoration':'none'})
         ),
          html.Span(
-             dcc.Link("Post Disaster Needs Assessment", href="/pdna", style={'textDecoration':'none'})
+             dcc.Link("Post Disaster Needs Assessment (PDNA)", href="/pdna", style={'textDecoration':'none'})
         ),
         html.Hr()
 
