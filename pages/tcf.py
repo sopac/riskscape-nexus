@@ -8,6 +8,7 @@ import dash_leaflet as dl
 import dash_leaflet.express as dlx
 import dash_dangerously_set_inner_html
 import json
+from dash import Dash, dash_table
 
 dash.register_page(__name__)
 
@@ -23,6 +24,13 @@ gdf_cyclone_track = gpd.read_file(
 # data
 df_regional_summary = pd.read_csv(
     "data/" + project_name + "/" + "jtwc-forecast-regional-summary.csv"
+)
+df_total_exposed = pd.read_csv(
+    "data/rsmc-tcwc/rapid-exposure-forecast-total-exposed-by-country.csv"
+)
+
+df_total_exposed_by_windspeed = pd.read_csv(
+    "data/rsmc-tcwc/rapid-exposure-forecast-total-by-windspeed.csv"
 )
 
 
@@ -153,7 +161,7 @@ layout = html.Div(
                             ),
                         ],
                         zoom=6,
-                        style={"height": "60vh"},
+                        style={"height": "100vh"},
                         center=(
                             gdf_regional_exposure.dissolve()
                             .centroid.y.values[0]
@@ -175,7 +183,7 @@ layout = html.Div(
                                     x="max_kmph",
                                     y="Buildings",
                                     histfunc="sum",
-                                    color='max_kmph',
+                                    color="max_kmph",
                                 ).update_layout(
                                     xaxis_title="Maximum Windspeed (KM/ph)",
                                     yaxis_title="No. Of Buildings Exposed",
@@ -190,17 +198,42 @@ layout = html.Div(
                                     x="max_kmph",
                                     y="Population",
                                     histfunc="sum",
-                                    color='max_kmph',
+                                    color="max_kmph",
                                 ).update_layout(
                                     xaxis_title="Maximum Windspeed (KM/ph)",
                                     yaxis_title="Population Exposed.",
                                 ),
                                 style={"height": "30vh"},
                             ),
-                            # html.B("title 4"),
-                            # bar chart - total value per windspeed (??)
+                            html.B("Exposed Value by Windspeed"),
+                            dcc.Graph(
+                                figure=px.bar(
+                                    df_total_exposed_by_windspeed,
+                                    x="Danger",
+                                    y=[
+                                        #"Total_Buildings",
+                                        #"Total_Population",
+                                        "Building_Value",
+                                    ],
+                                    barmode="group",
+                                ),  # .update_layout(
+                                #   xaxis_title="Maximum Windspeed (KM/ph)",
+                                #   yaxis_title="Population Exposed.",
+                                # ),
+                                style={"height": "40vh"},
+                            ),
                         ]
                     )
+                ),
+            ]
+        ),
+        dbc.Row(
+            [
+                html.B("Forecasted Total Exposed"),
+                # bar chart - total value nation
+                dash_table.DataTable(
+                    df_total_exposed.to_dict("records"),
+                    [{"name": i, "id": i} for i in df_total_exposed.columns],
                 ),
             ]
         ),
