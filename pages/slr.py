@@ -11,7 +11,7 @@ from collections import OrderedDict
 
 dash.register_page(__name__)
 
-project_name = "vanuatu"
+project_name = "samoa"
 
 # load data single
 gdf_regional_summary = gpd.read_file(
@@ -234,9 +234,9 @@ layout = html.Div(
                             # ),
                             dl.TileLayer(),
                             dl.GeoJSON(
-                                # data=json.loads(
-                                #    gdf_regional_impact["geometry"].to_json()
-                                # ),
+                                data=json.loads(
+                                   gdf_regional_impact["geometry"].to_json()
+                                ),
                                 id="map-region-impact",
                                 zoomToBounds=True,
                                 zoomToBoundsOnClick=True,
