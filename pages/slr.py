@@ -195,7 +195,7 @@ layout = html.Div(
                 dbc.Col(
                     dcc.Dropdown(
                         ["Cook-Islands", "Tonga", "Samoa", "Vanuatu"],
-                        "Vanuatu",
+                        "Samoa",
                         id="country-select",
                     ),
                     width=6,
@@ -205,7 +205,7 @@ layout = html.Div(
         dbc.Row(html.Br()),
         dbc.Row(
             [
-                dbc.Col(html.Label("Region (Island) : "), width=3),
+                dbc.Col(html.Label("Region : "), width=3),
                 dbc.Col(
                     dcc.Dropdown(
                         regions,
@@ -220,8 +220,8 @@ layout = html.Div(
         dbc.Row(html.Br()),
         dbc.Row(
             [
-                dbc.Col(html.B("Impact By Island")),
-                dbc.Col(html.B("AAL Change By Island (ssp245)")),
+                dbc.Col(html.B("Impact By Region")),
+                dbc.Col(html.B("AAL Change By Region (ssp245)")),
             ]
         ),
         dbc.Row(
@@ -365,5 +365,5 @@ def update_graph_regional_summary(value):
             # "Change.Population_Exposed",
         ],
         barmode="group",
-    ).update_layout(xaxis_title="Island", yaxis_title="Loss USD")
+    ).update_layout(xaxis_title="Region", yaxis_title="Loss USD")
     return figure
