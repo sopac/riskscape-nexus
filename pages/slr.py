@@ -30,6 +30,9 @@ df_average_loss = pd.read_csv(
     "data/" + project_name + "/" + "full-probabilistic-slr-average-loss.csv"
 )
 
+#filter for ssp245
+df_average_loss_245 = df_average_loss[df_average_loss["Scenario"] == 'ssp245 (medium confidence)']
+
 df_regional_average_loss = pd.read_csv(
     "data/" + project_name + "/" + "full-probabilistic-slr-regional-average-loss.csv"
 )
@@ -299,14 +302,14 @@ layout = html.Div(
                     dcc.Graph(
                         # id="graph-national-loss-curve",
                         figure=px.line(
-                            df_average_loss,
+                            df_average_loss_245,
                             x="Year",
                             y=[
                                 "Total_AAL",
                                 "Building_AAL",
                                 "Crops_AAL",
                                 "Road_AAL",
-                                "Infrastructure_AAL",
+                                "Infrastructure_AAL"
                                 # "Average_Annual_Population_Exposed",
                             ],
                             markers=True,
