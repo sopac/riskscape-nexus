@@ -17,14 +17,14 @@ project_name = "samoa"
 gdf_regional_summary = gpd.read_file(
     "data/" + project_name + "/" + "full-probabilistic-slr-regional-summary.geojson"
 )
-gdf_regional_summary.sort_values(by=["Region"], inplace=True)
+# gdf_regional_summary.sort_values(by=["Region"], inplace=True)
 
-gdf_regional_impact = gpd.read_file(
-    "data/"
-    + project_name
-    + "/"
-    + "full-probabilistic-slr-regional-impact-ari100.geojson"
-)
+# gdf_regional_impact = gpd.read_file(
+#     "data/"
+#     + project_name
+#     + "/"
+#     + "full-probabilistic-slr-regional-impact-ari100.geojson"
+# )
 
 df_average_loss = pd.read_csv(
     "data/" + project_name + "/" + "full-probabilistic-slr-average-loss.csv"
@@ -238,7 +238,7 @@ layout = html.Div(
                             dl.TileLayer(),
                             dl.GeoJSON(
                                 data=json.loads(
-                                   gdf_regional_impact["geometry"].to_json()
+                                   gdf_regional_summary["geometry"].to_json()
                                 ),
                                 id="map-region-impact",
                                 zoomToBounds=True,
@@ -256,8 +256,8 @@ layout = html.Div(
                         zoom=6,
                         style={"height": "40vh"},
                         center=(
-                            gdf_regional_impact.dissolve().centroid.y.values[0].item(),
-                            gdf_regional_impact.dissolve().centroid.x.values[0].item(),
+                            gdf_regional_summary.dissolve().centroid.y.values[0].item(),
+                            gdf_regional_summary.dissolve().centroid.x.values[0].item(),
                         ),
                     )
                 ),
@@ -334,13 +334,13 @@ def info_hover(feature):
 @callback(Output("map-region-impact", "data"), Input("region-select", "value"))
 def update_map(value):
     if value == '':
-        gdf_regional_impact_filtered = gdf_regional_impact
+        gdf_regional_summary_filtered = gdf_regional_summary
     else:
-        gdf_regional_impact_filtered = gdf_regional_impact[
-            gdf_regional_impact["Region"] == value
+        gdf_regional_summary_filtered = gdf_regional_summary[
+            gdf_regional_summary["Region"] == value
         ]
     data = json.loads(
-        gdf_regional_impact_filtered["geometry"].to_json(),
+        gdf_regional_summary_filtered["geometry"].to_json(),
         object_pairs_hook=OrderedDict,
     )
 
