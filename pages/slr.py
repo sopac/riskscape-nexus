@@ -29,14 +29,14 @@ gdf_regional_impact = gpd.read_file(
 df_average_loss = pd.read_csv(
     "data/" + project_name + "/" + "full-probabilistic-slr-average-loss.csv"
 )
-
 #filter for ssp245
 df_average_loss_245 = df_average_loss[df_average_loss["Scenario"] == 'ssp245 (medium confidence)']
 
 df_regional_average_loss = pd.read_csv(
     "data/" + project_name + "/" + "full-probabilistic-slr-regional-average-loss.csv"
 )
-
+#filter for ssp245
+df_regional_average_loss_245 = df_regional_average_loss[df_regional_average_loss["Scenario"] == 'ssp245 (medium confidence)']
 
 # gdf_national_loss_curve = gpd.read_file(
 #    "data/" + project_name + "/" + "coastal-slr-risk-national-loss-curve.geojson"
@@ -224,7 +224,7 @@ layout = html.Div(
         dbc.Row(
             [
                 dbc.Col(html.B("Impact By Region")),
-                dbc.Col(html.B("AAL Change By Region (ssp245)")),
+                dbc.Col(html.B("AAL Change Between 2020 And 2150 By Region (ssp245)")),
             ]
         ),
         dbc.Row(
@@ -272,7 +272,7 @@ layout = html.Div(
         dbc.Row(html.Br()),
         dbc.Row(
             [
-                dbc.Col(html.B("Average Annual Loss by Province (ssp245)")),
+                dbc.Col(html.B("AAL by Province (ssp245) averaged over 130 years")),
                 dbc.Col(html.B("National Loss Curve (ssp245)")),
             ]
         ),
@@ -284,7 +284,7 @@ layout = html.Div(
                         # id="graph-regional-loss-curve",
                         style={"height": "40vh"},
                         figure=px.histogram(
-                            df_regional_average_loss,
+                            df_regional_average_loss_245,
                             x="Region",
                             y=[
                                 #"Total_AAL",
