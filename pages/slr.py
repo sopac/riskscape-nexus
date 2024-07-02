@@ -330,7 +330,7 @@ def info_hover(feature):
 
 @callback(Output("map-region-impact", "data"), Input("region-select", "value"))
 def update_map(value):
-    if value == None:
+    if value == '':
         gdf_regional_impact_filtered = gdf_regional_impact
     else:
         gdf_regional_impact_filtered = gdf_regional_impact[
@@ -342,6 +342,7 @@ def update_map(value):
     )
 
     return data
+
 
 
 @callback(Output("graph-regional-summary", "figure"), Input("region-select", "value"))
