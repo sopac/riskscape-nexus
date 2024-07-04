@@ -11,14 +11,22 @@ from collections import OrderedDict
 
 dash.register_page(__name__)
 
+
 project_name = "samoa"
 
-# load data single
+############################### LOAD DATA AND PREPARE DATA ###############################
+
+#load regional summary
 gdf_regional_summary = gpd.read_file(
     "data/" + project_name + "/" + "full-probabilistic-slr-regional-summary.geojson"
 )
-# gdf_regional_summary.sort_values(by=["Region"], inplace=True)
+# rename regional summary columns for display
+gdf_regional_summary.rename(
+    columns={"Change.Average_Annual_Population_Exposed": "Change.Population_Exposed"},
+    inplace=True,
+)
 
+# #regional impact
 # gdf_regional_impact = gpd.read_file(
 #     "data/"
 #     + project_name
@@ -26,23 +34,28 @@ gdf_regional_summary = gpd.read_file(
 #     + "full-probabilistic-slr-regional-impact-ari100.geojson"
 # )
 
+#load average loss
 df_average_loss = pd.read_csv(
     "data/" + project_name + "/" + "full-probabilistic-slr-average-loss.csv"
 )
-#filter for ssp245
+#filter average loss for ssp245
 df_average_loss_245 = df_average_loss[df_average_loss["Scenario"] == 'ssp245 (medium confidence)']
 
+#load regional average loss
 df_regional_average_loss = pd.read_csv(
     "data/" + project_name + "/" + "full-probabilistic-slr-regional-average-loss.csv"
 )
-#filter for ssp245
+#filter regional average loss for ssp245
 df_regional_average_loss_245 = df_regional_average_loss[df_regional_average_loss["Scenario"] == 'ssp245 (medium confidence)']
 
+# #national loss curve
 # gdf_national_loss_curve = gpd.read_file(
 #    "data/" + project_name + "/" + "coastal-slr-risk-national-loss-curve.geojson"
 # )
 
-# gdf_regional_summary = gdf_regional_summary.to_crs('epsg:3587')
+
+
+############################### DROPDOWN SELECTION CONFIGURATION ###############################
 
 # create region list for region selection dropdown
 regions = gdf_regional_summary["Region"].tolist()
@@ -50,17 +63,15 @@ regions.sort()
 regions = ['All regions'] + regions
 
 
-# rename
-gdf_regional_summary.rename(
-    columns={"Change.Average_Annual_Population_Exposed": "Change.Population_Exposed"},
-    inplace=True,
-)
 
+############################### MAP COMPONENT ###############################
 
 # mapinfo
 colorscale = ["red", "yellow", "green", "blue", "purple"]  # rainbow
 
 
+
+############################### MAP FEATURE INFO BOX ###############################
 def get_info(feature=None):
     header = [html.B("Regional Summary")]
     if not feature:
@@ -188,6 +199,11 @@ info = html.Div(
         "background": "white",
     },
 )
+
+
+
+
+############################### DASHBOARD LAYOUT ###############################
 
 layout = html.Div(
     [
@@ -325,14 +341,16 @@ layout = html.Div(
     style={"textAlign": "center"},
 )
 
-# callbacks
 
 
+############################### CALLBACKS ###############################
+
+#map: retrieve feature info for info box
 @callback(Output("info", "children"), Input("map-region-impact", "hoverData"))
 def info_hover(feature):
     return get_info(feature)
 
-
+#map: zoom map to selected region 
 @callback(Output("map-region-impact", "data"), Input("region-select", "value"))
 def update_map(value):
     if value == 'All regions':
@@ -348,12 +366,11 @@ def update_map(value):
 
     return data
 
-
-
+#regional summary graph: display data from selected region
 @callback(Output("graph-regional-summary", "figure"), Input("region-select", "value"))
 def update_graph_regional_summary(value):
     # print(value)
-    if value == None:
+    if value == None: #this is a bit of a hack - value is never None, but this way the empty grpah looks nicest for now
         gdf_regional_summary_filtered = gdf_regional_summary
     else:
         gdf_regional_summary_filtered = gdf_regional_summary[
