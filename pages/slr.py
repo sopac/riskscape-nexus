@@ -44,9 +44,11 @@ df_regional_average_loss_245 = df_regional_average_loss[df_regional_average_loss
 
 # gdf_regional_summary = gdf_regional_summary.to_crs('epsg:3587')
 
-# lists
+# create region list for region selection dropdown
 regions = gdf_regional_summary["Region"].tolist()
 regions.sort()
+regions = ['All regions'] + regions
+
 
 # rename
 gdf_regional_summary.rename(
@@ -212,7 +214,7 @@ layout = html.Div(
                 dbc.Col(
                     dcc.Dropdown(
                         regions,
-                        "",
+                        "All regions",
                         id="region-select",
                     ),
                     width=6,
@@ -333,7 +335,7 @@ def info_hover(feature):
 
 @callback(Output("map-region-impact", "data"), Input("region-select", "value"))
 def update_map(value):
-    if value == '':
+    if value == 'All regions':
         gdf_regional_summary_filtered = gdf_regional_summary
     else:
         gdf_regional_summary_filtered = gdf_regional_summary[
