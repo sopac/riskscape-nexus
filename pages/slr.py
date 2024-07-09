@@ -212,7 +212,11 @@ layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(html.Label("Country (Project) : "), width=2),
+                dbc.Col(
+                    html.Label("Country : "), 
+                    width=1,
+                    align="end"
+                    ),
                 dbc.Col(
                     dcc.Dropdown(
                         ["Cook-Islands", "Tonga", "Samoa", "Vanuatu"],
@@ -220,8 +224,13 @@ layout = html.Div(
                         id="country-select",
                     ),
                     width=3,
+                    align="start"
                 ),
-                dbc.Col(html.Label("Region : "), width=2),
+                dbc.Col(
+                    html.Label("Region : "), 
+                    width=1,
+                    align="start"
+                    ),
                 dbc.Col(
                     dcc.Dropdown(
                         regions,
@@ -229,9 +238,11 @@ layout = html.Div(
                         id="region-select",
                     ),
                     width=3,
+                    align="start"
                 ),
                 html.Br()
             ],
+            justify="evenly"
         ),
         dbc.Row(html.Br()),
         dbc.Row(
