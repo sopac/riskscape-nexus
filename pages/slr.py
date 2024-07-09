@@ -219,7 +219,7 @@ layout = html.Div(
                     ),
                 dbc.Col(
                     dcc.Dropdown(
-                        ["Cook-Islands", "Tonga", "Samoa", "Vanuatu"],
+                        ["Samoa", "Tuvalu", "Vanuatu"],
                         "Samoa",
                         id="country-select",
                     ),
@@ -351,11 +351,6 @@ layout = html.Div(
 
 ############################### CALLBACKS ###############################
 
-#map: retrieve feature info for info box
-@callback(Output("info", "children"), Input("map-region-impact", "hoverData"))
-def info_hover(feature):
-    return get_info(feature)
-
 #map: zoom map to selected region 
 @callback(Output("map-region-impact", "data"), Input("region-select", "value"))
 def update_map(value):
@@ -371,6 +366,11 @@ def update_map(value):
     )
 
     return data
+
+#map: retrieve feature info for info box
+@callback(Output("info", "children"), Input("map-region-impact", "hoverData"))
+def info_hover(feature):
+    return get_info(feature)
 
 #regional summary graph: display data from selected region
 @callback(Output("graph-regional-summary", "figure"), Input("region-select", "value"))
