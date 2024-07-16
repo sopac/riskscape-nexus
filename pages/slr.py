@@ -12,7 +12,7 @@ from collections import OrderedDict
 dash.register_page(__name__)
 
 
-project_name = "samoa"
+project_name = "tuvalu"
 
 ############################### LOAD DATA AND PREPARE DATA ###############################
 
@@ -213,36 +213,50 @@ layout = html.Div(
         dbc.Row(
             [
                 dbc.Col(
-                    html.Label("Country : "), 
-                    width=1,
-                    align="end"
-                    ),
-                dbc.Col(
-                    dcc.Dropdown(
-                        ["Samoa", "Tuvalu", "Vanuatu"],
-                        "Samoa",
-                        id="country-select",
-                    ),
-                    width=3,
-                    align="start"
+                    [
+                        html.Label("Country : ", style={"textAlign": "right"}),
+                    ],
+                    width=1,  # Adjust width as needed
+                    style={"textAlign": "center"}  # Align label to the right
                 ),
                 dbc.Col(
-                    html.Label("Region : "), 
-                    width=1,
-                    align="start"
-                    ),
-                dbc.Col(
-                    dcc.Dropdown(
-                        regions,
-                        "All regions",
-                        id="region-select",
-                    ),
-                    width=3,
-                    align="start"
+                    [
+                        dcc.Dropdown(
+                            options=[
+                                {"label": "Samoa", "value": "Samoa"},
+                                {"label": "Tuvalu", "value": "Tuvalu"},
+                                {"label": "Vanuatu", "value": "Vanuatu"},
+                            ],
+                            value="Tuvalu",
+                            id="country-select",
+                            style={"width": "100%"}  # Adjust width as needed
+                        ),
+                    ],
+                    width=3,  # Adjust width as needed
+                    align="center"  # Center align the content
                 ),
-                html.Br()
+                dbc.Col(
+                    [
+                        html.Label("Region : ", style={"textAlign": "right"}),
+                    ],
+                    width=3,  # Adjust width as needed
+                    style={"textAlign": "right"}  # Align label to the right
+                ),
+                dbc.Col(
+                    [
+                        dcc.Dropdown(
+                            options=[{"label": region, "value": region} for region in regions],
+                            value="All regions",
+                            id="region-select",
+                            style={"width": "100%"}  # Adjust width as needed
+                        ),
+                    ],
+                    width=3,  # Adjust width as needed
+                    align="center"  # Center align the content
+                ),
             ],
-            justify="evenly"
+            justify="center",  # Center align the row content
+            style={"marginBottom": "10px"}  # Add margin to the row
         ),
         dbc.Row(html.Br()),
         dbc.Row(
