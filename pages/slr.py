@@ -12,7 +12,7 @@ from collections import OrderedDict
 dash.register_page(__name__)
 
 
-project_name = "tuvalu"
+project_name = "rmi"
 
 ############################### LOAD DATA AND PREPARE DATA ###############################
 
@@ -223,11 +223,12 @@ layout = html.Div(
                     [
                         dcc.Dropdown(
                             options=[
+                                {"label": "Marshall Islands", "value": "Marshall Islands"},
                                 {"label": "Samoa", "value": "Samoa"},
                                 {"label": "Tuvalu", "value": "Tuvalu"},
                                 {"label": "Vanuatu", "value": "Vanuatu"},
                             ],
-                            value="Tuvalu",
+                            value="Marshall Islands",
                             id="country-select",
                             style={"width": "100%"}  # Adjust width as needed
                         ),
