@@ -201,9 +201,9 @@ layout = html.Div(
     [
         dbc.Row(
             dbc.Col(
-                html.H3("Post Disaster Needs Assessment (PDNA)", style={"textAlign": "center", "color": "white"})
+                html.H3("Post Disaster Needs Assessment (PDNA)", style={"textAlign": "center", "color": "black"})
             ),
-            style={"backgroundColor": "#CCCCFF", "padding": "10px"}  # Periwinkle background for the header row
+            style={"backgroundColor": "#eaeded", "padding": "10px"}  # background for the header row
         ),
         dbc.Row(
             [
@@ -357,7 +357,7 @@ layout = html.Div(
             style={"padding": "10px"}  # Add padding around the row
         ),
     ],
-    style={"backgroundColor": "#CCCCFF", "color": "white", "padding": "20px"}  # Periwinkle background and white text color for the entire page
+    style={"backgroundColor": "#eaeded", "color": "white", "padding": "20px"}  # gray background and for the entire page
 )
 
 
