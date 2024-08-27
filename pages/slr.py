@@ -360,7 +360,7 @@ layout = html.Div(
             ]
         ),
     ],
-    style={"textAlign": "center"},
+    style={"textAlign": "center", "backgroundColor": "#eaeded", "color": "black", "padding": "20px"}
 )
 
 
