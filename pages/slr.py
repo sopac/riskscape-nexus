@@ -11,51 +11,67 @@ from collections import OrderedDict
 
 dash.register_page(__name__)
 
-project_name = "vanuatu"
 
-# load data single
+project_name = "cook-islands"
+
+############################### LOAD DATA AND PREPARE DATA ###############################
+
+#load regional summary
 gdf_regional_summary = gpd.read_file(
     "data/" + project_name + "/" + "full-probabilistic-slr-regional-summary.geojson"
 )
-gdf_regional_summary.sort_values(by=["Region"], inplace=True)
-
-gdf_regional_impact = gpd.read_file(
-    "data/"
-    + project_name
-    + "/"
-    + "full-probabilistic-slr-regional-impact-ari100.geojson"
-)
-
-df_average_loss = pd.read_csv(
-    "data/" + project_name + "/" + "full-probabilistic-slr-average-loss.csv"
-)
-
-df_regional_average_loss = pd.read_csv(
-    "data/" + project_name + "/" + "full-probabilistic-slr-regional-average-loss.csv"
-)
-
-
-# gdf_national_loss_curve = gpd.read_file(
-#    "data/" + project_name + "/" + "coastal-slr-risk-national-loss-curve.geojson"
-# )
-
-# gdf_regional_summary = gdf_regional_summary.to_crs('epsg:3587')
-
-# lists
-regions = gdf_regional_summary["Region"].tolist()
-regions.sort()
-
-# rename
+# rename regional summary columns for display
 gdf_regional_summary.rename(
     columns={"Change.Average_Annual_Population_Exposed": "Change.Population_Exposed"},
     inplace=True,
 )
 
+# #regional impact
+# gdf_regional_impact = gpd.read_file(
+#     "data/"
+#     + project_name
+#     + "/"
+#     + "full-probabilistic-slr-regional-impact-ari100.geojson"
+# )
+
+#load average loss
+df_average_loss = pd.read_csv(
+    "data/" + project_name + "/" + "full-probabilistic-slr-average-loss.csv"
+)
+#filter average loss for ssp245
+df_average_loss_245 = df_average_loss[df_average_loss["Scenario"] == 'ssp245 (medium confidence)']
+
+#load regional average loss
+df_regional_average_loss = pd.read_csv(
+    "data/" + project_name + "/" + "full-probabilistic-slr-regional-average-loss.csv"
+)
+#filter regional average loss for ssp245
+df_regional_average_loss_245 = df_regional_average_loss[df_regional_average_loss["Scenario"] == 'ssp245 (medium confidence)']
+
+# #national loss curve
+# gdf_national_loss_curve = gpd.read_file(
+#    "data/" + project_name + "/" + "coastal-slr-risk-national-loss-curve.geojson"
+# )
+
+
+
+############################### DROPDOWN SELECTION CONFIGURATION ###############################
+
+# create region list for region selection dropdown
+regions = gdf_regional_summary["Region"].tolist()
+regions.sort()
+regions = ['All regions'] + regions
+
+
+
+############################### MAP COMPONENT ###############################
 
 # mapinfo
 colorscale = ["red", "yellow", "green", "blue", "purple"]  # rainbow
 
 
+
+############################### MAP FEATURE INFO BOX ###############################
 def get_info(feature=None):
     header = [html.B("Regional Summary")]
     if not feature:
@@ -184,6 +200,11 @@ info = html.Div(
     },
 )
 
+
+
+
+############################### DASHBOARD LAYOUT ###############################
+
 layout = html.Div(
     [
         dbc.Row(
@@ -191,37 +212,59 @@ layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(html.Label("Country (Project) : "), width=3),
                 dbc.Col(
-                    dcc.Dropdown(
-                        ["Cook-Islands", "Tonga", "Samoa", "Vanuatu"],
-                        "Vanuatu",
-                        id="country-select",
-                    ),
-                    width=6,
+                    [
+                        html.Label("Country : ", style={"textAlign": "right"}),
+                    ],
+                    width=1,  # Adjust width as needed
+                    style={"textAlign": "center"}  # Align label to the right
                 ),
-            ]
+                dbc.Col(
+                    [
+                        dcc.Dropdown(
+                            options=[
+                                {"label": "Cook Islands", "value": "Cook Islands"},
+                                {"label": "Marshall Islands", "value": "Marshall Islands"},
+                                {"label": "Samoa", "value": "Samoa"},
+                                {"label": "Tuvalu", "value": "Tuvalu"},
+                                {"label": "Vanuatu", "value": "Vanuatu"},
+                            ],
+                            value="Cook Islands",
+                            id="country-select",
+                            style={"width": "100%"}  # Adjust width as needed
+                        ),
+                    ],
+                    width=3,  # Adjust width as needed
+                    align="center"  # Center align the content
+                ),
+                dbc.Col(
+                    [
+                        html.Label("Region : ", style={"textAlign": "right"}),
+                    ],
+                    width=3,  # Adjust width as needed
+                    style={"textAlign": "right"}  # Align label to the right
+                ),
+                dbc.Col(
+                    [
+                        dcc.Dropdown(
+                            options=[{"label": region, "value": region} for region in regions],
+                            value="All regions",
+                            id="region-select",
+                            style={"width": "100%"}  # Adjust width as needed
+                        ),
+                    ],
+                    width=3,  # Adjust width as needed
+                    align="center"  # Center align the content
+                ),
+            ],
+            justify="center",  # Center align the row content
+            style={"marginBottom": "10px"}  # Add margin to the row
         ),
         dbc.Row(html.Br()),
         dbc.Row(
             [
-                dbc.Col(html.Label("Region (Island) : "), width=3),
-                dbc.Col(
-                    dcc.Dropdown(
-                        regions,
-                        "",
-                        id="region-select",
-                    ),
-                    width=6,
-                ),
-                html.Br(),
-            ]
-        ),
-        dbc.Row(html.Br()),
-        dbc.Row(
-            [
-                dbc.Col(html.B("Impact By Island")),
-                dbc.Col(html.B("AAL Change By Island (ssp245)")),
+                dbc.Col(html.B("Impact By Region")),
+                dbc.Col(html.B("AAL Change Between 2020 And 2150 By Region (ssp245)")),
             ]
         ),
         dbc.Row(
@@ -234,9 +277,9 @@ layout = html.Div(
                             # ),
                             dl.TileLayer(),
                             dl.GeoJSON(
-                                # data=json.loads(
-                                #    gdf_regional_impact["geometry"].to_json()
-                                # ),
+                                data=json.loads(
+                                   gdf_regional_summary["geometry"].to_json()
+                                ),
                                 id="map-region-impact",
                                 zoomToBounds=True,
                                 zoomToBoundsOnClick=True,
@@ -253,8 +296,8 @@ layout = html.Div(
                         zoom=6,
                         style={"height": "40vh"},
                         center=(
-                            gdf_regional_impact.dissolve().centroid.y.values[0].item(),
-                            gdf_regional_impact.dissolve().centroid.x.values[0].item(),
+                            gdf_regional_summary.dissolve().centroid.y.values[0].item(),
+                            gdf_regional_summary.dissolve().centroid.x.values[0].item(),
                         ),
                     )
                 ),
@@ -269,7 +312,7 @@ layout = html.Div(
         dbc.Row(html.Br()),
         dbc.Row(
             [
-                dbc.Col(html.B("Average Annual Loss by Province (ssp245)")),
+                dbc.Col(html.B("AAL by Province (ssp245) averaged over 130 years")),
                 dbc.Col(html.B("National Loss Curve (ssp245)")),
             ]
         ),
@@ -281,7 +324,7 @@ layout = html.Div(
                         # id="graph-regional-loss-curve",
                         style={"height": "40vh"},
                         figure=px.histogram(
-                            df_regional_average_loss,
+                            df_regional_average_loss_245,
                             x="Region",
                             y=[
                                 #"Total_AAL",
@@ -299,14 +342,14 @@ layout = html.Div(
                     dcc.Graph(
                         # id="graph-national-loss-curve",
                         figure=px.line(
-                            df_average_loss,
+                            df_average_loss_245,
                             x="Year",
                             y=[
                                 "Total_AAL",
                                 "Building_AAL",
                                 "Crops_AAL",
                                 "Road_AAL",
-                                "Infrastructure_AAL",
+                                "Infrastructure_AAL"
                                 # "Average_Annual_Population_Exposed",
                             ],
                             markers=True,
@@ -317,37 +360,39 @@ layout = html.Div(
             ]
         ),
     ],
-    style={"textAlign": "center"},
+    style={"textAlign": "center", "backgroundColor": "#eaeded", "color": "black", "padding": "20px"}
 )
 
-# callbacks
 
 
-@callback(Output("info", "children"), Input("map-region-impact", "hoverData"))
-def info_hover(feature):
-    return get_info(feature)
+############################### CALLBACKS ###############################
 
-
+#map: zoom map to selected region 
 @callback(Output("map-region-impact", "data"), Input("region-select", "value"))
 def update_map(value):
-    if value == None:
-        gdf_regional_impact_filtered = gdf_regional_impact
+    if value == 'All regions':
+        gdf_regional_summary_filtered = gdf_regional_summary
     else:
-        gdf_regional_impact_filtered = gdf_regional_impact[
-            gdf_regional_impact["Region"] == value
+        gdf_regional_summary_filtered = gdf_regional_summary[
+            gdf_regional_summary["Region"] == value
         ]
     data = json.loads(
-        gdf_regional_impact_filtered["geometry"].to_json(),
+        gdf_regional_summary_filtered["geometry"].to_json(),
         object_pairs_hook=OrderedDict,
     )
 
     return data
 
+#map: retrieve feature info for info box
+@callback(Output("info", "children"), Input("map-region-impact", "hoverData"))
+def info_hover(feature):
+    return get_info(feature)
 
+#regional summary graph: display data from selected region
 @callback(Output("graph-regional-summary", "figure"), Input("region-select", "value"))
 def update_graph_regional_summary(value):
     # print(value)
-    if value == None:
+    if value == None: #this is a bit of a hack - value is never None, but this way the empty grpah looks nicest for now
         gdf_regional_summary_filtered = gdf_regional_summary
     else:
         gdf_regional_summary_filtered = gdf_regional_summary[
@@ -365,5 +410,5 @@ def update_graph_regional_summary(value):
             # "Change.Population_Exposed",
         ],
         barmode="group",
-    ).update_layout(xaxis_title="Island", yaxis_title="Loss USD")
+    ).update_layout(xaxis_title="Region", yaxis_title="Loss USD")
     return figure
