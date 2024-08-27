@@ -12,7 +12,7 @@ from collections import OrderedDict
 dash.register_page(__name__)
 
 
-project_name = "rmi"
+project_name = "cook-islands"
 
 ############################### LOAD DATA AND PREPARE DATA ###############################
 
@@ -223,12 +223,13 @@ layout = html.Div(
                     [
                         dcc.Dropdown(
                             options=[
+                                {"label": "Cook Islands", "value": "Cook Islands"},
                                 {"label": "Marshall Islands", "value": "Marshall Islands"},
                                 {"label": "Samoa", "value": "Samoa"},
                                 {"label": "Tuvalu", "value": "Tuvalu"},
                                 {"label": "Vanuatu", "value": "Vanuatu"},
                             ],
-                            value="Marshall Islands",
+                            value="Cook Islands",
                             id="country-select",
                             style={"width": "100%"}  # Adjust width as needed
                         ),
