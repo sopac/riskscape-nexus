@@ -177,31 +177,55 @@ def update_map_layer(selected_hazard):
 
 ############################### DASH CALLBACK FOR SUMMARIES ###############################
 
-# # Update the summary text dynamically based on the data relevant to the selected country, hazard, and cluster.
+# Non-interactive National Level Summary Boxes
 
-# @callback(
-#     Output("national-summary-text", "children"),
-#     Input("country-select", "value"),
-#     Input("hazard-select", "value")
-# )
-# def update_national_summary(selected_country, selected_hazard):
-#     summary_data = df_national_summary[(df_national_summary['Country'] == selected_country) & 
-#                                        (df_national_summary['Hazard'] == selected_hazard)]
+# Exposure Summary Box
+@callback(
+    Output("national-summary-text", "children"),
+    Input("interval-component", "n_intervals")  # Trigger callback on every interval tick
+)
+def update_national_summary(n_intervals):
+    # Titles to look for
+    titles = [
+        "Buildings_Exposed_To_Any_Hazard", 
+        "Population_Exposed_To_Any_Hazard", 
+        "Exposed_Infrastructure", 
+        "Exposed_Evacuation_Centres", 
+        "Exposed_Health_Facilties", 
+        "Exposed_Schools"
+    ]
+
+    # Find the corresponding values
+    values = [df_national_summary[title].values[0] for title in titles]
+
+    # Create a list of html.P elements, each representing a line of text
+    summary_text = [html.P(f"{title.replace('_', ' ')}: {value}") for title, value in zip(titles, values)]
+
+    return summary_text  # Return the list of html.P elements
+
+
+# Damage Summary Box
+@callback(
+    Output("damage-summary-text", "children"),
+    Input("interval-component", "n_intervals")  # Use the interval to trigger the update
+)
+def update_loss_damage_summary(n_intervals):
+    # Start from the second row (index 1)
+    titles = df_impact_by_asset_type.iloc[1:, 0].tolist()  # First column contains the titles
+    values = df_impact_by_asset_type.iloc[1:, 1].tolist()  # Second column contains the values
+
+    # Join each title and value with a newline 
+    summary_text = "\n".join([f"{title}: {value}" for title, value in zip(titles, values)])
     
-#     if summary_data.empty:
-#         return "No summary data available."
-    
-#     summary_text = f"{selected_country} - {selected_hazard} National Summary: " + \
-#                    f"Total Loss: {summary_data['Total_Loss'].values[0]} USD"
-    
-#     return summary_text
+    # Return the formatted summary as a string 
+    return html.Pre(f"{summary_text}")
 
 ############################### DASHBOARD LAYOUT ###############################
 layout = html.Div(
     [
         dbc.Row(
             dbc.Col(
-                html.H3("Post Disaster Needs Assessment (PDNA)", style={"textAlign": "center", "color": "black"})
+                html.H3("Post Disaster Impact Assessment (PDIA)", style={"textAlign": "center", "color": "black"})
             ),
             style={"backgroundColor": "#eaeded", "padding": "10px"}  # background for the header row
         ),
@@ -269,9 +293,7 @@ layout = html.Div(
                                     options=[
                                         {"label": "Select", "value": "Select"},
                                         {"label": "National", "value": "National"},
-                                        {"label": "Regional", "value": "Regional"},
-                                        {"label": "Provincial", "value": "Provincial"},
-                                        {"label": "District", "value": "District"},
+                                        {"label": "Regional", "value": "Regional"}
                                     ],
                                     value="Select",
                                     id="aggregation-select",
@@ -318,7 +340,7 @@ layout = html.Div(
                                                 id="loss-and-damage",
                                                 figure={
                                                 'data': [go.Pie(labels=["buildings: $30k", "roads: $800k", "agriculture: $1m"], values=["30000", "800000", "1000000"])], #placeholder pie chart ## needs to read in actual data
-                                                'layout': go.Layout(title='Loss and Damage Summary $USD')
+                                                'layout': go.Layout(title='Damage Summary $USD')
                                             },
                                                 style={"height": "30vh"}
                                             ),
@@ -333,14 +355,24 @@ layout = html.Div(
                                         html.Div(
                                             [
                                                 html.H4("National Level Exposure Summary:", style={"color": "black"}),
-                                                html.P("Summary content goes here...", style={"color": "black", "height": "19vh"})  # Add your summary content
+                                                html.Div(id="national-summary-text", style={"color": "black", "height": "22vh"}),
+                                                dcc.Interval(
+                                                    id="interval-component",
+                                                    interval=1*1000,  # Update every second (adjust the interval as needed)
+                                                    n_intervals=0
+                                                ),
                                             ],
                                             style={"padding": "10px", "backgroundColor": "#ffffff", "marginBottom": "10px"}
                                         ),
                                         html.Div(
                                             [
-                                                html.H4("National Level Loss and Damage Summary:", style={"color": "black"}),
-                                                html.P("Summary content goes here...", style={"color": "black", "height": "19vh"})  # Add your summary content
+                                                html.H4("National Level Damage Summary ($USD):", style={"color": "black"}),
+                                                html.Div(id="damage-summary-text", style={"color": "black", "height": "24vh"}),
+                                                dcc.Interval(
+                                                    id="interval-component",
+                                                    interval=1*1000,  # Update every second (adjust the interval as needed)
+                                                    n_intervals=0
+                                                ),
                                             ],
                                             style={"padding": "10px", "backgroundColor": "#ffffff"}
                                         ),
