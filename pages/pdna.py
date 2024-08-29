@@ -236,6 +236,7 @@ layout = html.Div(
                     [
                         html.Div(
                             [
+                                html.P("Please select the country for analysis:", style={"color": "black"}),
                                 html.Label("Country:", style={"color": "black"}),
                                 dcc.Dropdown(
                                     options=[
@@ -253,6 +254,7 @@ layout = html.Div(
                         ),
                         html.Div(
                             [
+                                html.P("Please select the hazard you want visualized on the map:", style={"color": "black"}),
                                 html.Label("Hazard:", style={"color": "black"}),
                                 dcc.Dropdown(
                                     options=[
@@ -271,6 +273,7 @@ layout = html.Div(
                         ),
                         html.Div(
                             [
+                                html.P("Please select the cluster you want to analyse:", style={"color": "black"}),
                                 html.Label("Cluster:", style={"color": "black"}),
                                 dcc.Dropdown(
                                     options=[
@@ -288,6 +291,7 @@ layout = html.Div(
                         ),
                         html.Div(
                             [
+                                html.P("Please select the aggregation level you would the anaylsis performed at:", style={"color": "black"}),
                                 html.Label("Aggregation:", style={"color": "black"}),
                                 dcc.Dropdown(
                                     options=[
@@ -358,7 +362,7 @@ layout = html.Div(
                                                 html.Div(id="national-summary-text", style={"color": "black", "height": "22vh"}),
                                                 dcc.Interval(
                                                     id="interval-component",
-                                                    interval=1*1000,  # Update every second (adjust the interval as needed)
+                                                    interval=1*5000000,  # Adjust the interval as needed
                                                     n_intervals=0
                                                 ),
                                             ],
@@ -370,7 +374,7 @@ layout = html.Div(
                                                 html.Div(id="damage-summary-text", style={"color": "black", "height": "24vh"}),
                                                 dcc.Interval(
                                                     id="interval-component",
-                                                    interval=1*1000,  # Update every second (adjust the interval as needed)
+                                                    interval=1*5000000,  # Adjust the interval as needed
                                                     n_intervals=0
                                                 ),
                                             ],
