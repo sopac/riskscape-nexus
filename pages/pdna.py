@@ -55,6 +55,33 @@ df_regional_summary = pd.read_csv("data/" + project_name + "/" + "regional-summa
 
 ############################### DASH CALLBACK FOR MAP ###############################
 
+# Dictionary of country coordinates and zoom levels
+country_coordinates = {
+    "Tonga": {"center": (-17, -171), "zoom": 7},
+    "Samoa": {"center": (-16, -169), "zoom": 7},
+    "Cook Islands": {"center": (-13, -158), "zoom": 7},
+    "Vanuatu": {"center": (-20, 172), "zoom": 6},
+}
+
+@callback(
+    [Output("pdna-map", "center"), Output("pdna-map", "zoom")],
+    Input("country-select", "value"),
+)
+def update_map_extent(selected_country):
+    if selected_country in country_coordinates:
+        # Get the center and zoom for the selected country
+        center = country_coordinates[selected_country]["center"]
+        zoom = country_coordinates[selected_country]["zoom"]
+    else:
+        # Default to Pacific region if no country is selected or the country is not in the dictionary
+        center = (-16, -170)
+        zoom = 5
+    
+    return center, zoom
+
+
+############################### DASH CALLBACK FOR MAP LAYERS ###############################
+
 # Base URL for the GeoServer WMS
 GEOSERVER_URL = "https://nexus.pacificdata.org/geoserver/geonode/wms"
 
@@ -62,63 +89,59 @@ GEOSERVER_URL = "https://nexus.pacificdata.org/geoserver/geonode/wms"
     Output("pdna-map", "children"),
     Input("hazard-select", "value")
 )
-def update_map_layer(selected_hazard):
-    # Base map layer should always be included
-    layers = [dl.TileLayer()]
+def update_map_layer(selected_hazards):
+    layers = [dl.TileLayer()]  # Base map layer
 
-    if selected_hazard == "Cyclone Track":
-        # Load Cyclone Track GeoJSON and display it on the map
-        layers.append(
-            dl.GeoJSON(
-            data=json.loads(gdf_cyclone_track.to_json()),  # Convert GeoDataFrame to GeoJSON format
-            id="cyclone-track",
-            zoomToBounds=True,
-            zoomToBoundsOnClick=True,
-            style=dict(
-                weight=2,
-                opacity=1,
-                color="red",
-                fillOpacity=0.5,
-            ),
-        )
-    )
-        
-    elif selected_hazard == "Coastal Inundation":
-        #Add WMSTile layer directly to the map
-        layers.append(
-            dl.WMSTileLayer(
-            url=GEOSERVER_URL,
-            layers="geonode:inundation_max", 
-            format="image/png",
-            transparent=True,
-            id="inundation-layer"
-        )
-    )
-        
-    # elif selected_hazard == "Storm Surge":
-    #     #Add WMSTile layer directly to the map
-    #     layers.append(
-    #         dl.WMSTileLayer(
-    #         url=GEOSERVER_URL,
-    #         layers="geonode:storm_surge", #replace with actual name of layer
-    #         format="image/png",
-    #         transparent=True,
-    #         id="storm_surge-layer"
-    #     )
-    # )
+    for hazard in selected_hazards:
+        if hazard == "Cyclone Track":
+            layers.append(
+                dl.GeoJSON(
+                    data=json.loads(gdf_cyclone_track.to_json()), 
+                    id="cyclone-track",
+                    zoomToBounds=True,
+                    zoomToBoundsOnClick=True,
+                    style=dict(
+                        weight=2,
+                        opacity=1,
+                        color="red",
+                        fillOpacity=0.5,
+                    ),
+                )
+            )
 
-    # elif selected_hazard == "Wave Height":
-    #     #Add WMSTile layer directly to the map
-    #     layers.append(
-    #         dl.WMSTileLayer(
-    #         url=GEOSERVER_URL,
-    #         layers="geonode:wave_height", #replace with actual name of layer
-    #         format="image/png",
-    #         transparent=True,
-    #         id="wave_height-layer"
-    #     )
-    # )
-        
+        elif hazard == "Coastal Inundation":
+            layers.append(
+                dl.WMSTileLayer(
+                    url=GEOSERVER_URL,
+                    layers="geonode:tc_lola_coastalinundation",
+                    format="image/png",
+                    transparent=True,
+                    id="inundation-layer"
+                )
+            )
+
+        # elif hazard == "Storm Surge":
+        #     layers.append(
+        #         dl.WMSTileLayer(
+        #             url=GEOSERVER_URL,
+        #             layers="geonode:storm_surge",
+        #             format="image/png",
+        #             transparent=True,
+        #             id="storm_surge-layer"
+        #         )
+        #     )
+
+        elif hazard == "Wave Height":
+            layers.append(
+                dl.WMSTileLayer(
+                    url=GEOSERVER_URL,
+                    layers="	geonode:tc_lola_hs_max",
+                    format="image/png",
+                    transparent=True,
+                    id="wave_height-layer"
+                )
+            )
+    
     return layers  # Always return the base map layer + any additional layers
 
 ############################### DASH CALLBACK FOR HOVERING ###############################
@@ -199,8 +222,11 @@ def update_national_summary(n_intervals):
     values = [df_national_summary[title].values[0] for title in titles]
 
     # Create a list of html.P elements, each representing a line of text
-    summary_text = [html.P(f"{title.replace('_', ' ')}: {value}") for title, value in zip(titles, values)]
-
+    summary_text = [
+        html.P(f"{title.replace('_', ' ')}: {value}", style={"font-family": "Times New Roman", "font-size": "14px"}) 
+        for title, value in zip(titles, values)
+    ]
+    
     return summary_text  # Return the list of html.P elements
 
 
@@ -218,7 +244,8 @@ def update_loss_damage_summary(n_intervals):
     summary_text = "\n".join([f"{title}: {value}" for title, value in zip(titles, values)])
     
     # Return the formatted summary as a string 
-    return html.Pre(f"{summary_text}")
+    return html.Pre(f"{summary_text}", style={"font-family": "Times New Roman", "font-size": "14px"})
+
 
 ############################### DASHBOARD LAYOUT ###############################
 layout = html.Div(
@@ -236,7 +263,7 @@ layout = html.Div(
                     [
                         html.Div(
                             [
-                                html.P("Please select the country for analysis:", style={"color": "black"}),
+                                html.P("Please select a country for analysis:", style={"color": "black"}),
                                 html.Label("Country:", style={"color": "black"}),
                                 dcc.Dropdown(
                                     options=[
@@ -245,7 +272,7 @@ layout = html.Div(
                                         {"label": "Cook Islands", "value": "Cook Islands"},
                                         {"label": "Vanuatu", "value": "Vanuatu"},
                                     ],
-                                    value="Vanuatu",
+                                    value="",
                                     id="country-select",
                                     style={"width": "100%", "backgroundColor": "#ffffff", "color": "black"}  # Dropdown background color
                                 ),
@@ -258,14 +285,14 @@ layout = html.Div(
                                 html.Label("Hazard:", style={"color": "black"}),
                                 dcc.Dropdown(
                                     options=[
-                                        {"label": "Select", "value": "Select"},
                                         {"label": "Wave Height", "value": "Wave Height"},
                                         {"label": "Coastal Inundation", "value": "Coastal Inundation"},
                                         {"label": "Cyclone Track", "value": "Cyclone Track"},
                                         {"label": "Storm Surge", "value": "Storm Surge"},
                                     ],
-                                    value="Select",
+                                    value="", # No default seclection
                                     id="hazard-select",
+                                    multi=True, # Enable multiple selections
                                     style={"width": "100%", "backgroundColor": "#ffffff", "color": "black"}  # Dropdown background color
                                 ),
                             ],
@@ -273,16 +300,15 @@ layout = html.Div(
                         ),
                         html.Div(
                             [
-                                html.P("Please select the cluster you want to analyse:", style={"color": "black"}),
+                                html.P("Please select the cross sectoral cluster you want to analyse:", style={"color": "black"}),
                                 html.Label("Cluster:", style={"color": "black"}),
                                 dcc.Dropdown(
                                     options=[
-                                        {"label": "Select", "value": "Select"},
                                         {"label": "Agriculture", "value": "Agriculture"},
                                         {"label": "Social", "value": "Social"},
                                         {"label": "Health", "value": "Health"},
                                     ],
-                                    value="Select",
+                                    value="",
                                     id="cluster-select",
                                     style={"width": "100%", "backgroundColor": "#ffffff", "color": "black"}  # Dropdown background color
                                 ),
@@ -295,11 +321,10 @@ layout = html.Div(
                                 html.Label("Aggregation:", style={"color": "black"}),
                                 dcc.Dropdown(
                                     options=[
-                                        {"label": "Select", "value": "Select"},
                                         {"label": "National", "value": "National"},
                                         {"label": "Regional", "value": "Regional"}
                                     ],
-                                    value="Select",
+                                    value="",
                                     id="aggregation-select",
                                     style={"width": "100%", "backgroundColor": "#ffffff", "color": "black"}  # Dropdown background color
                                 ),
@@ -319,12 +344,9 @@ layout = html.Div(
                                         [
                                             dl.TileLayer(),
                                         ],
-                                        zoom=6,
                                         style={"height": "60vh"},
-                                        center=(
-                                            gdf_cyclone_track.dissolve().centroid.y.values[0].item(),
-                                            gdf_cyclone_track.dissolve().centroid.x.values[0].item(),
-                                        ),
+                                        zoom=5,
+                                        center=(-16, -170),  # Central coordinates for the Pacific region
                                         id="pdna-map",
                                     ),
                                     width=6  # Width for the map column
