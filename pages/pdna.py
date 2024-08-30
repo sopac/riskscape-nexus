@@ -55,27 +55,29 @@ df_regional_summary = pd.read_csv("data/" + project_name + "/" + "regional-summa
 
 ############################### DASH CALLBACK FOR MAP ###############################
 
-# Dictionary of country coordinates and zoom levels
+# Dictionary of country coordinates
 country_coordinates = {
-    "Tonga": {"center": (-17, -171), "zoom": 7},
-    "Samoa": {"center": (-16, -169), "zoom": 7},
-    "Cook Islands": {"center": (-13, -158), "zoom": 7},
-    "Vanuatu": {"center": (-20, 172), "zoom": 6},
+    "Vanuatu": {"center": (-18, -190)},
+    "Samoa": {"center": (-14, -170)},
+    "Cook Islands": {"center": (-21, -159)},
+    "Tonga": {"center": (-20, -178)},
 }
 
 @callback(
-    [Output("pdna-map", "center"), Output("pdna-map", "zoom")],
-    Input("country-select", "value"),
+    Output("pdna-map", "center"),
+    Output("pdna-map", "zoom"),
+    Input("country-select", "value")
 )
 def update_map_extent(selected_country):
+    # Set the zoom level to a constant value of 5
+    zoom = 5
+    
     if selected_country in country_coordinates:
-        # Get the center and zoom for the selected country
+        # Get the center for the selected country
         center = country_coordinates[selected_country]["center"]
-        zoom = country_coordinates[selected_country]["zoom"]
     else:
         # Default to Pacific region if no country is selected or the country is not in the dictionary
         center = (-16, -170)
-        zoom = 5
     
     return center, zoom
 
@@ -348,6 +350,7 @@ layout = html.Div(
                                         zoom=5,
                                         center=(-16, -170),  # Central coordinates for the Pacific region
                                         id="pdna-map",
+                                        viewport={"center": [-16, -170], "zoom": 5},  # Track the map's viewport
                                     ),
                                     width=6  # Width for the map column
                                 ),
