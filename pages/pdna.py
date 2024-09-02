@@ -1,5 +1,5 @@
 import dash
-from dash import Dash, html, dcc, callback, Output, Input
+from dash import Dash, html, dcc, callback, Output, Input, State
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import geopandas as gpd
@@ -15,28 +15,27 @@ import io
 # from rasterio import features
 from shapely.geometry import shape
 import matplotlib as plt
-from PIL import Image
-import base64
+
 
 
 dash.register_page(__name__)
 
-project_name = "pdna"
+project_name = "cooks_pdia"
 
 ############################### LOAD DATA AND PREPARE RISKSCAPE DATA ###############################
 
-#  GEOJSONS  #
-#load cyclone track
-gdf_cyclone_track = gpd.read_file("data/" + project_name + "/" + "cyclone-track.geojson")
-
+#  datasets  #
 #load damaged buildings
-gdf_damaged_buildings = gpd.read_file("data/" + project_name + "/" + "damaged-buildings.geojson")
+gdf_damaged_buildings = gpd.read_file("data/" + project_name + "/" + "damaged-buildings.gpkg")
 
 #load damaged roads
-gdf_damaged_roads = gpd.read_file("data/" + project_name + "/" + "damaged-roads.geojson")
+gdf_damaged_roads = gpd.read_file("data/" + project_name + "/" + "damaged-roads.gpkg")
 
 #load exposure by cluster
 gdf_exposure_by_cluster = gpd.read_file( "data/" + project_name + "/" + "exposure-by-cluster.geojson")
+
+#load regional impacts by sector
+gdf_regional_impacts_by_sector = gpd.read_file("data/" + project_name + "/" + "regional-impacts-by-sector.geojson")
 
 #load regional impacts
 gdf_regional_impacts = gpd.read_file("data/" + project_name + "/" + "regional-impacts.geojson")
@@ -46,36 +45,44 @@ gdf_regional_impacts = gpd.read_file("data/" + project_name + "/" + "regional-im
 #load impact by asset type
 df_impact_by_asset_type = pd.read_csv("data/" + project_name + "/" + "impact-by-asset-type.csv")
 
+#load national impacts by sector
+df_national_impact_by_sector = gpd.read_file("data/" + project_name + "/" + "national-impact-by-sector.csv")
+
 #load national summary
 df_national_summary = pd.read_csv("data/" + project_name + "/" + "national-summary.csv")
 
 #load regional summary
 df_regional_summary = pd.read_csv("data/" + project_name + "/" + "regional-summary.csv")
 
+#load regional summary by sector
+df_regional_summary_by_sector = gpd.read_file("data/" + project_name + "/" + "regional-summary-by-sector.csv")
+
 
 ############################### DASH CALLBACK FOR MAP ###############################
 
-# Dictionary of country coordinates and zoom levels
+# Dictionary of country coordinates
 country_coordinates = {
-    "Tonga": {"center": (-17, -171), "zoom": 7},
-    "Samoa": {"center": (-16, -169), "zoom": 7},
-    "Cook Islands": {"center": (-13, -158), "zoom": 7},
-    "Vanuatu": {"center": (-20, 172), "zoom": 6},
+    "Vanuatu": {"center": (-18, -190)},
+    "Samoa": {"center": (-14, -170)},
+    "Cook Islands": {"center": (-21, -159)},
+    "Tonga": {"center": (-20, -178)},
 }
 
 @callback(
-    [Output("pdna-map", "center"), Output("pdna-map", "zoom")],
-    Input("country-select", "value"),
+    Output("pdna-map", "center"),
+    Output("pdna-map", "zoom"),
+    Input("country-select", "value")
 )
 def update_map_extent(selected_country):
+    # Set the zoom level to a constant value of 5
+    zoom = 5
+    
     if selected_country in country_coordinates:
-        # Get the center and zoom for the selected country
+        # Get the center for the selected country
         center = country_coordinates[selected_country]["center"]
-        zoom = country_coordinates[selected_country]["zoom"]
     else:
         # Default to Pacific region if no country is selected or the country is not in the dictionary
         center = (-16, -170)
-        zoom = 5
     
     return center, zoom
 
@@ -95,17 +102,12 @@ def update_map_layer(selected_hazards):
     for hazard in selected_hazards:
         if hazard == "Cyclone Track":
             layers.append(
-                dl.GeoJSON(
-                    data=json.loads(gdf_cyclone_track.to_json()), 
-                    id="cyclone-track",
-                    zoomToBounds=True,
-                    zoomToBoundsOnClick=True,
-                    style=dict(
-                        weight=2,
-                        opacity=1,
-                        color="red",
-                        fillOpacity=0.5,
-                    ),
+                dl.WMSTileLayer(
+                    url=GEOSERVER_URL,
+                    layers="geonode:ref_tc_meena_cook_islands_cyclone_track", 	
+                    format="image/png",
+                    transparent=True,
+                    id="cyclone-track-layer"
                 )
             )
 
@@ -120,16 +122,16 @@ def update_map_layer(selected_hazards):
                 )
             )
 
-        # elif hazard == "Storm Surge":
-        #     layers.append(
-        #         dl.WMSTileLayer(
-        #             url=GEOSERVER_URL,
-        #             layers="geonode:storm_surge",
-        #             format="image/png",
-        #             transparent=True,
-        #             id="storm_surge-layer"
-        #         )
-        #     )
+        elif hazard == "Wind":
+            layers.append(
+                dl.WMSTileLayer(
+                    url=GEOSERVER_URL,
+                    layers="geonode:ref_tc_meena_cook_islands_wind_swaths",
+                    format="image/png",
+                    transparent=True,
+                    id="wind-swath-layer"
+                )
+            )
 
         elif hazard == "Wave Height":
             layers.append(
@@ -144,60 +146,297 @@ def update_map_layer(selected_hazards):
     
     return layers  # Always return the base map layer + any additional layers
 
-############################### DASH CALLBACK FOR HOVERING ###############################
-
-# # Display detailed information on hover or click on the map 
-
-# @callback(
-#     Output("exposure-summary-text", "children"),
-#     Output("loss-damage-summary-text", "children"),
-#     Input("pdna-map", "clickData")
-# )
-# def display_map_info(click_data):
-#     if click_data is None:
-#         return "Click on an area to see details.", "Click on an area to see details."
-    
-#     # Extract data from click_data
-#     location_info = click_data['points'][0]
-#     location_name = location_info.get('text', 'Unknown location')
-    
-#     # Look up details based on location_name or coordinates
-#     exposure_summary = f"Exposure summary for {location_name}..."
-#     loss_damage_summary = f"Loss and damage summary for {location_name}..."
-    
-#     return exposure_summary, loss_damage_summary
-
-
 ############################### DASH CALLBACK FOR GRAPHS ###############################
 
-# # Update graphs based on selected cluster and aggregation level
+# Update graphs based on selected cluster and aggregation level
+# Cluster x National 
+# Cluster x Regional
 
-# @callback(
-#     Output("exposure", "figure"),
-#     Output("loss-and-damage", "figure"),
-#     Input("cluster-select", "value"),
-#     Input("aggregation-select", "value")
-# )
-# def update_graphs(selected_cluster, selected_aggregation):
-#     # Filter data based on selections
-#     filtered_df = df_impact_by_asset_type[(df_impact_by_asset_type['Cluster'] == selected_cluster) & 
-#                                           (df_impact_by_asset_type['Aggregation'] == selected_aggregation)]
+@callback(
+    Output("exposure", "figure"),
+    Input("cluster-select", "value"),
+    Input("aggregation-select", "value")
+)
+def update_exposure_graph(selected_cluster, selected_aggregation):
+    # Check if both selections are made
+    if not selected_cluster or not selected_aggregation:
+        return go.Figure(
+            data=[],
+            layout=go.Layout(
+                title="Cluster Exposure Summary",
+                xaxis_title="Sector",
+                yaxis_title="Values",
+                annotations=[{
+                    "text": "Select Aggregation Level and Cluster to view the data.",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {"size": 10}
+                }]
+            )
+        )
     
-#     exposure_data = go.Pie(
-#         labels=filtered_df['Asset_Type'].tolist(),
-#         values=filtered_df['Exposure'].tolist()
-#     )
+    # Handle National Aggregation
+    if selected_aggregation.lower() == "national":
+        df = df_national_impact_by_sector.copy()
+        
+        # Validate if the selected cluster exists in the dataframe
+        if selected_cluster not in df.columns:
+            return go.Figure(
+                data=[],
+                layout=go.Layout(
+                    title="Cluster Exposure Summary",
+                    xaxis_title="Sector",
+                    yaxis_title="Values",
+                    annotations=[{
+                        "text": f"No data available for the selected cluster: {selected_cluster}.",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {"size": 14}
+                    }]
+                )
+            )
+        
+        # Select rows 0 to 10 (index 0 to 10)
+        data_subset = df.loc[0:10, ['Sector', selected_cluster]]
+        
+        # Handle empty or NaN values
+        data_subset = data_subset.dropna()
+        
+        # Create Bar Chart
+        fig = go.Figure(
+            data=[
+                go.Bar(
+                    x=data_subset['Sector'],
+                    y=data_subset[selected_cluster],
+                    marker_color='indianred',
+                )
+            ],
+            layout=go.Layout(
+                title={
+                    'text': f'National Level Exposure of {selected_cluster}',
+                    'font': {
+                        'size': 14  # Adjust the font size here
+                    }
+                },
+                yaxis_title="Value",
+                template="plotly_white"
+            )
+        )
+        return fig
     
-#     loss_data = go.Pie(
-#         labels=filtered_df['Asset_Type'].tolist(),
-#         values=filtered_df['Loss_and_Damage'].tolist()
-#     )
+    # Handle Regional Aggregation
+    elif selected_aggregation.lower() == "regional":
+        df = df_regional_summary_by_sector.copy()
+        
+        # Group by Region and Sector, then sum Total_Exposed_Value
+        grouped_df = df.groupby(['Region', 'Sector'])['Total_Exposed_Value'].sum().unstack().fillna(0)
+        
+        # Create a trace for each sector
+        traces = []
+        for sector in grouped_df.columns:
+            traces.append(
+                go.Bar(
+                    x=grouped_df.index,  # Regions on x-axis
+                    y=grouped_df[sector],  # Total Exposed Values for each sector
+                    name=sector
+                )
+            )
+        
+        # Create Stacked Bar Chart
+        fig = go.Figure(
+            data=traces,
+            layout=go.Layout(
+                title={
+                    'text': 'Regional Level Exposure by Sector',
+                    'font': {
+                        'size': 14  # Adjust the font size here
+                    }
+                },
+                barmode='stack',
+                xaxis_title="Region",
+                yaxis_title="Total Exposed Value",
+                template="plotly_white"
+            )
+        )
+        return fig
+    
+    else:
+        # Handle case if the selected aggregation level is not recognized
+        return go.Figure(
+            data=[],
+            layout=go.Layout(
+                title="Cluster Exposure Summary",
+                xaxis_title="Categories",
+                yaxis_title="Values",
+                annotations=[{
+                    "text": f"Aggregation level is not implemented yet.",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {"size": 12}
+                }]
+            )
+        )
+    
 
-#     return (
-#         {"data": [exposure_data], "layout": go.Layout(title="Exposure Summary")},
-#         {"data": [loss_data], "layout": go.Layout(title="Loss and Damage Summary $USD")}
-#     )
+# Update damage summary graph based on selected hazard
+# Hazard x National 
+# Hazard x Regional
 
+@callback(
+    Output("loss-and-damage", "figure"),
+    [Input("hazard-select", "value"),
+     Input("aggregation-select", "value")]
+)
+def update_damage_summary_graph(selected_hazards, selected_aggregation):
+    # Validate that exactly one hazard is selected
+    if len(selected_hazards) != 1:
+        return go.Figure(
+            data=[],
+            layout=go.Layout(
+                title="Hazard Summary",
+                xaxis_title="Hazard",
+                yaxis_title="Value",
+                annotations=[{
+                    "text": "Please select only one hazard.",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {"size": 14}
+                }]
+            )
+        )
+
+    hazard = selected_hazards[0]
+    row_title = ""
+
+    if hazard == "Wind":
+        row_title = "Total_Wind_Loss"
+    elif hazard == "Cyclone Track":
+        row_title = "Total_Loss"
+    else:
+        return go.Figure(
+            data=[],
+            layout=go.Layout(
+                title="Hazard Summary",
+                annotations=[{
+                    "text": "Invalid hazard selected.",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {"size": 14}
+                }]
+            )
+        )
+
+    # Handle National Aggregation
+    if selected_aggregation.lower() == "national":
+        if row_title in df_national_impact_by_sector['Sector'].values:
+            row_data = df_national_impact_by_sector[df_national_impact_by_sector['Sector'] == row_title].iloc[0, 1:]
+            
+            fig = go.Figure(
+                data=[
+                    go.Pie(
+                        labels=row_data.index,
+                        values=row_data.values,
+                    )
+                ],
+                layout=go.Layout(
+                    title=f'Damage Summary for {hazard}',
+                    template="plotly_white"
+                )
+            )
+            return fig
+        else:
+            return go.Figure(
+                data=[],
+                layout=go.Layout(
+                    title="Hazard Summary",
+                    annotations=[{
+                        "text": "Data not available for the selected hazard.",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {"size": 14}
+                    }]
+                )
+            )
+        
+    # Handle Regional Aggregation
+    elif selected_aggregation.lower() == "regional":
+        # Check if the row title is present in the index
+        if row_title in df_regional_summary.iloc[:, 0].values:
+            # Find the row where the value in the first column matches the row_title
+            row_data = df_regional_summary[df_regional_summary.iloc[:, 0] == row_title]
+            if row_data.empty:
+                return go.Figure(
+                    data=[],
+                    layout=go.Layout(
+                        title="Hazard Summary",
+                        annotations=[{
+                            "text": "Data not available for the selected hazard.",
+                            "xref": "paper",
+                            "yref": "paper",
+                            "showarrow": False,
+                            "font": {"size": 14}
+                        }]
+                    )
+                )
+            # Extract data excluding the first column (row title)
+            row_data = row_data.iloc[0, 1:]
+            
+            # Filter out zero values
+            row_data = row_data[row_data > 0]
+            
+            row_data.index.name = 'Region'
+            print("Regional Aggregation - Row Data:")
+            print(row_data)  # Print row data for debugging
+            
+            fig = go.Figure(
+                data=[
+                    go.Pie(
+                        labels=row_data.index,
+                        values=row_data.values,
+                    )
+                ],
+                layout=go.Layout(
+                    title=f'Damage Summary for {hazard}',
+                    template="plotly_white"
+                )
+            )
+            return fig
+        else:
+            return go.Figure(
+                data=[],
+                layout=go.Layout(
+                    title="Hazard Summary",
+                    annotations=[{
+                        "text": "Data not available for the selected hazard.",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {"size": 14}
+                    }]
+                )
+            )
+
+    else:
+        return go.Figure(
+            data=[],
+            layout=go.Layout(
+                title="Hazard Summary",
+                annotations=[{
+                    "text": "Invalid aggregation level.",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {"size": 14}
+                }]
+            )
+        )
+        
 ############################### DASH CALLBACK FOR SUMMARIES ###############################
 
 # Non-interactive National Level Summary Boxes
@@ -281,6 +520,21 @@ layout = html.Div(
                         ),
                         html.Div(
                             [
+                                html.P("Please select the aggregation level you would the anaylsis performed at:", style={"color": "black"}),
+                                html.Label("Aggregation:", style={"color": "black"}),
+                                dcc.Dropdown(
+                                    options=[
+                                        {"label": "National", "value": "National"},
+                                        {"label": "Regional", "value": "Regional"}
+                                    ],
+                                    value="",
+                                    id="aggregation-select",
+                                    style={"width": "100%", "backgroundColor": "#ffffff", "color": "black"}  # Dropdown background color
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
                                 html.P("Please select the hazard you want visualized on the map:", style={"color": "black"}),
                                 html.Label("Hazard:", style={"color": "black"}),
                                 dcc.Dropdown(
@@ -288,7 +542,7 @@ layout = html.Div(
                                         {"label": "Wave Height", "value": "Wave Height"},
                                         {"label": "Coastal Inundation", "value": "Coastal Inundation"},
                                         {"label": "Cyclone Track", "value": "Cyclone Track"},
-                                        {"label": "Storm Surge", "value": "Storm Surge"},
+                                        {"label": "Wind", "value": "Wind"},
                                     ],
                                     value="", # No default seclection
                                     id="hazard-select",
@@ -304,9 +558,13 @@ layout = html.Div(
                                 html.Label("Cluster:", style={"color": "black"}),
                                 dcc.Dropdown(
                                     options=[
-                                        {"label": "Agriculture", "value": "Agriculture"},
-                                        {"label": "Social", "value": "Social"},
-                                        {"label": "Health", "value": "Health"},
+                                        {"label": "Residential", "value": "Residential"},
+                                        {"label": "Productive", "value": "Productive"},
+                                        {"label": "Infrastructure", "value": "Infrastructure"},
+                                        {"label": "Education", "value": "Education"},
+                                        {"label": "Public", "value": "Public"},
+                                        {"label": "Others", "value": "Others"},
+                                        {"label": "Unknown", "value": "Unknown"},
                                     ],
                                     value="",
                                     id="cluster-select",
@@ -314,21 +572,6 @@ layout = html.Div(
                                 ),
                             ],
                             style={"marginBottom": "10px"}
-                        ),
-                        html.Div(
-                            [
-                                html.P("Please select the aggregation level you would the anaylsis performed at:", style={"color": "black"}),
-                                html.Label("Aggregation:", style={"color": "black"}),
-                                dcc.Dropdown(
-                                    options=[
-                                        {"label": "National", "value": "National"},
-                                        {"label": "Regional", "value": "Regional"}
-                                    ],
-                                    value="",
-                                    id="aggregation-select",
-                                    style={"width": "100%", "backgroundColor": "#ffffff", "color": "black"}  # Dropdown background color
-                                ),
-                            ]
                         ),
                     ],
                     width=2,  # Width for dropdowns column
@@ -348,6 +591,7 @@ layout = html.Div(
                                         zoom=5,
                                         center=(-16, -170),  # Central coordinates for the Pacific region
                                         id="pdna-map",
+                                        viewport={"center": [-16, -170], "zoom": 5},  # Track the map's viewport
                                     ),
                                     width=6  # Width for the map column
                                 ),
@@ -356,8 +600,8 @@ layout = html.Div(
                                         dcc.Graph(
                                             id="exposure",
                                             figure={
-                                                'data': [go.Pie(labels=["buildings", "roads", "agriculture"], values=["20", "35", "72"])], #placeholder pie chart ## needs to read in actual data
-                                                'layout': go.Layout(title='Exposure Summary')
+                                                'data': [go.Pie()], 
+                                                'layout': go.Layout(title='Cluster Exposure Summary')
                                             },
                                             style={"height": "30vh"}
                                         ),
@@ -365,8 +609,8 @@ layout = html.Div(
                                             dcc.Graph(
                                                 id="loss-and-damage",
                                                 figure={
-                                                'data': [go.Pie(labels=["buildings: $30k", "roads: $800k", "agriculture: $1m"], values=["30000", "800000", "1000000"])], #placeholder pie chart ## needs to read in actual data
-                                                'layout': go.Layout(title='Damage Summary $USD')
+                                                'data': [go.Pie()], 
+                                                'layout': go.Layout(title='Hazard Summary')
                                             },
                                                 style={"height": "30vh"}
                                             ),
