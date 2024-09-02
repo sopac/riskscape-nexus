@@ -10,9 +10,9 @@ import json
 from collections import OrderedDict
 import plotly.graph_objects as go
 import io
-import rasterio
-from rasterio.plot import show
-from rasterio import features
+# import rasterio
+# from rasterio.plot import show
+# from rasterio import features
 from shapely.geometry import shape
 import matplotlib as plt
 from PIL import Image

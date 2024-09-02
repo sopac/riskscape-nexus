@@ -239,7 +239,8 @@ layout = html.Div(
             ]
         ),
     ],
-    style={"textAlign": "center"},
+    # style={"textAlign": "center"},
+    style={"backgroundColor": "#eaeded", "color": "black", "padding": "20px"}  # gray background and for the entire page
 )
 
 
