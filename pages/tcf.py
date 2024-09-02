@@ -187,8 +187,9 @@ layout = html.Div(
                                 ).update_layout(
                                     xaxis_title="Maximum Windspeed (KM/ph)",
                                     yaxis_title="No. Of Buildings Exposed",
+                                    showlegend=False
                                 ),
-                                style={"height": "30vh"},
+                                style={"height": "30vh"}
                             ),
                             # bar chart - population per windspeed
                             html.B("Population Exposed by Windspeed"),
@@ -202,6 +203,7 @@ layout = html.Div(
                                 ).update_layout(
                                     xaxis_title="Maximum Windspeed (KM/ph)",
                                     yaxis_title="Population Exposed.",
+                                    showlegend=False
                                 ),
                                 style={"height": "30vh"},
                             ),
@@ -220,6 +222,7 @@ layout = html.Div(
                                 ).update_layout(
                                     xaxis_title="Windspeed",
                                     yaxis_title="Exposed Building Value (USD)",
+                                    showlegend=False
                                 ),
                                 style={"height": "40vh"},
                             ),
