@@ -1,0 +1,21 @@
+Country,Region,Overall_Winds,Min_WindSpeed_knots,Max_WindSpeed_knots,Min_WindSpeed_kmph,Max_WindSpeed_kmph,Exposed_Buildings,Exposed_Residential_Buildings,Exposed_Nonresidential_Buildings,Buildings_in_Floodplains,Buildings_In_Track_Uncertainty,Total_Buildings,Exposed_Building_Value,Building_Value_in_Floodplains,Building_Value_in_Track_Uncertainty,Total_Building_Value,Exposed_Population,Population_in_Floodplains,Population_in_Track_Uncertainty,Total_Population,Exposed_Road_km,Road_km_in_Floodplains,Total_Road_km,Exposed_Road_Value,Road_Value_in_Floodplains,Total_Road_Value,Exposed_Infrastructure_Value,Infrastructure_Value_in_Floodplains,Total_Infrastructure_Value,Exposed_Crop_Value,Crop_Value_in_Floodplains,Total_Crop_Value,Exposed_Evacuation_Centres,Evacuation_Centres_in_Floodplains,Evacuation_Centres_in_Track_Uncertainty,Exposed_Health_Facilties,Health_Facilties_in_Floodplains,Health_Facilties_in_Track_Uncertainty,Exposed_Schools,Schools_in_Floodplains,Schools_in_Track_Uncertainty
+,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Cook Islands,Aitutaki,Gale Winds,34,48,63,89,3564,2100,1464,0,0,3564,133084814,0,0,133084814,1608,0,0,1608,102.86,0.0,102.86,25834988,0,25834988,15091666,0,15091666,727974,0,727974,0,0,0,3,0,0,4,0,0
+Cook Islands,Atiu,Possible Gale Winds,34,34,63,63,778,598,180,0,0,778,36742814,0,0,36742814,461,0,0,461,52.27,0.0,52.27,2761438,0,2761438,1528527,0,1528527,1020192,0,1020192,10,0,0,0,0,0,2,0,0
+Cook Islands,Mangaia,Gale Winds,34,34,63,63,752,351,401,0,0,752,46925149,0,0,46925149,522,0,0,522,88.43,0.0,88.43,5195596,0,5195596,1667626,0,1667626,4219595,0,4219595,7,0,0,0,0,0,3,0,0
+Cook Islands,Manihiki,,,,,,0,0,0,0,0,623,0,0,0,21804201,0,0,0,249,0.0,0.0,14.72,0,0,1159778,0,0,1605816,0,0,205348,0,0,0,0,0,0,0,0,0
+Cook Islands,Mauke,,,,,,0,0,0,0,0,463,0,0,0,18172730,0,0,0,372,0.0,0.0,40.78,0,0,2262085,0,0,1657722,0,0,380837,0,0,0,0,0,0,0,0,0
+Cook Islands,Mitiaro,,,,,,0,0,0,0,0,393,0,0,0,10988705,0,0,0,181,0.0,0.0,38.83,0,0,1730165,0,0,1256328,0,0,216777,0,0,0,0,0,0,0,0,0
+Cook Islands,Motu Tou,,,,,,0,0,0,0,0,3,0,0,0,107517,0,0,0,0,0.0,0.0,0.0,0,0,0,0,0,0,0,0,14872,0,0,0,0,0,0,0,0,0
+Cook Islands,Nassau,,,,,,0,0,0,0,0,150,0,0,0,2401391,0,0,0,70,0.0,0.0,12.42,0,0,485436,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Cook Islands,Palmerston,Gale Winds,34,34,63,63,35,5,30,0,0,35,3759371,0,0,3759371,78,0,0,78,0.29,0.0,0.29,11181,0,11181,0,0,0,82940,0,82940,0,0,0,0,0,0,1,0,0
+Cook Islands,Penrhyn,,,,,,0,0,0,0,0,369,0,0,0,18081418,0,0,0,212,0.0,0.0,8.62,0,0,354103,0,0,3022902,0,0,0,0,0,0,0,0,0,0,0,0
+Cook Islands,Pukapuka,,,,,,0,0,0,0,0,485,0,0,0,11779748,0,0,0,463,0.0,0.0,20.82,0,0,1369498,0,0,1076595,0,0,164164,0,0,0,0,0,0,0,0,0
+Cook Islands,Rakahanga,,,,,,0,0,0,0,0,161,0,0,0,7669263,0,0,0,89,0.0,0.0,5.5,0,0,499656,0,0,0,0,0,161304,0,0,0,0,0,0,0,0,0
+Cook Islands,Rarotonga,Possible Hurricane Winds,64,64,119,119,10770,6720,4050,0,0,10770,1099395858,0,0,1099395858,10974,0,0,10974,245.07,0.0,245.07,76618221,0,76618221,47194591,0,47194591,2016238,0,2016238,18,0,0,6,0,0,13,0,0
+Vanuatu,Malampa,,,,,,0,0,0,0,0,31674,0,0,0,658911697,0,0,0,42777,0.0,0.0,580.26,0,0,49602112,0,0,1980221,0,0,14900139,0,0,0,0,0,0,0,0,0
+Vanuatu,Penama,,,,,,0,0,0,0,0,23206,0,0,0,865356224,0,0,0,35923,0.0,0.0,456.36,0,0,100254226,0,0,1041772,0,0,7420718,0,0,0,0,0,0,0,0,0
+Vanuatu,Sanma,,,,,,0,0,0,0,0,42801,0,0,0,1916797166,0,0,0,62016,0.0,0.0,1263.92,0,0,267087862,0,0,42125636,0,0,24835228,0,0,0,0,0,0,0,0,0
+Vanuatu,Shefa,,,,,,0,0,0,0,0,43355,0,0,0,3950757673,0,0,0,108833,0.0,0.0,1339.21,0,0,180714146,0,0,67735499,0,0,4261587,0,0,0,0,0,0,0,0,0
+Vanuatu,Tafea,,,,,,0,0,0,0,0,29860,0,0,0,569862481,0,0,0,45762,0.0,0.0,622.53,0,0,42083874,0,0,6171377,0,0,3147711,0,0,0,0,0,0,0,0,0
+Vanuatu,Torba,,,,,,0,0,0,0,0,7624,0,0,0,177397372,0,0,0,11386,0.0,0.0,118.0,0,0,7415789,0,0,777640,0,0,2139648,0,0,0,0,0,0,0,0,0
