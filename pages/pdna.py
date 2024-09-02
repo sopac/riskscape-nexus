@@ -149,6 +149,8 @@ def update_map_layer(selected_hazards):
 ############################### DASH CALLBACK FOR GRAPHS ###############################
 
 # Update graphs based on selected cluster and aggregation level
+# Cluster x National 
+# Cluster x Regional
 
 @callback(
     Output("exposure", "figure"),
@@ -161,7 +163,7 @@ def update_exposure_graph(selected_cluster, selected_aggregation):
         return go.Figure(
             data=[],
             layout=go.Layout(
-                title="Exposure Summary",
+                title="Cluster Exposure Summary",
                 xaxis_title="Sector",
                 yaxis_title="Values",
                 annotations=[{
@@ -183,7 +185,7 @@ def update_exposure_graph(selected_cluster, selected_aggregation):
             return go.Figure(
                 data=[],
                 layout=go.Layout(
-                    title="Exposure Summary",
+                    title="Cluster Exposure Summary",
                     xaxis_title="Sector",
                     yaxis_title="Values",
                     annotations=[{
@@ -191,12 +193,12 @@ def update_exposure_graph(selected_cluster, selected_aggregation):
                         "xref": "paper",
                         "yref": "paper",
                         "showarrow": False,
-                        "font": {"size": 12}
+                        "font": {"size": 14}
                     }]
                 )
             )
         
-        # Select rows 2 to 12 (index 1 to 11)
+        # Select rows 0 to 10 (index 0 to 10)
         data_subset = df.loc[0:10, ['Sector', selected_cluster]]
         
         # Handle empty or NaN values
@@ -224,16 +226,52 @@ def update_exposure_graph(selected_cluster, selected_aggregation):
         )
         return fig
     
+    # Handle Regional Aggregation
+    elif selected_aggregation.lower() == "regional":
+        df = df_regional_summary_by_sector.copy()
+        
+        # Group by Region and Sector, then sum Total_Exposed_Value
+        grouped_df = df.groupby(['Region', 'Sector'])['Total_Exposed_Value'].sum().unstack().fillna(0)
+        
+        # Create a trace for each sector
+        traces = []
+        for sector in grouped_df.columns:
+            traces.append(
+                go.Bar(
+                    x=grouped_df.index,  # Regions on x-axis
+                    y=grouped_df[sector],  # Total Exposed Values for each sector
+                    name=sector
+                )
+            )
+        
+        # Create Stacked Bar Chart
+        fig = go.Figure(
+            data=traces,
+            layout=go.Layout(
+                title={
+                    'text': 'Regional Level Exposure by Sector',
+                    'font': {
+                        'size': 14  # Adjust the font size here
+                    }
+                },
+                barmode='stack',
+                xaxis_title="Region",
+                yaxis_title="Total Exposed Value",
+                template="plotly_white"
+            )
+        )
+        return fig
+    
     else:
-        # Placeholder for other aggregation levels like 'Regional'
+        # Handle case if the selected aggregation level is not recognized
         return go.Figure(
             data=[],
             layout=go.Layout(
-                title="Exposure Summary",
+                title="Cluster Exposure Summary",
                 xaxis_title="Categories",
                 yaxis_title="Values",
                 annotations=[{
-                    "text": f"Aggregation level '{selected_aggregation}' is not implemented yet.",
+                    "text": f"Aggregation level is not implemented yet.",
                     "xref": "paper",
                     "yref": "paper",
                     "showarrow": False,
@@ -241,8 +279,11 @@ def update_exposure_graph(selected_cluster, selected_aggregation):
                 }]
             )
         )
+    
 
 # Update damage summary graph based on selected hazard
+# Hazard x National 
+# Hazard x Regional
 
 @callback(
     Output("loss-and-damage", "figure"),
@@ -250,28 +291,12 @@ def update_exposure_graph(selected_cluster, selected_aggregation):
      Input("aggregation-select", "value")]
 )
 def update_damage_summary_graph(selected_hazards, selected_aggregation):
-    # Check if aggregation level is National
-    if selected_aggregation.lower() != "national":
+    # Validate that exactly one hazard is selected
+    if len(selected_hazards) != 1:
         return go.Figure(
             data=[],
             layout=go.Layout(
-                title="Damage Summary",
-                annotations=[{
-                    "text": f"Aggregation level '{selected_aggregation}' is not implemented for damage summary.",
-                    "xref": "paper",
-                    "yref": "paper",
-                    "showarrow": False,
-                    "font": {"size": 14}
-                }]
-            )
-        )
-    
-    # Check if multiple hazards are selected
-    if len(selected_hazards) > 1:
-        return go.Figure(
-            data=[],
-            layout=go.Layout(
-                title="Damage Summary",
+                title="Hazard Summary",
                 xaxis_title="Hazard",
                 yaxis_title="Value",
                 annotations=[{
@@ -283,39 +308,34 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
                 }]
             )
         )
-    
-    # Handle the case where exactly one hazard is selected
-    if len(selected_hazards) == 1:
-        hazard = selected_hazards[0]
-        
-        # Determine the corresponding row based on the selected hazard
-        row_title = ""
-        if hazard == "Wind":
-            row_title = "Total_Wind_Loss"
-        elif hazard == "Cyclone Track":
-            row_title = "Total_Loss"
-        else:
-            return go.Figure(
-                data=[],
-                layout=go.Layout(
-                    title="Damage Summary",
-                    xaxis_title="Hazard",
-                    yaxis_title="Value",
-                    annotations=[{
-                        "text": "Invalid hazard selected.",
-                        "xref": "paper",
-                        "yref": "paper",
-                        "showarrow": False,
-                        "font": {"size": 14}
-                    }]
-                )
+
+    hazard = selected_hazards[0]
+    row_title = ""
+
+    if hazard == "Wind":
+        row_title = "Total_Wind_Loss"
+    elif hazard == "Cyclone Track":
+        row_title = "Total_Loss"
+    else:
+        return go.Figure(
+            data=[],
+            layout=go.Layout(
+                title="Hazard Summary",
+                annotations=[{
+                    "text": "Invalid hazard selected.",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {"size": 14}
+                }]
             )
-        
-        # Fetch the data for the selected hazard
+        )
+
+    # Handle National Aggregation
+    if selected_aggregation.lower() == "national":
         if row_title in df_national_impact_by_sector['Sector'].values:
             row_data = df_national_impact_by_sector[df_national_impact_by_sector['Sector'] == row_title].iloc[0, 1:]
             
-            # Prepare the data for the pie chart
             fig = go.Figure(
                 data=[
                     go.Pie(
@@ -333,9 +353,7 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
             return go.Figure(
                 data=[],
                 layout=go.Layout(
-                    title="Damage Summary",
-                    xaxis_title="Hazard",
-                    yaxis_title="Value",
+                    title="Hazard Summary",
                     annotations=[{
                         "text": "Data not available for the selected hazard.",
                         "xref": "paper",
@@ -345,16 +363,72 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
                     }]
                 )
             )
+        
+    # Handle Regional Aggregation
+    elif selected_aggregation.lower() == "regional":
+        # Check if the row title is present in the index
+        if row_title in df_regional_summary.iloc[:, 0].values:
+            # Find the row where the value in the first column matches the row_title
+            row_data = df_regional_summary[df_regional_summary.iloc[:, 0] == row_title]
+            if row_data.empty:
+                return go.Figure(
+                    data=[],
+                    layout=go.Layout(
+                        title="Hazard Summary",
+                        annotations=[{
+                            "text": "Data not available for the selected hazard.",
+                            "xref": "paper",
+                            "yref": "paper",
+                            "showarrow": False,
+                            "font": {"size": 14}
+                        }]
+                    )
+                )
+            # Extract data excluding the first column (row title)
+            row_data = row_data.iloc[0, 1:]
+            
+            # Filter out zero values
+            row_data = row_data[row_data > 0]
+            
+            row_data.index.name = 'Region'
+            print("Regional Aggregation - Row Data:")
+            print(row_data)  # Print row data for debugging
+            
+            fig = go.Figure(
+                data=[
+                    go.Pie(
+                        labels=row_data.index,
+                        values=row_data.values,
+                    )
+                ],
+                layout=go.Layout(
+                    title=f'Damage Summary for {hazard}',
+                    template="plotly_white"
+                )
+            )
+            return fig
+        else:
+            return go.Figure(
+                data=[],
+                layout=go.Layout(
+                    title="Hazard Summary",
+                    annotations=[{
+                        "text": "Data not available for the selected hazard.",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {"size": 14}
+                    }]
+                )
+            )
+
     else:
-        # Default case if no hazard is selected
         return go.Figure(
             data=[],
             layout=go.Layout(
-                title="Damage Summary",
-                xaxis_title="Hazard",
-                yaxis_title="Value",
+                title="Hazard Summary",
                 annotations=[{
-                    "text": "Select a hazard to view the data.",
+                    "text": "Invalid aggregation level.",
                     "xref": "paper",
                     "yref": "paper",
                     "showarrow": False,
@@ -362,8 +436,7 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
                 }]
             )
         )
-
-
+        
 ############################### DASH CALLBACK FOR SUMMARIES ###############################
 
 # Non-interactive National Level Summary Boxes
@@ -447,6 +520,21 @@ layout = html.Div(
                         ),
                         html.Div(
                             [
+                                html.P("Please select the aggregation level you would the anaylsis performed at:", style={"color": "black"}),
+                                html.Label("Aggregation:", style={"color": "black"}),
+                                dcc.Dropdown(
+                                    options=[
+                                        {"label": "National", "value": "National"},
+                                        {"label": "Regional", "value": "Regional"}
+                                    ],
+                                    value="",
+                                    id="aggregation-select",
+                                    style={"width": "100%", "backgroundColor": "#ffffff", "color": "black"}  # Dropdown background color
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
                                 html.P("Please select the hazard you want visualized on the map:", style={"color": "black"}),
                                 html.Label("Hazard:", style={"color": "black"}),
                                 dcc.Dropdown(
@@ -485,21 +573,6 @@ layout = html.Div(
                             ],
                             style={"marginBottom": "10px"}
                         ),
-                        html.Div(
-                            [
-                                html.P("Please select the aggregation level you would the anaylsis performed at:", style={"color": "black"}),
-                                html.Label("Aggregation:", style={"color": "black"}),
-                                dcc.Dropdown(
-                                    options=[
-                                        {"label": "National", "value": "National"},
-                                        {"label": "Regional", "value": "Regional"}
-                                    ],
-                                    value="",
-                                    id="aggregation-select",
-                                    style={"width": "100%", "backgroundColor": "#ffffff", "color": "black"}  # Dropdown background color
-                                ),
-                            ]
-                        ),
                     ],
                     width=2,  # Width for dropdowns column
                     style={"paddingRight": "10px"}  # Add some spacing on the right side
@@ -527,8 +600,8 @@ layout = html.Div(
                                         dcc.Graph(
                                             id="exposure",
                                             figure={
-                                                'data': [go.Pie(labels=["buildings", "roads", "agriculture"], values=["20", "35", "72"])], #placeholder pie chart ## needs to read in actual data
-                                                'layout': go.Layout(title='Exposure Summary')
+                                                'data': [go.Pie()], 
+                                                'layout': go.Layout(title='Cluster Exposure Summary')
                                             },
                                             style={"height": "30vh"}
                                         ),
@@ -536,8 +609,8 @@ layout = html.Div(
                                             dcc.Graph(
                                                 id="loss-and-damage",
                                                 figure={
-                                                'data': [go.Pie(labels=["buildings: $30k", "roads: $800k", "agriculture: $1m"], values=["30000", "800000", "1000000"])], #placeholder pie chart ## needs to read in actual data
-                                                'layout': go.Layout(title='Damage Summary $USD')
+                                                'data': [go.Pie()], 
+                                                'layout': go.Layout(title='Hazard Summary')
                                             },
                                                 style={"height": "30vh"}
                                             ),
