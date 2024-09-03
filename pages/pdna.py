@@ -163,22 +163,6 @@ def update_map_layer(selected_hazards):
     
     return layers  # Always return the base map layer + any additional layers
 
-############################### TEST CALLBACK FOR CLICK ###############################
-
-# @callback(
-#         Output('exposure', 'figure'),
-#         Input('pdna-map', 'clickData')
-# )
-# def update_exposure_on_click(clickData, f):
-#     if clickData:
-#         region = clickData['points'][0]['']
-
-
-
-
-
-
-
 
 
 ############################### DASH CALLBACK FOR GRAPHS ###############################
@@ -191,10 +175,11 @@ def update_map_layer(selected_hazards):
 
 @callback(
     Output("exposure", "figure"),
-    Input("aggregation-select", "value")
-    
+    Input("aggregation-select", "value"),
+    Input('pdna-map', 'clickData')
 )
-def update_exposure_graph(selected_aggregation):
+def update_exposure_graph(selected_aggregation, clickData):
+
     # Check if both selections are made
     if not selected_aggregation:
         return go.Figure(
@@ -266,100 +251,87 @@ def update_exposure_graph(selected_aggregation):
     
     # Handle Regional Aggregation
     elif selected_aggregation.lower() == "regional":
+        # if clickData is not None:            
+        #     print(json.dumps(clickData))
         df = df_regional_summary_by_sector.copy()
 
+        
+        # grouped_df = df.groupby(['Region', 'Sector'])['Total_Exposed_Value'].sum().unstack().fillna(0)
+        # print(grouped_df)
+
+        # # Create Bar Chart
+        # fig = go.Figure(
+        #     data=[
+        #         go.Bar(
+        #             x=df['Sector'],
+        #             y=df['Total_Exposed_Value'],
+        #             marker_color='indianred',
+        #         )
+        #     ],
+        #     layout=go.Layout(
+        #         title={
+        #             'text': 'Total Exposed Value (USD) per sector <br>- National Level',
+        #             'font': {
+        #                 'size': 14  # Adjust the font size here
+        #             }
+        #         },
+        #         yaxis_title="Value (USD)",
+        #         xaxis_title = 'Sector',
+        #         template="plotly_white"
+        #     )
+        # )
+        # return fig
+
+        
+        # Group by Region and Sector, then sum Total_Exposed_Value
         grouped_df = df.groupby(['Region', 'Sector'])['Total_Exposed_Value'].sum().unstack().fillna(0)
-        print(grouped_df)
-
-    #     # Create Bar Chart
-    #     fig = go.Figure(
-    #         data=[
-    #             go.Bar(
-    #                 x=df['Sector'],
-    #                 y=df['Total_Exposed_Value'],
-    #                 marker_color='indianred',
-    #             )
-    #         ],
-    #         layout=go.Layout(
-    #             title={
-    #                 'text': 'Total Exposed Value (USD) per sector <br>- National Level',
-    #                 'font': {
-    #                     'size': 14  # Adjust the font size here
-    #                 }
-    #             },
-    #             yaxis_title="Value (USD)",
-    #             xaxis_title = 'Sector',
-    #             template="plotly_white"
-    #         )
-    #     )
-    #     return fig
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         
-    #     # Group by Region and Sector, then sum Total_Exposed_Value
-    #     grouped_df = df.groupby(['Region', 'Sector'])['Total_Exposed_Value'].sum().unstack().fillna(0)
+        # Create a trace for each sector
+        traces = []
+        for sector in grouped_df.columns:
+            traces.append(
+                go.Bar(
+                    x=grouped_df.index,  # Regions on x-axis
+                    y=grouped_df[sector],  # Total Exposed Values for each sector
+                    name=sector
+                )
+            )
         
-    #     # Create a trace for each sector
-    #     traces = []
-    #     for sector in grouped_df.columns:
-    #         traces.append(
-    #             go.Bar(
-    #                 x=grouped_df.index,  # Regions on x-axis
-    #                 y=grouped_df[sector],  # Total Exposed Values for each sector
-    #                 name=sector
-    #             )
-    #         )
-        
-    #     # Create Stacked Bar Chart
-    #     fig = go.Figure(
-    #         data=traces,
-    #         layout=go.Layout(
-    #             title={
-    #                 'text': 'Regional Level Exposure by Sector',
-    #                 'font': {
-    #                     'size': 14  # Adjust the font size here
-    #                 }
-    #             },
-    #             barmode='stack',
-    #             xaxis_title="Region",
-    #             yaxis_title="Total Exposed Value",
-    #             template="plotly_white"
-    #         )
-    #     )
-    #     return fig
+        # Create Stacked Bar Chart
+        fig = go.Figure(
+            data=traces,
+            layout=go.Layout(
+                title={
+                    'text': 'Regional Level Exposure by Sector',
+                    'font': {
+                        'size': 14  # Adjust the font size here
+                    }
+                },
+                barmode='stack',
+                xaxis_title="Region",
+                yaxis_title="Total Exposed Value",
+                template="plotly_white"
+            )
+        )
+        return fig
     
-    # else:
-    #     # Handle case if the selected aggregation level is not recognized
-    #     return go.Figure(
-    #         data=[],
-    #         layout=go.Layout(
-    #             title="Cluster Exposure Summary",
-    #             xaxis_title="Categories",
-    #             yaxis_title="Values",
-    #             annotations=[{
-    #                 "text": f"Aggregation level is not implemented yet.",
-    #                 "xref": "paper",
-    #                 "yref": "paper",
-    #                 "showarrow": False,
-    #                 "font": {"size": 12}
-    #             }]
-    #         )
-    #     )
+    else:
+        # Handle case if the selected aggregation level is not recognized
+        return go.Figure(
+            data=[],
+            layout=go.Layout(
+                title="Cluster Exposure Summary",
+                xaxis_title="Categories",
+                yaxis_title="Values",
+                annotations=[{
+                    "text": f"Aggregation level is not implemented yet.",
+                    "xref": "paper",
+                    "yref": "paper",
+                    "showarrow": False,
+                    "font": {"size": 12}
+                }]
+            )
+        )
     
 
 
@@ -672,6 +644,21 @@ layout = html.Div(
                                     dl.Map(
                                         [
                                             dl.TileLayer(),
+                                            dl.GeoJSON(
+                                                data=json.loads(
+                                                    gdf_regional_impacts["geometry"].to_json()
+                                                ),
+                                                id="map-region-impact",
+                                                # zoomToBounds=True,
+                                                zoomToBoundsOnClick=True,
+                                                style=dict(
+                                                    weight=2,
+                                                    opacity=1,
+                                                    color="red",
+                                                    fillOpacity=0.5,
+                                                    # colorscale=colorscale,
+                                                ),
+                                            )
                                         ],
                                         style={"height": "60vh"},
                                         zoom=5,
