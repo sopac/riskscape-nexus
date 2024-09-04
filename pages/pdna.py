@@ -175,21 +175,20 @@ def update_map_layer(selected_hazards):
 
 @callback(
     Output("exposure", "figure"),
-    Input("aggregation-select", "value"),
-    Input('pdna-map', 'clickData')
+    Input("aggregation-select", "value")
 )
-def update_exposure_graph(selected_aggregation, clickData):
+def update_exposure_graph(selected_aggregation):
 
     # Check if both selections are made
     if not selected_aggregation:
         return go.Figure(
             data=[],
             layout=go.Layout(
-                title="Total Exposed Value (USD) per sector ",
+                title={'text':"Total Exposed Value (USD) per sector ", 'font':{'size':15}},
                 xaxis_title="Sector",
                 yaxis_title="Value (USD)",
                 annotations=[{
-                    "text": "Select Aggregation Level to view the data.",
+                    "text": "Select Aggregation Level <br> to view the data",
                     "xref": "paper",
                     "yref": "paper",
                     "showarrow": False,
@@ -201,30 +200,6 @@ def update_exposure_graph(selected_aggregation, clickData):
     # Handle National Aggregation
     if selected_aggregation.lower() == "national":
         df = df_national_impact_by_sector.copy()
-        
-        # # Validate if the selected cluster exists in the dataframe
-        # if selected_cluster not in df.columns:
-        #     return go.Figure(
-        #         data=[],
-        #         layout=go.Layout(
-        #             title="Cluster Exposure Summary",
-        #             xaxis_title="Sector",
-        #             yaxis_title="Values",
-        #             annotations=[{
-        #                 "text": f"No data available for the selected cluster: {selected_cluster}.",
-        #                 "xref": "paper",
-        #                 "yref": "paper",
-        #                 "showarrow": False,
-        #                 "font": {"size": 14}
-        #             }]
-        #         )
-        #     )
-        
-        # # Select rows 0 to 10 (index 0 to 10)
-        # data_subset = df.loc[0:10, ['Sector', selected_cluster]]
-        
-        # # Handle empty or NaN values
-        # data_subset = data_subset.dropna()
         
         # Create Bar Chart
         fig = go.Figure(
@@ -239,7 +214,7 @@ def update_exposure_graph(selected_aggregation, clickData):
                 title={
                     'text': 'Total Exposed Value (USD) per sector <br>- National Level',
                     'font': {
-                        'size': 14  # Adjust the font size here
+                        'size': 15  # Adjust the font size here
                     }
                 },
                 yaxis_title="Value (USD)",
@@ -302,14 +277,14 @@ def update_exposure_graph(selected_aggregation, clickData):
             data=traces,
             layout=go.Layout(
                 title={
-                    'text': 'Regional Level Exposure by Sector',
+                    'text': 'Total Exposed Value per Sector <br> - Regional Level',
                     'font': {
-                        'size': 14  # Adjust the font size here
+                        'size': 15  # Adjust the font size here
                     }
                 },
                 barmode='stack',
                 xaxis_title="Region",
-                yaxis_title="Total Exposed Value",
+                yaxis_title="Value (USD)",
                 template="plotly_white"
             )
         )
@@ -324,11 +299,11 @@ def update_exposure_graph(selected_aggregation, clickData):
                 xaxis_title="Categories",
                 yaxis_title="Values",
                 annotations=[{
-                    "text": f"Aggregation level is not implemented yet.",
+                    "text": f"Selected aggregation level <br> is not implemented yet.",
                     "xref": "paper",
                     "yref": "paper",
                     "showarrow": False,
-                    "font": {"size": 12}
+                    "font": {"size": 10}
                 }]
             )
         )
@@ -346,7 +321,8 @@ def update_exposure_graph(selected_aggregation, clickData):
 @callback(
     Output("loss-and-damage", "figure"),
     [Input("hazard-select", "value"),
-     Input("aggregation-select", "value")]
+     Input("aggregation-select", "value")
+    ]
 )
 def update_damage_summary_graph(selected_hazards, selected_aggregation):
     # Validate that exactly one hazard is selected
@@ -354,7 +330,7 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
         return go.Figure(
             data=[],
             layout=go.Layout(
-                title="Hazard Summary",
+                title={'text':"Total Damage (USD) per sector", 'font': {'size': 15}},
                 xaxis_title="Hazard",
                 yaxis_title="Value",
                 annotations=[{
@@ -362,7 +338,7 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
                     "xref": "paper",
                     "yref": "paper",
                     "showarrow": False,
-                    "font": {"size": 14}
+                    "font": {"size": 10}
                 }]
             )
         )
@@ -371,9 +347,9 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
     row_title = ""
 
     if hazard == "Wind":
-        row_title = "Total_Wind_Loss"
+        col_title = "Total_Wind_Loss"
     elif hazard == "Cyclone Track":
-        row_title = "Total_Loss"
+        col_title = "Total_Loss"
     else:
         return go.Figure(
             data=[],
@@ -384,25 +360,25 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
                     "xref": "paper",
                     "yref": "paper",
                     "showarrow": False,
-                    "font": {"size": 14}
+                    "font": {"size": 10}
                 }]
             )
         )
 
     # Handle National Aggregation
     if selected_aggregation.lower() == "national":
-        if row_title in df_national_impact_by_sector['Sector'].values:
-            row_data = df_national_impact_by_sector[df_national_impact_by_sector['Sector'] == row_title].iloc[0, 1:]
+        if col_title in df_national_impact_by_sector.columns:                                                    
             
             fig = go.Figure(
                 data=[
                     go.Pie(
-                        labels=row_data.index,
-                        values=row_data.values,
+                        labels=df_national_impact_by_sector['Sector'],
+                        values=df_national_impact_by_sector[col_title],
                     )
                 ],
                 layout=go.Layout(
-                    title=f'Damage Summary for {hazard}',
+                    # title=f'Total Damage (USD) per sector <br> - National Level - {hazard}',
+                    title = {'text':f"Total Damage (USD) per sector <br> - National Level - {hazard}", 'font': {'size': 15}},
                     template="plotly_white"
                 )
             )
@@ -411,13 +387,13 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
             return go.Figure(
                 data=[],
                 layout=go.Layout(
-                    title="Hazard Summary",
+                    title = {'text':"Total Damage (USD) per sector", 'font': {'size': 15}},
                     annotations=[{
-                        "text": "Data not available for the selected hazard.",
+                        "text": "Data not available <br> for the selected hazard.",
                         "xref": "paper",
                         "yref": "paper",
                         "showarrow": False,
-                        "font": {"size": 14}
+                        "font": {"size": 10}
                     }]
                 )
             )
@@ -425,66 +401,40 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
     # Handle Regional Aggregation
     elif selected_aggregation.lower() == "regional":
         # Check if the row title is present in the index
-        if row_title in df_regional_summary.iloc[:, 0].values:
-            # Find the row where the value in the first column matches the row_title
-            row_data = df_regional_summary[df_regional_summary.iloc[:, 0] == row_title]
-            if row_data.empty:
-                return go.Figure(
-                    data=[],
-                    layout=go.Layout(
-                        title="Hazard Summary",
-                        annotations=[{
-                            "text": "Data not available for the selected hazard.",
-                            "xref": "paper",
-                            "yref": "paper",
-                            "showarrow": False,
-                            "font": {"size": 14}
-                        }]
+        if col_title in df_regional_summary_by_sector.columns:
+            df = df_regional_summary_by_sector.copy()
+        # Group by Region and Sector, then sum Total_Exposed_Value
+            grouped_df = df.groupby(['Region', 'Sector'])[col_title].sum().unstack().fillna(0)
+        
+            # Create a trace for each sector
+            traces = []
+            for sector in grouped_df.columns:
+                traces.append(
+                    go.Bar(
+                        x=grouped_df.index,  # Regions on x-axis
+                        y=grouped_df[sector],  # Total Exposed Values for each sector
+                        name=sector
                     )
                 )
-            # Extract data excluding the first column (row title)
-            row_data = row_data.iloc[0, 1:]
-            
-            # Filter out zero values
-            row_data = row_data[row_data > 0]
-            
-            row_data.index.name = 'Region'
-            print("Regional Aggregation - Row Data:")
-            print(row_data)  # Print row data for debugging
-            
+        
+            # Create Stacked Bar Chart
             fig = go.Figure(
-                data=[
-                    go.Pie(
-                        labels=row_data.index,
-                        values=row_data.values,
-                    )
-                ],
+                data=traces,
                 layout=go.Layout(
-                    title=f'Damage Summary for {hazard}',
+                    title={'text': f'Total Damage (USD) per Sector <br> - Regional Level - {hazard}', 'font': {'size': 15}},
+                    barmode='stack',
+                    xaxis_title="Region",
+                    yaxis_title="Damage (USD)",
                     template="plotly_white"
                 )
             )
-            return fig
-        else:
-            return go.Figure(
-                data=[],
-                layout=go.Layout(
-                    title="Hazard Summary",
-                    annotations=[{
-                        "text": "Data not available for the selected hazard.",
-                        "xref": "paper",
-                        "yref": "paper",
-                        "showarrow": False,
-                        "font": {"size": 14}
-                    }]
-                )
-            )
+        return fig
 
     else:
         return go.Figure(
             data=[],
             layout=go.Layout(
-                title="Hazard Summary",
+                title={'text': 'Total Damage (USD) per Sector', 'font': {'size': 15}},
                 annotations=[{
                     "text": "Invalid aggregation level.",
                     "xref": "paper",
@@ -610,27 +560,27 @@ layout = html.Div(
                             ],
                             style={"marginBottom": "10px"}
                         ),
-                        html.Div(
-                            [
-                                html.P("Please select the cross sectoral cluster you want to analyse:", style={"color": "black"}),
-                                html.Label("Cluster:", style={"color": "black"}),
-                                dcc.Dropdown(
-                                    options=[
-                                        {"label": "Residential", "value": "Residential"},
-                                        {"label": "Productive", "value": "Productive"},
-                                        {"label": "Infrastructure", "value": "Infrastructure"},
-                                        {"label": "Education", "value": "Education"},
-                                        {"label": "Public", "value": "Public"},
-                                        {"label": "Others", "value": "Others"},
-                                        {"label": "Unknown", "value": "Unknown"},
-                                    ],
-                                    value="",
-                                    id="cluster-select",
-                                    style={"width": "100%", "backgroundColor": "#ffffff", "color": "black"}  # Dropdown background color
-                                ),
-                            ],
-                            style={"marginBottom": "10px"}
-                        ),
+                        # html.Div(
+                        #     [
+                        #         html.P("Please select the cross sectoral cluster you want to analyse:", style={"color": "black"}),
+                        #         html.Label("Cluster:", style={"color": "black"}),
+                        #         dcc.Dropdown(
+                        #             options=[
+                        #                 {"label": "Residential", "value": "Residential"},
+                        #                 {"label": "Productive", "value": "Productive"},
+                        #                 {"label": "Infrastructure", "value": "Infrastructure"},
+                        #                 {"label": "Education", "value": "Education"},
+                        #                 {"label": "Public", "value": "Public"},
+                        #                 {"label": "Others", "value": "Others"},
+                        #                 {"label": "Unknown", "value": "Unknown"},
+                        #             ],
+                        #             value="",
+                        #             id="cluster-select",
+                        #             style={"width": "100%", "backgroundColor": "#ffffff", "color": "black"}  # Dropdown background color
+                        #         ),
+                        #     ],
+                        #     style={"marginBottom": "10px"}
+                        # ),
                     ],
                     width=2,  # Width for dropdowns column
                     style={"paddingRight": "10px"}  # Add some spacing on the right side
@@ -672,20 +622,12 @@ layout = html.Div(
                                     [
                                         dcc.Graph(
                                             id="exposure",
-                                            figure={
-                                                'data': [go.Pie()], 
-                                                'layout': go.Layout(title='Cluster Exposure Summary')
-                                            },
-                                            style={"height": "30vh"}
+                                            style={"height": "32vh"}
                                         ),
                                         html.Div(
                                             dcc.Graph(
                                                 id="loss-and-damage",
-                                                figure={
-                                                'data': [go.Pie()], 
-                                                'layout': go.Layout(title='Hazard Summary')
-                                            },
-                                                style={"height": "30vh"}
+                                                style={"height": "32vh"}
                                             ),
                                             style={"marginTop": "10px"}  # Space between the two graphs
                                         ),
@@ -697,7 +639,7 @@ layout = html.Div(
                                     [
                                         html.Div(
                                             [
-                                                html.H4("National Level Exposure Summary:", style={"color": "black"}),
+                                                html.H5("National Level Exposure Summary:", style={"color": "black"}),
                                                 html.Div(id="national-summary-text", style={"color": "black", "height": "22vh"}),
                                                 dcc.Interval(
                                                     id="interval-component",
@@ -709,7 +651,7 @@ layout = html.Div(
                                         ),
                                         html.Div(
                                             [
-                                                html.H4("National Level Damage Summary ($USD):", style={"color": "black"}),
+                                                html.H5("National Level Damage Summary ($USD):", style={"color": "black"}),
                                                 html.Div(id="damage-summary-text", style={"color": "black", "height": "24vh"}),
                                                 dcc.Interval(
                                                     id="interval-component",
