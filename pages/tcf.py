@@ -42,6 +42,10 @@ df_total_exposed_by_windspeed = pd.read_csv(
 )
 
 
+# Base URL for the GeoServer WMS
+GEOSERVER_URL = "https://nexus.pacificdata.org/geoserver/geonode/wms"
+
+
 def get_info(feature=None):
     header = [html.B("Regional Exposure")]
     if not feature:
@@ -140,7 +144,7 @@ layout = html.Div(
                             dl.GeoJSON(
                                 id="map-regional-exposure",
                                 data=json.loads(
-                                    gdf_regional_exposure["geometry"].to_json()
+                                    gdf_regional_exposure["geometry"].to_json(),
                                 ),
                                 zoomToBounds=True,
                                 zoomToBoundsOnClick=True,
@@ -151,7 +155,6 @@ layout = html.Div(
                                     fillOpacity=0.5,
                                 ),
                             ),
-                            info,
                             dl.GeoJSON(
                                 data=json.loads(
                                     gdf_cyclone_track["geometry"].to_json()
@@ -159,12 +162,21 @@ layout = html.Div(
                                 zoomToBounds=True,
                                 zoomToBoundsOnClick=True,
                                 style=dict(
-                                    weight=2,
+                                    weight=3,
                                     opacity=1,
-                                    color="blue",
+                                    color="grey",
                                     fillOpacity=0.5,
                                 ),
                             ),
+                            dl.WMSTileLayer(
+                                url=GEOSERVER_URL,
+                                layers="geonode:ref_tc_meena_cook_islands_track_distance", 	
+                                format="image/png",
+                                transparent=True,
+                                id="cyclone-track-distance-layer"
+
+                                ),
+                            info,
                         ],
                         zoom=6,
                         style={"height": "100vh"},
