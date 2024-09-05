@@ -499,7 +499,7 @@ layout = html.Div(
     [
         dbc.Row(
             dbc.Col(
-                html.H3("Post Disaster Impact Assessment (PDIA)", style={"textAlign": "center", "color": "black"})
+                html.H3("Post Disaster Impact Estimate (PDIE)", style={"textAlign": "center", "color": "black"})
             ),
             style={"backgroundColor": "#eaeded", "padding": "10px"}  # background for the header row
         ),
@@ -639,7 +639,7 @@ layout = html.Div(
                                     [
                                         html.Div(
                                             [
-                                                html.H5("National Level Exposure Summary:", style={"color": "black"}),
+                                                html.H5("National Level Exposure Summary (#):", style={"color": "black"}),
                                                 html.Div(id="national-summary-text", style={"color": "black", "height": "22vh"}),
                                                 dcc.Interval(
                                                     id="interval-component",
