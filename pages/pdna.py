@@ -117,7 +117,7 @@ def update_map_layer(selected_hazards):
     ]  # Base map layer
 
     for hazard in selected_hazards:
-        if hazard == "Cyclone Track":
+        if hazard == "All hazards":
             layers.append(
                 dl.WMSTileLayer(
                     url=GEOSERVER_URL,
@@ -348,7 +348,7 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
 
     if hazard == "Wind":
         col_title = "Total_Wind_Loss"
-    elif hazard == "Cyclone Track":
+    elif hazard == "All hazards":
         col_title = "Total_Loss"
     else:
         return go.Figure(
@@ -549,7 +549,7 @@ layout = html.Div(
                                     options=[
                                         {"label": "Wave Height", "value": "Wave Height"},
                                         {"label": "Coastal Inundation", "value": "Coastal Inundation"},
-                                        {"label": "Cyclone Track", "value": "Cyclone Track"},
+                                        {"label": "All hazards", "value": "All hazards"},
                                         {"label": "Wind", "value": "Wind"},
                                     ],
                                     value="", # No default seclection
