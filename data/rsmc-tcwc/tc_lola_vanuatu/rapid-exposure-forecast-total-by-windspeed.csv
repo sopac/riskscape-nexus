@@ -1,0 +1,9 @@
+WindSpeed,Danger,Total_Buildings,Building_Value,Total_Population
+0.0,Not exposed,190,22192199,2305
+0.0,Track Uncertainty,7163,343349899,39099
+34.0,Possible Gale Winds,14453,3794036126,105219
+34.0,Gale Winds,1428,194218519,13968
+48.0,Possible Storm Winds,641,49687926,4681
+48.0,Storm Winds,9608,529018109,29958
+64.0,Possible Hurricane Winds,2199,195770859,20830
+64.0,Hurricane Winds,13121,1218050845,75019

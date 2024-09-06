@@ -13,36 +13,50 @@ from dash import Dash, dash_table
 dash.register_page(__name__)
 
 # load data
-project_name = "vanuatu"
-# maps
+project_name = "tc_meena_cookislands"
+
+############################### LOAD DATA AND PREPARE RISKSCAPE DATA ###############################
+
+# tc meena data is for Vanuatu and Cooks. Below implement some hard coded filtering to focus on Cooks. 
+# This would eventually have to be done dynamically when lookign at teh country entry to dashboards, or someother filter
+
+
+# data for the map
 gdf_regional_exposure = gpd.read_file(
-    "data/" + project_name + "/" + "jtwc-forecast-regional-exposure.geojson"
+    # "data/" + "vanuatu" + "/" + "jtwc-forecast-regional-exposure.geojson"
+    "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-regional-impacts.geojson"
 )
 gdf_cyclone_track = gpd.read_file(
-    "data/" + project_name + "/" + "cyclone-pdna-cyclone-track.geojson"
+    "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-cyclone-track.geojson"
 )
 # data
-df_regional_summary = pd.read_csv(
-    "data/" + project_name + "/" + "jtwc-forecast-regional-summary.csv"
-)
+# df_regional_summary = pd.read_csv(
+#     "data/" + "vanuatu" + "/" + "jtwc-forecast-regional-summary.csv"
+# )
 df_total_exposed = pd.read_csv(
-    "data/rsmc-tcwc/rapid-exposure-forecast-total-exposed-by-country.csv"
+    "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-total-exposed-by-country.csv"
 )
 
 df_total_exposed_by_windspeed = pd.read_csv(
-    "data/rsmc-tcwc/rapid-exposure-forecast-total-by-windspeed.csv"
+    "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-total-by-windspeed-SK.csv"
 )
+
+
+# Base URL for the GeoServer WMS
+GEOSERVER_URL = "https://nexus.pacificdata.org/geoserver/geonode/wms"
 
 
 def get_info(feature=None):
     header = [html.B("Regional Exposure")]
     if not feature:
         return header + [html.P("N/A")]
+    
     id = feature["id"]
+    
     # print(id)
 
     return header + [
-        html.P(gdf_regional_exposure.iloc[[int(id)]]["map_region.eaname"].values[0]),
+        html.P(gdf_regional_exposure.iloc[[int(id)]]["Region.Region"].values[0]),
         html.Div(
             [
                 dash_dangerously_set_inner_html.DangerouslySetInnerHTML(
@@ -50,24 +64,20 @@ def get_info(feature=None):
         
         <table style='border: 1px'>
           <tr>
-           <td>Buildings Affected : </td/>
-           <td>{gdf_regional_exposure.iloc[[int(id)]]["Buildings"].values[0]}</td/>
+           <td>Buildings Exposed (#): </td/>
+           <td>{gdf_regional_exposure.iloc[[int(id)]]["Exposed_Buildings"].values[0]}</td/>
           </tr>
           <tr>
-           <td>Population Affected : </td/>
-           <td>{gdf_regional_exposure.iloc[[int(id)]]["Population"].values[0]}</td/>
+           <td>Population Affected (#): </td/>
+           <td>{gdf_regional_exposure.iloc[[int(id)]]["Exposed_Population"].values[0]}</td/>
           </tr>
           <tr>
-           <td>Max KM/ph : </td/>
-           <td>{gdf_regional_exposure.iloc[[int(id)]]["max_kmph"].values[0]}</td/>
+           <td>Max Windspeed (km/h) : </td/>
+           <td>{gdf_regional_exposure.iloc[[int(id)]]["Max_WindSpeed_kmph"].values[0]}</td/>
           </tr>
           <tr>
-           <td>Min KM/ph : </td/>
-           <td>{gdf_regional_exposure.iloc[[int(id)]]["min_kmph"].values[0]}</td/>
-          </tr>
-          <tr>
-           <td>Track KM/ph : </td/>
-           <td>{gdf_regional_exposure.iloc[[int(id)]]["track_kmph"].values[0]}</td/>
+           <td>Min Windspeed (km/h) : </td/>
+           <td>{gdf_regional_exposure.iloc[[int(id)]]["Min_WindSpeed_kmph"].values[0]}</td/>
           </tr>
         </table>
 
@@ -110,8 +120,8 @@ layout = html.Div(
                 dbc.Col(html.Label("Tropical Cyclone : "), width=3),
                 dbc.Col(
                     dcc.Dropdown(
-                        ["TC Lola (Vanuatu)", "Cook-Islands", "Tonga", "Samoa"],
-                        "TC Lola (Vanuatu)",
+                        ["TC Lola (Vanuatu)", "TC Meena (Cook Islands)", "Tonga", "Samoa"],
+                        "TC Meena (Cook Islands)",
                         id="country-select",
                     ),
                     width=6,
@@ -134,7 +144,7 @@ layout = html.Div(
                             dl.GeoJSON(
                                 id="map-regional-exposure",
                                 data=json.loads(
-                                    gdf_regional_exposure["geometry"].to_json()
+                                    gdf_regional_exposure["geometry"].to_json(),
                                 ),
                                 zoomToBounds=True,
                                 zoomToBoundsOnClick=True,
@@ -145,7 +155,6 @@ layout = html.Div(
                                     fillOpacity=0.5,
                                 ),
                             ),
-                            info,
                             dl.GeoJSON(
                                 data=json.loads(
                                     gdf_cyclone_track["geometry"].to_json()
@@ -153,12 +162,21 @@ layout = html.Div(
                                 zoomToBounds=True,
                                 zoomToBoundsOnClick=True,
                                 style=dict(
-                                    weight=2,
+                                    weight=3,
                                     opacity=1,
-                                    color="blue",
+                                    color="grey",
                                     fillOpacity=0.5,
                                 ),
                             ),
+                            dl.WMSTileLayer(
+                                url=GEOSERVER_URL,
+                                layers="geonode:ref_tc_meena_cook_islands_track_distance", 	
+                                format="image/png",
+                                transparent=True,
+                                id="cyclone-track-distance-layer"
+
+                                ),
+                            info,
                         ],
                         zoom=6,
                         style={"height": "100vh"},
@@ -179,29 +197,31 @@ layout = html.Div(
                             html.B("Buildings Exposed by Windspeed"),
                             dcc.Graph(
                                 figure=px.histogram(
-                                    gdf_regional_exposure,
-                                    x="max_kmph",
+                                    df_total_exposed_by_windspeed,
+                                    x='Danger',
                                     y="Buildings",
                                     histfunc="sum",
-                                    color="max_kmph",
+                                    color="Danger",
                                 ).update_layout(
-                                    xaxis_title="Maximum Windspeed (KM/ph)",
+                                    xaxis_title="Maximum Windspeed (Km/h)",
                                     yaxis_title="No. Of Buildings Exposed",
+                                    showlegend=False
                                 ),
-                                style={"height": "30vh"},
+                                style={"height": "30vh"}
                             ),
                             # bar chart - population per windspeed
                             html.B("Population Exposed by Windspeed"),
                             dcc.Graph(
                                 figure=px.histogram(
-                                    gdf_regional_exposure,
-                                    x="max_kmph",
+                                    df_total_exposed_by_windspeed,
+                                    x="Danger",
                                     y="Population",
                                     histfunc="sum",
-                                    color="max_kmph",
+                                    color="Danger",
                                 ).update_layout(
-                                    xaxis_title="Maximum Windspeed (KM/ph)",
-                                    yaxis_title="Population Exposed.",
+                                    xaxis_title="Maximum Windspeed (Km/h)",
+                                    yaxis_title="Population Exposed",
+                                    showlegend=False
                                 ),
                                 style={"height": "30vh"},
                             ),
@@ -210,16 +230,13 @@ layout = html.Div(
                                 figure=px.bar(
                                     df_total_exposed_by_windspeed,
                                     x="Danger",
-                                    y=[
-                                        # "Total_Buildings",
-                                        # "Total_Population",
-                                        "Building_Value",
-                                    ],
-                                    barmode="group",
+                                    y="Building_Value",
+                                    # barmode="group",
                                     color="Danger",
                                 ).update_layout(
                                     xaxis_title="Windspeed",
                                     yaxis_title="Exposed Building Value (USD)",
+                                    showlegend=False
                                 ),
                                 style={"height": "40vh"},
                             ),
@@ -228,18 +245,19 @@ layout = html.Div(
                 ),
             ]
         ),
-        dbc.Row(
-            [
-                html.B("Forecasted Total Exposed"),
-                # bar chart - total value nation
-                dash_table.DataTable(
-                    df_total_exposed.to_dict("records"),
-                    [{"name": i, "id": i} for i in df_total_exposed.columns],
-                ),
-            ]
-        ),
+        # dbc.Row(
+        #     [
+        #         html.B("Forecasted Total Exposed"),
+        #         # bar chart - total value nation
+        #         dash_table.DataTable(
+        #             df_total_exposed.to_dict("records"),
+        #             [{"name": i, "id": i} for i in df_total_exposed.columns],
+        #         ),
+        #     ]
+        # ),
     ],
-    style={"textAlign": "center"},
+    # style={"textAlign": "center"},
+    style={"backgroundColor": "#eaeded", "color": "black", "padding": "20px"}  # gray background and for the entire page
 )
 
 

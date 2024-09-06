@@ -1,0 +1,8 @@
+WindSpeed,Danger,Country,Buildings,Residential_Buildings,Nonresidential_Buildings,Building_Value,Population,Road_km,Road_Value,Crop_Value,Infrastructure_Value,Evacuation_Centres,Health_Facilties,Schools
+,Not exposed,,0,0,0,0,0,0.0,0,0,0,1,2,0
+,Not exposed,Cook Islands,2647,898,1749,91004973,1636,141.69,7860721,1143302,8619363,9,0,9
+34.0,Possible Gale Winds,Cook Islands,778,598,180,36742814,461,52.27,2761438,1020192,1698087,10,0,2
+34.0,Gale Winds,Cook Islands,4345,2452,1893,183606392,2208,191.59,31041764,5024789,16589732,7,3,8
+48.0,Possible Storm Winds,Cook Islands,6,4,2,162942,0,0.0,0,5720,0,0,0,0
+64.0,Possible Hurricane Winds,Cook Islands,10770,6720,4050,1099395858,10974,245.07,76618221,2016238,47194591,18,6,13
+,Not exposed,Vanuatu,178520,31159,147361,8139082614,306697,4380.28,647158009,56705031,119832145,562,134,470

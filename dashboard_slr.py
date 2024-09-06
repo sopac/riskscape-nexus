@@ -4,6 +4,7 @@ import numpy as np
 from random import randrange
 
 #project_name = "cook-islands"
+
 project_name = app.select(name="Country", options=["cook-islands", "tonga", "samoa"], default="cook-islands")
 
 app.display(name="title", value="PARTneR-2 Sea Level Rise Dashboard [" + project_name + "]")
