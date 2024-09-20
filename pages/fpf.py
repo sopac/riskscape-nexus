@@ -6,6 +6,7 @@ import pandas as pd
 import geopandas as gpd
 import dash_leaflet as dl
 import json
+from dash_bootstrap_templates import load_figure_template
 
 dash.register_page(__name__, external_stylesheets=[dbc.themes.SLATE])
 
@@ -97,16 +98,53 @@ def draw_text(input_label, input_value):
         ], style ={'marginTop':'10px'})
 
 
-### CHART - buildings
-chart_buildings = html.P('buildings pie')
-# chart_buildings = dcc.Graph(id='chart_buildings')
+### CHART - buildings prep
+# additional work: filter on region, filter on ARI based on user selection. Now hardcoded for ARI 5
+# manipulate dataframe to display count of buildings by use type per ARI scenario and region
+gdf_building_impacts_notnull = gdf_building_impacts[gdf_building_impacts['Impact.ARI5.Flood_Depth'].notnull()]
+# group by building use type
+grouped = gdf_building_impacts_notnull.groupby('exposure.UseType')
+# build dataframe with require stats for building pie chart and informing pop-up
+df_building_impacts_summary = pd.DataFrame()
+df_building_impacts_summary['count'] = grouped.count()['geometry']
+df_building_impacts_summary['exposureValue_sum'] = grouped.sum('exposure.Value')['exposure.Value']
 
-# def generate_pie_chart(names, values)
-#     fig = px.pie()
+# load_figure_template('slate')
+# load_figure_template('darkly')
+load_figure_template('seaborn')
+
+chart_buildings = px.pie(
+    df_building_impacts_summary, 
+    values='count', 
+    names=df_building_impacts_summary.index,
+    hover_name=df_building_impacts_summary.index,
+    # hover_data=['count', 'exposureValue_sum'], # needs more attention
+    # labels={'exposureValue_sum': 'Total exposure (USD)'},
+    # title='Share of exposed buildings by use type for selected region and Average Recurrence Interval',
+    hole=.3,
+    # color_discrete_sequence=px.colors.sequential.Rainbow,
+    # template='plotly_dark'
+)
+
+chart_buildings_fig = dcc.Graph(figure=chart_buildings, style={'height': '30vh'})
 
 
 ### CHART - roads
 chart_roads = html.P('roads pie')
+
+
+### CHART - card
+def draw_chart_card(chart, title):
+        return html.Div([
+            dbc.Card([
+                dbc.CardBody([
+                        html.Div([
+                            html.H6(title),
+                            chart,
+                        ], style={'height':'33vh'}) 
+                ]),
+            ])
+        ], style ={'marginBottom':'10px'})
 
 
 ## CARDS in layout
@@ -162,16 +200,8 @@ cards = html.Div(children=[
                     ]),
                 ], width=5),
                 dbc.Col([
-                    dbc.Card([
-                        dbc.CardBody([
-                            chart_buildings
-                        ])
-                    ]),
-                    dbc.Card([
-                        dbc.CardBody([
-                            chart_roads
-                        ])
-                    ])
+                    draw_chart_card(chart_buildings_fig, 'Share of exposed buildings by use type for selected region and Average Recurrence Interval'),
+                    draw_chart_card(chart_buildings_fig, 'Share of exposed roads by use type for selected region and Average Recurrence Interval')
                 ])
             ])  
     ])
