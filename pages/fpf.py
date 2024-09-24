@@ -27,6 +27,11 @@ gdf_building_impacts = gpd.read_file(
     "data/" + project_name + "/" + "fluvial-static-inundation-building-impacts.geojson"
 )
 
+#load impact to roads
+gdf_road_impacts = gpd.read_file(
+    "data/" + project_name + "/" + "fluvial-static-inundation-road-impacts.geojson"
+)
+
 ############################### LAYOUT COMPONENTS #######################
 ### DROPDOWN - region
 # list of regions for region selection dropdown
@@ -98,39 +103,78 @@ def draw_text(input_label, input_value):
         ], style ={'marginTop':'10px'})
 
 
-### CHART - buildings prep
-# additional work: filter on region, filter on ARI based on user selection. Now hardcoded for ARI 5
-# manipulate dataframe to display count of buildings by use type per ARI scenario and region
+### CHART - buildings
+    # additional work: filter on region, filter on ARI based on user selection. Now hardcoded for ARI 5
+    # manipulate dataframe to display count of buildings by use type per ARI scenario and region
 gdf_building_impacts_notnull = gdf_building_impacts[gdf_building_impacts['Impact.ARI5.Flood_Depth'].notnull()]
-# group by building use type
-grouped = gdf_building_impacts_notnull.groupby('exposure.UseType')
-# build dataframe with require stats for building pie chart and informing pop-up
+    # group by building use type
+grouped = gdf_building_impacts_notnull.groupby(['Region','exposure.UseType'])
+    # build dataframe with require stats for building pie chart and informing pop-up
 df_building_impacts_summary = pd.DataFrame()
 df_building_impacts_summary['count'] = grouped.count()['geometry']
 df_building_impacts_summary['exposureValue_sum'] = grouped.sum('exposure.Value')['exposure.Value']
+df_building_impacts_summary.reset_index(inplace=True)
 
-# load_figure_template('slate')
+load_figure_template('slate')
 # load_figure_template('darkly')
-load_figure_template('seaborn')
+# load_figure_template('seaborn')
 
-chart_buildings = px.pie(
+chart_buildings = px.bar(
     df_building_impacts_summary, 
-    values='count', 
-    names=df_building_impacts_summary.index,
-    hover_name=df_building_impacts_summary.index,
-    # hover_data=['count', 'exposureValue_sum'], # needs more attention
-    # labels={'exposureValue_sum': 'Total exposure (USD)'},
-    # title='Share of exposed buildings by use type for selected region and Average Recurrence Interval',
-    hole=.3,
+    x='exposure.UseType', 
+    y='exposureValue_sum',
+    color='Region',
+    hover_name='exposure.UseType',
+    hover_data={'exposure.UseType':False},
+    labels={'exposureValue_sum': 'Total exposure (USD)', 'exposure.UseType':'Building use type'},
+    # category_orders={'exposure.UseType':pd.Series(list(df_building_impacts_summary['exposure.UseType'])).drop_duplicates().to_list()}, # NOT WORKING
     # color_discrete_sequence=px.colors.sequential.Rainbow,
-    # template='plotly_dark'
+    # template='seaborn'
 )
+
+chart_buildings.update_layout(
+    paper_bgcolor ='rgb(252,252,252)',
+    font_color='rgb(20,20,20)',
+    margin=dict(l=30, r=20, t=40, b=30),
+    font=dict(size= 12)
+    )
 
 chart_buildings_fig = dcc.Graph(figure=chart_buildings, style={'height': '30vh'})
 
 
 ### CHART - roads
-chart_roads = html.P('roads pie')
+    # additional work: filter on region, filter on ARI based on user selection. Now hardcoded for ARI 5
+    # manipulate dataframe to display count of buildings by use type per ARI scenario and region
+gdf_road_impacts_notnull = gdf_road_impacts[gdf_road_impacts['Impact.ARI5.Flood_Depth'].notnull()]
+    # group by building use type
+grouped = gdf_road_impacts_notnull.groupby(['Region','exposure.UseType'])
+    # build dataframe with require stats for building pie chart and informing pop-up
+df_road_impacts_summary = pd.DataFrame()
+df_road_impacts_summary['count'] = grouped.count()['geometry']
+df_road_impacts_summary['exposureValue_sum'] = grouped.sum('exposure.Value')['exposure.Value']
+df_road_impacts_summary.reset_index(inplace=True)
+
+chart_roads = px.bar(
+    df_road_impacts_summary, 
+    x='exposure.UseType', 
+    y='exposureValue_sum',
+    color='Region',
+    hover_name='exposure.UseType',
+    hover_data={'exposure.UseType':False},
+    labels={'exposureValue_sum': 'Total exposure (USD)', 'exposure.UseType':'Building use type'},
+    # category_orders={'exposure.UseType':pd.Series(list(df_road_impacts_summary['exposure.UseType'])).drop_duplicates().to_list()}, # NOT WORKING
+    # color_discrete_sequence=px.colors.sequential.Rainbow,
+    # template='seaborn'
+)
+
+chart_roads.update_layout(
+    paper_bgcolor ='rgb(252,252,252)',
+    font_color='rgb(20,20,20)',
+    margin=dict(l=30, r=20, t=40, b=30),
+    font=dict(size= 12)
+    )
+
+chart_roads_fig = dcc.Graph(figure=chart_roads, style={'height': '30vh'})
 
 
 ### CHART - card
@@ -201,7 +245,7 @@ cards = html.Div(children=[
                 ], width=5),
                 dbc.Col([
                     draw_chart_card(chart_buildings_fig, 'Share of exposed buildings by use type for selected region and Average Recurrence Interval'),
-                    draw_chart_card(chart_buildings_fig, 'Share of exposed roads by use type for selected region and Average Recurrence Interval')
+                    draw_chart_card(chart_roads_fig, 'Share of exposed roads by use type for selected region and Average Recurrence Interval')
                 ])
             ])  
     ])
