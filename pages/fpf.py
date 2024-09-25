@@ -244,8 +244,8 @@ cards = html.Div(children=[
                     ]),
                 ], width=5),
                 dbc.Col([
-                    draw_chart_card(chart_buildings_fig, 'Share of exposed buildings by use type for selected region and Average Recurrence Interval'),
-                    draw_chart_card(chart_roads_fig, 'Share of exposed roads by use type for selected region and Average Recurrence Interval')
+                    draw_chart_card(chart_buildings_fig, 'Share of exposed buildings by use type for selected Average Recurrence Interval'),
+                    draw_chart_card(chart_roads_fig, 'Share of exposed roads by use type for selected Average Recurrence Interval')
                 ])
             ])  
     ])
@@ -258,3 +258,12 @@ cards
  
 ]) 
 
+############################## CALLBACKS ################################
+
+# callback text cards
+@callback(
+      Output(component_id='stats', component_property='children'),
+      [Input('region-select', 'value')]
+)
+def update_output_stats(region):
+      
