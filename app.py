@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 
-app = Dash(__name__, use_pages=True, external_stylesheets = [dbc.themes.BOOTSTRAP])
+app = Dash(__name__, use_pages=True, external_stylesheets = [dbc.themes.SLATE])
 
 app.layout = html.Div([
     html.H2(children='Pacific Risk Tool for Resilience, Phase 2 (PARTneR-2)', style={'textAlign':'center'}),
@@ -26,7 +26,6 @@ app.layout = html.Div([
              dcc.Link("Post Disaster Impact Estimation (PDIE)", href="/pdna", style={'textDecoration':'none'})
         ),
         html.Hr()
-
     ], style={'textAlign':'center'}),
 
      dash.page_container
