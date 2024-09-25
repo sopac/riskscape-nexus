@@ -1,0 +1,8 @@
+Track_distance,km,Country,Buildings,Residential_Buildings,Nonresidential_Buildings,Building_Value,Population,Road_km,Road_Value,Crop_Value,Infrastructure_Value,Evacuation_Centres,Health_Facilties,Schools
+200+ km away from track,,,31,0,31,490808,0,0.0,0,305955,0,1,2,0
+Within 200km of track,200,,5,0,5,38488,0,0.0,0,12090,0,0,0,0
+200+ km away from track,,Cook Islands,18546,10672,7874,1410912980,15279,630.62,118282143,9210241,74101772,44,9,32
+200+ km away from track,,Tonga,12282,5976,6306,460886293,20993,544.82,68233134,4974172,21934581,30,14,73
+Within 100km of track,100,Tonga,32664,18194,14470,1666859695,65828,1494.95,187151903,16717786,50083911,7,18,51
+Within 125km of track,125,Tonga,8208,4606,3602,517133669,12847,328.12,53311583,3549304,45494835,5,9,14
+200+ km away from track,,Vanuatu,178520,31159,147361,8139082614,306697,4380.28,647158009,56705031,119832145,562,134,470

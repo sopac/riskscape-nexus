@@ -1,0 +1,8 @@
+WindSpeed,Danger,Country,Buildings,Residential_Buildings,Nonresidential_Buildings,Building_Value,Population,Road_km,Road_Value,Crop_Value,Infrastructure_Value,Evacuation_Centres,Health_Facilties,Schools
+,Not exposed,,2,0,2,9094,0,0.0,0,0,0,1,2,0
+34.0,Possible Gale Winds,,34,0,34,520201,0,0.0,0,318045,0,0,0,0
+,Not exposed,Cook Islands,18546,10672,7874,1410912980,15279,630.62,118282143,9210241,74101772,44,9,32
+,Not exposed,Tonga,7659,4480,3179,329351924,14897,362.91,54089240,3495281,16881872,9,7,40
+34.0,Possible Gale Winds,Tonga,4623,1496,3127,131534369,6096,181.91,14143894,1478891,5052709,21,7,33
+48.0,Possible Storm Winds,Tonga,40872,22800,18072,2183993364,78675,1823.07,240463486,20267090,95578747,12,27,65
+,Not exposed,Vanuatu,178520,31159,147361,8139082614,306697,4380.28,647158009,56705031,119832145,562,134,470

@@ -1,0 +1,4 @@
+WindSpeed,Danger,Country,Buildings,Residential_Buildings,Nonresidential_Buildings,Building_Value,Population,Road_km,Road_Value,Crop_Value,Infrastructure_Value,Evacuation_Centres,Health_Facilties,Schools
+34,Possible Gale Winds,,34,0,34,520201,0,0,0,318045,0,0,0,0
+34,Possible Gale Winds,Tonga,4623,1496,3127,131534369,6096,181.91,14143894,1478891,5052709,21,7,33
+48,Possible Storm Winds,Tonga,40872,22800,18072,2183993364,78675,1823.07,240463486,20267090,95578747,12,27,65
