@@ -18,44 +18,44 @@ import matplotlib as plt
 
 
 
-dash.register_page(__name__)
+dash.register_page(__name__, external_stylesheets=[dbc.themes.SLATE])
 
-project_name = "cooks_pdia"
+project_name = "tonga_pdia_harold"
 
 ############################### LOAD DATA AND PREPARE RISKSCAPE DATA ###############################
 
 #  datasets  #
 #load damaged buildings
-gdf_damaged_buildings = gpd.read_file("data/" + project_name + "/" + "damaged-buildings.gpkg")
+gdf_damaged_buildings = gpd.read_file("data/" + project_name + "/" + "cyclone_pdna_damaged-buildings.gpkg")
 
 #load damaged roads
-gdf_damaged_roads = gpd.read_file("data/" + project_name + "/" + "damaged-roads.gpkg")
+gdf_damaged_roads = gpd.read_file("data/" + project_name + "/" + "cyclone_pdna_damaged-roads.gpkg")
 
 #load exposure by cluster
-gdf_exposure_by_cluster = gpd.read_file( "data/" + project_name + "/" + "exposure-by-cluster.geojson")
+gdf_exposure_by_cluster = gpd.read_file( "data/" + project_name + "/" + "cyclone_pdna_exposure-by-cluster.geojson")
 
 #load regional impacts by sector
-gdf_regional_impacts_by_sector = gpd.read_file("data/" + project_name + "/" + "regional-impacts-by-sector.geojson")
+gdf_regional_impacts_by_sector = gpd.read_file("data/" + project_name + "/" + "cyclone_pdna_regional-impacts-by-sector.geojson")
 
 #load regional impacts
-gdf_regional_impacts = gpd.read_file("data/" + project_name + "/" + "regional-impacts.geojson")
+gdf_regional_impacts = gpd.read_file("data/" + project_name + "/" + "cyclone_pdna_regional-impacts.geojson")
 
 
 #  CSV's  #
 #load impact by asset type
-df_impact_by_asset_type = pd.read_csv("data/" + project_name + "/" + "impact-by-asset-type.csv")
+df_impact_by_asset_type = pd.read_csv("data/" + project_name + "/" + "cyclone_pdna_impact-by-asset-type.csv")
 
 #load national impacts by sector
-df_national_impact_by_sector = gpd.read_file("data/" + project_name + "/" + "national-impact-by-sector-SK.csv")
+df_national_impact_by_sector = gpd.read_file("data/" + project_name + "/" + "cyclone_pdna_impact-by-sector.csv")
 
 #load national summary
-df_national_summary = pd.read_csv("data/" + project_name + "/" + "national-summary.csv")
+df_national_summary = pd.read_csv("data/" + project_name + "/" + "cyclone_pdna_national-summary.csv")
 
 #load regional summary
-df_regional_summary = pd.read_csv("data/" + project_name + "/" + "regional-summary.csv")
+# df_regional_summary = pd.read_csv("data/" + project_name + "/" + "cyclone_pdna_regional-summary.csv")
 
 #load regional summary by sector
-df_regional_summary_by_sector = gpd.read_file("data/" + project_name + "/" + "regional-summary-by-sector.csv")
+df_regional_summary_by_sector = gpd.read_file("data/" + project_name + "/" + "cyclone_pdna_regional-summary-by-sector.csv")
 
 
 ############################### DASH CALLBACK FOR MAP EXTENT ###############################
@@ -121,7 +121,8 @@ def update_map_layer(selected_hazards):
             layers.append(
                 dl.WMSTileLayer(
                     url=GEOSERVER_URL,
-                    layers="geonode:ref_tc_meena_cook_islands_cyclone_track", 	
+                    # layers="geonode:ref_tc_meena_cook_islands_cyclone_track",
+                    layers="geonode:to_cyclone_pdna_cyclone_track" ,	
                     format="image/png",
                     transparent=True,
                     id="cyclone-track-layer"
@@ -132,34 +133,35 @@ def update_map_layer(selected_hazards):
             layers.append(
                 dl.WMSTileLayer(
                     url=GEOSERVER_URL,
-                    layers="geonode:tc_lola_coastalinundation",
+                    # layers="geonode:tc_lola_coastalinundation",
+                    layers="geonode:tc_harold_inundation_max_180",
                     format="image/png",
                     transparent=True,
                     id="inundation-layer"
                 )
             )
 
-        elif hazard == "Wind":
-            layers.append(
-                dl.WMSTileLayer(
-                    url=GEOSERVER_URL,
-                    layers="geonode:ref_tc_meena_cook_islands_wind_swaths",
-                    format="image/png",
-                    transparent=True,
-                    id="wind-swath-layer"
-                )
-            )
+        # elif hazard == "Wind":
+        #     layers.append(
+        #         dl.WMSTileLayer(
+        #             url=GEOSERVER_URL,
+        #             layers="geonode:ref_tc_meena_cook_islands_wind_swaths",
+        #             format="image/png",
+        #             transparent=True,
+        #             id="wind-swath-layer"
+        #         )
+        #     )
 
-        elif hazard == "Wave Height":
-            layers.append(
-                dl.WMSTileLayer(
-                    url=GEOSERVER_URL,
-                    layers="	geonode:tc_lola_hs_max",
-                    format="image/png",
-                    transparent=True,
-                    id="wave_height-layer"
-                )
-            )
+        # elif hazard == "Wave Height":
+        #     layers.append(
+        #         dl.WMSTileLayer(
+        #             url=GEOSERVER_URL,
+        #             layers="	geonode:tc_lola_hs_max",
+        #             format="image/png",
+        #             transparent=True,
+        #             id="wave_height-layer"
+        #         )
+        #     )
     
     return layers  # Always return the base map layer + any additional layers
 
@@ -350,6 +352,8 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
         col_title = "Total_Wind_Loss"
     elif hazard == "All hazards":
         col_title = "Total_Loss"
+    elif hazard == "Coastal Inundation":
+        col_title = "Total_Coastal_Loss"
     else:
         return go.Figure(
             data=[],
@@ -470,7 +474,7 @@ def update_national_summary(n_intervals):
 
     # Create a list of html.P elements, each representing a line of text
     summary_text = [
-        html.P(f"{title.replace('_', ' ')}: {value}", style={"font-family": "Times New Roman", "font-size": "14px"}) 
+        html.P(f"{title.replace('_', ' ')}: {value}", style={"font-family": "Calibri", "font-size": "14px"}) 
         for title, value in zip(titles, values)
     ]
     
@@ -491,7 +495,7 @@ def update_loss_damage_summary(n_intervals):
     summary_text = "\n".join([f"{title}: {value}" for title, value in zip(titles, values)])
     
     # Return the formatted summary as a string 
-    return html.Pre(f"{summary_text}", style={"font-family": "Times New Roman", "font-size": "14px"})
+    return html.Pre(f"{summary_text}", style={"font-family": "Calibri", "font-size": "14px"})
 
 
 ############################### DASHBOARD LAYOUT ###############################
@@ -547,7 +551,7 @@ layout = html.Div(
                                 html.Label("Hazard:", style={"color": "black"}),
                                 dcc.Dropdown(
                                     options=[
-                                        {"label": "Wave Height", "value": "Wave Height"},
+                                        # {"label": "Wave Height", "value": "Wave Height"},
                                         {"label": "Coastal Inundation", "value": "Coastal Inundation"},
                                         {"label": "All hazards", "value": "All hazards"},
                                         {"label": "Wind", "value": "Wind"},
