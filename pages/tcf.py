@@ -13,12 +13,14 @@ from dash import Dash, dash_table
 dash.register_page(__name__)
 
 # load data
-project_name = "tc_meena_cookislands"
+project_name = "tc_harold_tonga"
 
 ############################### LOAD DATA AND PREPARE RISKSCAPE DATA ###############################
 
-# tc meena data is for Vanuatu and Cooks. Below implement some hard coded filtering to focus on Cooks. 
-# This would eventually have to be done dynamically when lookign at teh country entry to dashboards, or someother filter
+# tc meena data is for Cooks. 
+# tc harold data is for Tonga
+# tc lola data is for Vanuatu
+# Below implemented some hard coded filtering to focus on specific country and tc. Eventually it should only choose the TC and show all countries for which there is data for it (?)
 
 
 # data for the map
@@ -120,8 +122,8 @@ layout = html.Div(
                 dbc.Col(html.Label("Tropical Cyclone : "), width=3),
                 dbc.Col(
                     dcc.Dropdown(
-                        ["TC Lola (Vanuatu)", "TC Meena (Cook Islands)", "Tonga", "Samoa"],
-                        "TC Meena (Cook Islands)",
+                        ["TC Lola (Vanuatu)", "TC Meena (Cook Islands)", "TC Harold (Tonga)", "Samoa"],
+                        "TC Harold (Tonga)",
                         id="country-select",
                     ),
                     width=6,
@@ -201,11 +203,11 @@ layout = html.Div(
                                     x='Danger',
                                     y="Buildings",
                                     histfunc="sum",
-                                    color="Danger",
+                                    color="Danger"
                                 ).update_layout(
-                                    xaxis_title="Maximum Windspeed (Km/h)",
+                                    xaxis_title="Maximum Windspeed Category",
                                     yaxis_title="No. Of Buildings Exposed",
-                                    showlegend=False
+                                    showlegend=False,
                                 ),
                                 style={"height": "30vh"}
                             ),
@@ -219,7 +221,7 @@ layout = html.Div(
                                     histfunc="sum",
                                     color="Danger",
                                 ).update_layout(
-                                    xaxis_title="Maximum Windspeed (Km/h)",
+                                    xaxis_title="Maximum Windspeed Category",
                                     yaxis_title="Population Exposed",
                                     showlegend=False
                                 ),
@@ -234,7 +236,7 @@ layout = html.Div(
                                     # barmode="group",
                                     color="Danger",
                                 ).update_layout(
-                                    xaxis_title="Windspeed",
+                                    xaxis_title="Maximum Windspeed Category",
                                     yaxis_title="Exposed Building Value (USD)",
                                     showlegend=False
                                 ),
