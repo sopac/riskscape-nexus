@@ -12,7 +12,7 @@ from collections import OrderedDict
 dash.register_page(__name__)
 
 
-project_name = "cook-islands"
+project_name = "tonga"
 
 ############################### LOAD DATA AND PREPARE DATA ###############################
 
@@ -229,7 +229,7 @@ layout = html.Div(
                                 {"label": "Tuvalu", "value": "Tuvalu"},
                                 {"label": "Vanuatu", "value": "Vanuatu"},
                             ],
-                            value="Cook Islands",
+                            value="Tonga",
                             id="country-select",
                             style={"width": "100%"}  # Adjust width as needed
                         ),
