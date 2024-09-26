@@ -31,6 +31,10 @@ gdf_regional_exposure = gpd.read_file(
 gdf_cyclone_track = gpd.read_file(
     "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-cyclone-track.geojson"
 )
+
+gdf_cyclone_track_distance = gpd.read_file(
+    "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-track-distance.geojson"
+)
 # data
 # df_regional_summary = pd.read_csv(
 #     "data/" + "vanuatu" + "/" + "jtwc-forecast-regional-summary.csv"
@@ -159,6 +163,19 @@ layout = html.Div(
                             ),
                             dl.GeoJSON(
                                 data=json.loads(
+                                    gdf_cyclone_track_distance["geometry"].to_json()
+                                ),
+                                zoomToBounds=True,
+                                zoomToBoundsOnClick=True,
+                                style=dict(
+                                    weight=1,
+                                    opacity=0.06,
+                                    color="red",
+                                    fillOpacity=0.04,
+                                ),
+                            ),
+                            dl.GeoJSON(
+                                data=json.loads(
                                     gdf_cyclone_track["geometry"].to_json()
                                 ),
                                 zoomToBounds=True,
@@ -169,15 +186,15 @@ layout = html.Div(
                                     color="grey",
                                     fillOpacity=0.5,
                                 ),
-                            ),
-                            dl.WMSTileLayer(
-                                url=GEOSERVER_URL,
-                                layers="geonode:ref_tc_meena_cook_islands_track_distance", 	
-                                format="image/png",
-                                transparent=True,
-                                id="cyclone-track-distance-layer"
+                            ),                            
+                            # dl.WMSTileLayer(
+                            #     url=GEOSERVER_URL,
+                            #     layers="geonode:ref_tc_meena_cook_islands_track_distance", 	
+                            #     format="image/png",
+                            #     transparent=True,
+                            #     id="cyclone-track-distance-layer"
 
-                                ),
+                            #     ),
                             info,
                         ],
                         zoom=6,
