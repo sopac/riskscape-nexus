@@ -10,12 +10,12 @@ import dash_dangerously_set_inner_html
 import json
 from dash import Dash, dash_table
 
-dash.register_page(__name__)
+dash.register_page(__name__, external_stylesheets=[dbc.themes.SLATE])
 
 # load data
 project_name = "tc_harold_tonga"
 
-############################### LOAD DATA AND PREPARE RISKSCAPE DATA ###############################
+############################### LOAD AND PREPARE RISKSCAPE DATA ###############################
 
 # tc meena data is for Cooks. 
 # tc harold data is for Tonga
@@ -35,10 +35,7 @@ gdf_cyclone_track = gpd.read_file(
 gdf_cyclone_track_distance = gpd.read_file(
     "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-track-distance.geojson"
 )
-# data
-# df_regional_summary = pd.read_csv(
-#     "data/" + "vanuatu" + "/" + "jtwc-forecast-regional-summary.csv"
-# )
+
 df_total_exposed = pd.read_csv(
     "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-total-exposed-by-country.csv"
 )
@@ -52,14 +49,14 @@ df_total_exposed_by_windspeed = pd.read_csv(
 GEOSERVER_URL = "https://nexus.pacificdata.org/geoserver/geonode/wms"
 
 
+
+############################### MAP FEATURE INFO BOX ###############################
 def get_info(feature=None):
     header = [html.B("Regional Exposure")]
     if not feature:
         return header + [html.P("N/A")]
     
     id = feature["id"]
-    
-    # print(id)
 
     return header + [
         html.P(gdf_regional_exposure.iloc[[int(id)]]["Region.Region"].values[0]),
@@ -93,7 +90,6 @@ def get_info(feature=None):
             style={"textAlign": "left"},
         ),
     ]
-    return header
 
 
 info = html.Div(
@@ -110,176 +106,170 @@ info = html.Div(
 )
 
 
-layout = html.Div(
-    [
-        dbc.Row(
-            dbc.Col(
-                html.H3(
-                    "Rapid Exposure Forecase for Tropical Cyclone Scenarios",
-                    style={"textAlign": "center"},
-                )
-            )
-        ),
-        dbc.Row(html.Br()),
-        dbc.Row(
-            [
-                dbc.Col(html.Label("Tropical Cyclone : "), width=3),
-                dbc.Col(
-                    dcc.Dropdown(
-                        ["TC Lola (Vanuatu)", "TC Meena (Cook Islands)", "TC Harold (Tonga)", "Samoa"],
-                        "TC Harold (Tonga)",
-                        id="country-select",
-                    ),
-                    width=6,
-                ),
-            ]
-        ),
-        dbc.Row(html.Br()),
-        dbc.Row(
-            [
-                dbc.Col(html.B("Regional Exposure and Track Path")),
-                dbc.Col(html.B("")),
-            ]
-        ),
-        dbc.Row(
-            [
-                dbc.Col(
-                    dl.Map(
-                        [
-                            dl.TileLayer(),
-                            dl.GeoJSON(
-                                id="map-regional-exposure",
-                                data=json.loads(
-                                    gdf_regional_exposure["geometry"].to_json(),
-                                ),
-                                zoomToBounds=True,
-                                zoomToBoundsOnClick=True,
-                                style=dict(
-                                    weight=2,
-                                    opacity=1,
-                                    color="red",
-                                    fillOpacity=0.5,
-                                ),
-                            ),
-                            dl.GeoJSON(
-                                data=json.loads(
-                                    gdf_cyclone_track_distance["geometry"].to_json()
-                                ),
-                                zoomToBounds=True,
-                                zoomToBoundsOnClick=True,
-                                style=dict(
-                                    weight=1,
-                                    opacity=0.06,
-                                    color="red",
-                                    fillOpacity=0.04,
-                                ),
-                            ),
-                            dl.GeoJSON(
-                                data=json.loads(
-                                    gdf_cyclone_track["geometry"].to_json()
-                                ),
-                                zoomToBounds=True,
-                                zoomToBoundsOnClick=True,
-                                style=dict(
-                                    weight=3,
-                                    opacity=1,
-                                    color="grey",
-                                    fillOpacity=0.5,
-                                ),
-                            ),                            
-                            # dl.WMSTileLayer(
-                            #     url=GEOSERVER_URL,
-                            #     layers="geonode:ref_tc_meena_cook_islands_track_distance", 	
-                            #     format="image/png",
-                            #     transparent=True,
-                            #     id="cyclone-track-distance-layer"
-
-                            #     ),
-                            info,
-                        ],
-                        zoom=6,
-                        style={"height": "100vh"},
-                        center=(
-                            gdf_regional_exposure.dissolve()
-                            .centroid.y.values[0]
-                            .item(),
-                            gdf_regional_exposure.dissolve()
-                            .centroid.x.values[0]
-                            .item(),
-                        ),
-                    )
-                ),
-                dbc.Col(
-                    dbc.Row(
-                        [
-                            # bar chart - buildings per windspeed
-                            html.B("Buildings Exposed by Windspeed"),
-                            dcc.Graph(
-                                figure=px.histogram(
-                                    df_total_exposed_by_windspeed,
-                                    x='Danger',
-                                    y="Buildings",
-                                    histfunc="sum",
-                                    color="Danger"
-                                ).update_layout(
-                                    xaxis_title="Maximum Windspeed Category",
-                                    yaxis_title="No. Of Buildings Exposed",
-                                    showlegend=False,
-                                ),
-                                style={"height": "30vh"}
-                            ),
-                            # bar chart - population per windspeed
-                            html.B("Population Exposed by Windspeed"),
-                            dcc.Graph(
-                                figure=px.histogram(
-                                    df_total_exposed_by_windspeed,
-                                    x="Danger",
-                                    y="Population",
-                                    histfunc="sum",
-                                    color="Danger",
-                                ).update_layout(
-                                    xaxis_title="Maximum Windspeed Category",
-                                    yaxis_title="Population Exposed",
-                                    showlegend=False
-                                ),
-                                style={"height": "30vh"},
-                            ),
-                            html.B("Exposed Building Value by Windspeed"),
-                            dcc.Graph(
-                                figure=px.bar(
-                                    df_total_exposed_by_windspeed,
-                                    x="Danger",
-                                    y="Building_Value",
-                                    # barmode="group",
-                                    color="Danger",
-                                ).update_layout(
-                                    xaxis_title="Maximum Windspeed Category",
-                                    yaxis_title="Exposed Building Value (USD)",
-                                    showlegend=False
-                                ),
-                                style={"height": "40vh"},
-                            ),
-                        ]
-                    )
-                ),
-            ]
-        ),
-        # dbc.Row(
-        #     [
-        #         html.B("Forecasted Total Exposed"),
-        #         # bar chart - total value nation
-        #         dash_table.DataTable(
-        #             df_total_exposed.to_dict("records"),
-        #             [{"name": i, "id": i} for i in df_total_exposed.columns],
-        #         ),
-        #     ]
-        # ),
-    ],
-    # style={"textAlign": "center"},
-    style={"backgroundColor": "#eaeded", "color": "black", "padding": "20px"}  # gray background and for the entire page
+############################### LAYOUT COMPONENTS ##################################
+### DROPDOWN - tropical cyclone
+# define dropdown object
+dropdown_tc =  dcc.Dropdown(
+    options=["TC Lola (Vanuatu)", "TC Meena (Cook Islands)", "TC Harold (Tonga)", "Samoa"],
+    value="TC Harold (Tonga)",
+    id="country-select",
 )
 
 
+### MAP
+map = dl.Map([
+    dl.TileLayer(),
+    dl.GeoJSON(
+        data=json.loads(gdf_cyclone_track_distance["geometry"].to_json()),
+        zoomToBounds=True,
+        zoomToBoundsOnClick=True,
+        style=dict(
+            weight=1,
+            opacity=0.06,
+            color="red",
+            fillOpacity=0.04,
+        ),
+    ),
+    dl.GeoJSON(
+        data=json.loads(gdf_cyclone_track["geometry"].to_json()),
+        zoomToBounds=True,
+        zoomToBoundsOnClick=True,
+        style=dict(
+            weight=3,
+            opacity=1,
+            color="grey",
+            fillOpacity=0.5,
+        ),
+    ),
+    dl.GeoJSON(
+        id="map-regional-exposure",
+        data=json.loads(gdf_regional_exposure["geometry"].to_json()),
+        zoomToBounds=True,
+        zoomToBoundsOnClick=True,
+        style=dict(
+            weight=2,
+            opacity=1,
+            color="red",
+            fillOpacity=0.5,
+        ),
+    ),                            
+    # dl.WMSTileLayer(
+    #     url=GEOSERVER_URL,
+    #     layers="geonode:ref_tc_meena_cook_islands_track_distance", 	
+    #     format="image/png",
+    #     transparent=True,
+    #     id="cyclone-track-distance-layer"
+
+    #     ),
+    info,
+],
+    zoom=6,
+    style={"height": "65vh"},
+    center=(
+        gdf_regional_exposure.dissolve().centroid.y.values[0].item(),
+        gdf_regional_exposure.dissolve().centroid.x.values[0].item(),
+    ),
+)
+
+
+### CHART - no. of assets
+chart_asset_no = dcc.Graph(
+    figure=px.histogram(
+        df_total_exposed_by_windspeed,
+        x='Danger',
+        y=["Buildings", "Population"],
+        histfunc="sum",
+        barmode="group"
+    ).update_layout(
+        xaxis_title="Maximum Windspeed Category",
+        yaxis_title="No. Exposed",
+        paper_bgcolor ='rgb(252,252,252)',
+        font_color='rgb(20,20,20)',
+        margin=dict(l=33, r=30, t=40, b=33),
+        font=dict(size= 11),
+        showlegend=True,
+        legend_title_text='',
+        legend=dict(
+            orientation="h",
+            yanchor='bottom',
+            y=1.02,
+            xanchor="right",
+            x=1
+        )
+    ),
+    style={"height": "30vh"}
+)
+
+### CHART - value of assets
+chart_asset_value = dcc.Graph(
+    figure=px.bar(
+        df_total_exposed_by_windspeed,
+        x="Danger",
+        y=["Building_Value", "Road_Value", "Infrastructure_Value", "Crop_Value"],
+        barmode="group"
+    ).update_layout(
+        xaxis_title="Maximum Windspeed Category",
+        yaxis_title="Exposed Building Value (USD)",
+        showlegend=True,
+        legend_title_text='',
+        legend=dict(
+            orientation="h",
+            yanchor='bottom',
+            y=1.02,
+            xanchor="right",
+            x=1
+        )
+    ),
+    style={"height": "30vh"},
+)
+
+
+############################### DEFINE LAYOUT ######################################
+layout = html.Div(children=[
+        # dbc.Row(
+        #     dbc.Col(
+        #         html.H3(
+        #             "Rapid Exposure Forecase for Tropical Cyclone Scenarios",
+        #             style={"textAlign": "center"},
+        #         )
+        #     )
+        # ),
+        # dbc.Row(html.Br()),
+        dbc.Row([
+                dbc.Col(
+                    html.B("Tropical Cyclone : "), width=3),
+                dbc.Col([
+                    dropdown_tc
+                ], width=6),
+            ]),
+        dbc.Row(html.Br()),
+        dbc.Row([
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardBody([
+                            html.B("Regional Exposure and Track Path"),
+                            map
+                        ])
+                    ])    
+                ]),
+                dbc.Col([
+                    dbc.Card([
+                        dbc.CardBody([
+                            # bar chart - buildings per windspeed
+                            html.B("No. Assets Exposed by Windspeed"),
+                            chart_asset_no,
+                            html.Br(),
+                            html.B("Value of Assets Exposed by Windspeed"),
+                            chart_asset_value
+                        ])
+                    ])
+                ])
+            ]),
+    ], style={"textAlign": "center"}
+)
+
+
+############################### CALLBACKS ##########################################
 @callback(Output("info-tc", "children"), Input("map-regional-exposure", "hoverData"))
 def info_hover(feature):
     return get_info(feature)
