@@ -8,6 +8,7 @@ import dash_leaflet as dl
 import dash_leaflet.express as dlx
 import json
 from collections import OrderedDict
+from dash_bootstrap_templates import load_figure_template
 
 dash.register_page(__name__)
 
@@ -62,12 +63,12 @@ regions = gdf_regional_summary["Region"].tolist()
 regions.sort()
 regions = ['All regions'] + regions
 
-
+load_figure_template('slate')
 
 ############################### MAP COMPONENT ###############################
 
 # mapinfo
-colorscale = ["red", "yellow", "green", "blue", "purple"]  # rainbow
+# colorscale = ["red", "yellow", "green", "blue", "purple"]  # rainbow
 
 
 
@@ -288,7 +289,6 @@ layout = html.Div(
                                     opacity=1,
                                     color="red",
                                     fillOpacity=0.5,
-                                    colorscale=colorscale,
                                 ),
                             ),
                             info,
@@ -360,7 +360,11 @@ layout = html.Div(
             ]
         ),
     ],
-    style={"textAlign": "center", "backgroundColor": "#eaeded", "color": "black", "padding": "20px"}
+    style={"textAlign": "center", 
+        #    "backgroundColor": "#eaeded", 
+        #    "color": "black", 
+           "padding": "20px"
+           }
 )
 
 

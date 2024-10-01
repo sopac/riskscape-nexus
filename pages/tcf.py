@@ -9,6 +9,8 @@ import dash_leaflet.express as dlx
 import dash_dangerously_set_inner_html
 import json
 from dash import Dash, dash_table
+from dash_bootstrap_templates import load_figure_template
+from shapely import LineString
 
 dash.register_page(__name__, external_stylesheets=[dbc.themes.SLATE])
 
@@ -28,6 +30,7 @@ gdf_regional_exposure = gpd.read_file(
     # "data/" + "vanuatu" + "/" + "jtwc-forecast-regional-exposure.geojson"
     "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-regional-impacts.geojson"
 )
+
 gdf_cyclone_track = gpd.read_file(
     "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-cyclone-track.geojson"
 )
@@ -164,13 +167,14 @@ map = dl.Map([
     info,
 ],
     zoom=6,
-    style={"height": "65vh"},
+    style={"height": "70vh"},
     center=(
         gdf_regional_exposure.dissolve().centroid.y.values[0].item(),
         gdf_regional_exposure.dissolve().centroid.x.values[0].item(),
     ),
 )
 
+load_figure_template('slate')
 
 ### CHART - no. of assets
 chart_asset_no = dcc.Graph(
@@ -183,8 +187,8 @@ chart_asset_no = dcc.Graph(
     ).update_layout(
         xaxis_title="Maximum Windspeed Category",
         yaxis_title="No. Exposed",
-        paper_bgcolor ='rgb(252,252,252)',
-        font_color='rgb(20,20,20)',
+        # paper_bgcolor ='rgb(252,252,252)',
+        # font_color='rgb(20,20,20)',
         margin=dict(l=33, r=30, t=40, b=33),
         font=dict(size= 11),
         showlegend=True,
@@ -206,10 +210,14 @@ chart_asset_value = dcc.Graph(
         df_total_exposed_by_windspeed,
         x="Danger",
         y=["Building_Value", "Road_Value", "Infrastructure_Value", "Crop_Value"],
-        barmode="group"
+        barmode="group",
+        # hover_data={'exposure.UseType':False},
+        labels={'variable': 'Asset', 'sum of value':'Count'}
     ).update_layout(
         xaxis_title="Maximum Windspeed Category",
         yaxis_title="Exposed Building Value (USD)",
+        margin=dict(l=33, r=30, t=40, b=33),
+        font=dict(size= 11),
         showlegend=True,
         legend_title_text='',
         legend=dict(
@@ -258,7 +266,11 @@ layout = html.Div(children=[
                             # bar chart - buildings per windspeed
                             html.B("No. Assets Exposed by Windspeed"),
                             chart_asset_no,
-                            html.Br(),
+                        ])
+                    ]),
+                    html.Br(),
+                    dbc.Card([
+                        dbc.CardBody([
                             html.B("Value of Assets Exposed by Windspeed"),
                             chart_asset_value
                         ])

@@ -4,14 +4,16 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
 
-app = Dash(__name__, use_pages=True, external_stylesheets = [dbc.themes.SLATE])
+app = Dash(__name__, use_pages=True, 
+           external_stylesheets = [dbc.themes.SLATE]
+           )
 
 app.layout = html.Div([
     html.H2(children='Pacific Risk Tool for Resilience, Phase 2 (PARTneR-2)', style={'textAlign':'center'}),
     html.Div([
       html.Img(src="https://niwa.co.nz/sites/default/files/styles/portrait/public/PARTneR-2_partner%20logo%20panel.jpg"),
     ],style={'textAlign':'center'}),
-    html.H3(children='Riskscape Dashboards', style={'textAlign':'center'}),
+#     html.H3(children='Riskscape Dashboards', style={'textAlign':'center'}),
     html.Div([
         html.Span(
              dcc.Link("Sea Level Rise (SLR) | ", href="/slr", style={'textDecoration':'none'})
