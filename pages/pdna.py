@@ -67,10 +67,13 @@ dropdown_hazard = dcc.Dropdown(
 
 
 ### MAP
+# Base URL for the GeoServer WMS
+GEOSERVER_URL = "https://nexus.pacificdata.org/geoserver/geonode/wms"
+
 map = dl.Map([
-        dl.TileLayer(),
-        dl.GeoJSON(
-            data=json.loads(gdf_regional_impacts["geometry"].to_json()),
+    dl.LayersControl(
+        [dl.BaseLayer(dl.TileLayer(), name='OpenStreetMap', checked=True)] +
+        [dl.Overlay(dl.GeoJSON(data=json.loads(gdf_regional_impacts["geometry"].to_json()),
             id="map-region-impact",
             zoomToBounds=True,
             zoomToBoundsOnClick=True,
@@ -79,17 +82,18 @@ map = dl.Map([
                 opacity=1,
                 color="red",
                 fillOpacity=0.5
-            )
-        )
+            )), name='Region impact', checked=True)],
+            id="lc"
+    )
     ],
     style={"height": "70vh"},
     zoom=6,
     center=(
         gdf_regional_impacts.dissolve().centroid.y.values[0].item(),
         gdf_regional_impacts.dissolve().centroid.x.values[0].item()
-        ),
-    id="pdna-map"
+        )
 )
+
 
 
 ############################### DASHBOARD LAYOUT ###############################################
@@ -109,7 +113,8 @@ layout = html.Div(children=[
                 dbc.Col([
                     dbc.Card([
                         dbc.CardBody([
-                             map           
+                             map,
+                             html.Div(id="log")           
                         ])         
                     ], style={"height": "74vh"})
                 ], width=4),
@@ -203,4 +208,8 @@ layout = html.Div(children=[
                 ])
         ])
 ])
+
+
+
+
 
