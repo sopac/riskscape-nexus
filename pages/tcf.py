@@ -34,11 +34,13 @@ gdf_regional_exposure = gpd.read_file(
 gdf_regional_exposure = gdf_regional_exposure[gdf_regional_exposure['Region.Country']=='Tonga']
 
 gdf_cyclone_track = gpd.read_file(
-    "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-cyclone-track.geojson"
+    #"data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-cyclone-track.geojson"
+    "data/rsmc-tcwc/" + project_name + "/" + "track.geojson"
 )
 
 gdf_cyclone_track_distance = gpd.read_file(
-    "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-track-distance.geojson"
+    #"data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-track-distance.geojson"
+     "data/rsmc-tcwc/" + project_name + "/" + "track-distance.geojson"
 )
 
 df_total_exposed = pd.read_csv(
