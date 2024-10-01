@@ -30,6 +30,8 @@ gdf_regional_exposure = gpd.read_file(
     # "data/" + "vanuatu" + "/" + "jtwc-forecast-regional-exposure.geojson"
     "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-regional-impacts.geojson"
 )
+# filter for Tonga data
+gdf_regional_exposure = gdf_regional_exposure[gdf_regional_exposure['Region.Country']=='Tonga']
 
 gdf_cyclone_track = gpd.read_file(
     "data/rsmc-tcwc/" + project_name + "/" + "rapid-exposure-forecast-cyclone-track.geojson"
