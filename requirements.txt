@@ -12,4 +12,4 @@ dash-bootstrap-components
 dash-leaflet
 openpyxl
 dash-dangerously-set-inner-html
-
+dash-bootstrap-templates
