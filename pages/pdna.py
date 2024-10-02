@@ -48,7 +48,7 @@ dropdown_agg =  dcc.Dropdown(
         {"label": "National", "value": "National"},
         {"label": "Regional", "value": "Regional"}
     ],
-    value="",
+    value="National",
     id="aggregation-select",
 )
 
@@ -72,18 +72,57 @@ GEOSERVER_URL = "https://nexus.pacificdata.org/geoserver/geonode/wms"
 
 map = dl.Map([
     dl.LayersControl(
-        [dl.BaseLayer(dl.TileLayer(), name='OpenStreetMap', checked=True)] +
-        [dl.Overlay(dl.GeoJSON(data=json.loads(gdf_regional_impacts["geometry"].to_json()),
-            id="map-region-impact",
-            zoomToBounds=True,
-            zoomToBoundsOnClick=True,
-            style=dict(
-                weight=2,
-                opacity=1,
-                color="red",
-                fillOpacity=0.5
-            )), name='Region impact', checked=True)],
-            id="lc"
+        [dl.BaseLayer(
+            # default OSM
+            dl.TileLayer(), 
+            name='OpenStreetMap', 
+            checked=True),
+         dl.BaseLayer(
+             # ESRI satellite imagery
+             dl.TileLayer(
+                 url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 
+                 attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'),
+            name='ESRI satellite imagery',
+            checked=False)
+        ] +
+        [dl.Overlay(
+            # regional impact
+            dl.GeoJSON(
+                data=json.loads(gdf_regional_impacts["geometry"].to_json()),
+                id="map-region-impact",
+                zoomToBounds=True,
+                zoomToBoundsOnClick=True,
+                style=dict(
+                    weight=2,
+                    opacity=1,
+                    color="red",
+                    fillOpacity=0.5
+                )), 
+            name='Region impact', 
+            checked=True),
+         dl.Overlay(
+            # cyclone track
+            dl.WMSTileLayer(
+                    url=GEOSERVER_URL,
+                    # layers="geonode:ref_tc_meena_cook_islands_cyclone_track",
+                    layers="geonode:to_cyclone_pdna_cyclone_track" ,	
+                    format="image/png",
+                    transparent=True,
+                    id="cyclone-track-layer"), 
+            name='Cyclone track',
+            checked = True),
+         dl.Overlay(
+            # Coastal inundation extent
+            dl.WMSTileLayer(
+                url=GEOSERVER_URL,
+                # layers="geonode:tc_lola_coastalinundation",
+                layers="geonode:tc_harold_inundation_max_180",
+                format="image/png",
+                transparent=True,
+                id="inundation-layer"),
+            name = 'Coastal inundation extent',
+            checked = False)
+        ], id="lc"
     )
     ],
     style={"height": "70vh"},
@@ -93,6 +132,47 @@ map = dl.Map([
         gdf_regional_impacts.dissolve().centroid.x.values[0].item()
         )
 )
+
+
+
+
+
+load_figure_template('slate')
+
+
+fig_exposure = px.histogram(
+            df_national_impact_by_sector,
+            x='Sector',
+            y='Total_Exposed_Value',
+            color='Sector',
+            histfunc="sum",
+            hover_name='Sector',
+            hover_data={'Sector':False},
+            labels={'Total_Exposed_Value': 'exposed value (USD)'}
+        ).update_layout(
+            yaxis_title='Total Value of exposed assets (USD)',
+            margin=dict(l=25, r=25, t=20, b=33),
+            font=dict(size= 11),
+            showlegend=False,
+            # legend_title_text='',
+            # legend=dict(
+            #     orientation="h",
+            #     yanchor='bottom',
+            #     y=1,
+            #     xanchor="right",
+            #     x=1
+            # )
+        )
+
+chart_exposure=dcc.Graph(
+    figure=fig_exposure, 
+    id='chart-exposure',
+    style={'height': '35vh'}
+    )
+
+
+
+
 
 
 
@@ -123,20 +203,21 @@ layout = html.Div(children=[
                         dbc.Col([
                             dbc.Card([
                                 dbc.CardBody([
-                                    html.P('Please select an aggregation level to view the chart')
+                                    # html.P('Please select an aggregation level to view the chart'),
+                                    chart_exposure
                                 ])
                             ], style={'height':'37vh'})
                         ])
                     ]),
-                    dbc.Row([
-                        dbc.Col([
-                            dbc.Card([
-                                dbc.CardBody([
-                                    html.P('Please select an aggregation level and hazard to view the chart')
-                                ])
-                            ], style={'height':'37vh'})
-                        ])
-                    ])
+                    # dbc.Row([
+                    #     dbc.Col([
+                    #         dbc.Card([
+                    #             dbc.CardBody([
+                    #                 html.P('Please select an aggregation level and hazard to view the chart')
+                    #             ])
+                    #         ], style={'height':'37vh'})
+                    #     ])
+                    # ])
                 ], width=3),
                 dbc.Col([
                     dbc.Row([
@@ -213,3 +294,21 @@ layout = html.Div(children=[
 
 
 
+
+
+############## callbacks
+
+### update exposure chart based on aggregation level dropdown
+@callback(
+    Output('chart-exposure', 'children'),
+    Input('aggregation-select', 'value')
+)
+def updateExposureChart(value):
+    if value == 'National':
+        fig_exposure = px.bar(
+            df_national_impact_by_sector,
+            x='Sector',
+            y='Total_exposed_Value'
+        )
+    chart_exposure=dcc.Graph(figure=fig_exposure)
+    return chart_exposure
