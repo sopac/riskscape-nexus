@@ -234,24 +234,6 @@ def update_exposure_graph(selected_aggregation):
         )
         return fig
     
-    else:
-        # Handle case if the selected aggregation level is not recognized
-        return go.Figure(
-            data=[],
-            layout=go.Layout(
-                title="Cluster Exposure Summary",
-                xaxis_title="Categories",
-                yaxis_title="Values",
-                annotations=[{
-                    "text": f"Selected aggregation level <br> is not implemented yet.",
-                    "xref": "paper",
-                    "yref": "paper",
-                    "showarrow": False,
-                    "font": {"size": 10}
-                }]
-            )
-        )
-    
 
 
 
@@ -268,33 +250,17 @@ def update_exposure_graph(selected_aggregation):
      Input("aggregation-select", "value")
     ]
 )
-def update_damage_summary_graph(selected_hazards, selected_aggregation):
+def update_damage_summary_graph(selected_hazard, selected_aggregation):
     # Validate that exactly one hazard is selected
-    if len(selected_hazards) != 1:
-        return go.Figure(
-            data=[],
-            layout=go.Layout(
-                title={'text':"Total Damage per sector", 'font': {'size': 15}},
-                xaxis_title="Hazard",
-                yaxis_title="Damage (USD)",
-                annotations=[{
-                    "text": "Please select only one hazard.",
-                    "xref": "paper",
-                    "yref": "paper",
-                    "showarrow": False,
-                    "font": {"size": 10}
-                }]
-            )
-        )
+    # if len(selected_hazards) != 1:
 
-    hazard = selected_hazards[0]
     row_title = ""
 
-    if hazard == "Wind":
+    if selected_hazard == "Wind":
         col_title = "Total_Wind_Loss"
-    elif hazard == "All hazards":
+    elif selected_hazard == "All hazards":
         col_title = "Total_Loss"
-    elif hazard == "Coastal Inundation":
+    elif selected_hazard == "Coastal Inundation":
         col_title = "Total_Coastal_Loss"
     else:
         return go.Figure(
@@ -302,7 +268,7 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
             layout=go.Layout(
                 title="Hazard Summary",
                 annotations=[{
-                    "text": "Invalid hazard selected.",
+                    "text": "Select Aggregation Level <br> and hazard to view the data",
                     "xref": "paper",
                     "yref": "paper",
                     "showarrow": False,
@@ -324,7 +290,7 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
                 ],
                 layout=go.Layout(
                     # title=f'Total Damage (USD) per sector <br> - National Level - {hazard}',
-                    title = {'text':f"Total Damage per sector <br> - National Level - {hazard}", 'font': {'size': 15}},
+                    title = {'text':f"Total Damage per sector <br> - National Level - {selected_hazard}", 'font': {'size': 15}},
                     template="plotly_white"
                 )
             )
@@ -367,7 +333,7 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
             fig = go.Figure(
                 data=traces,
                 layout=go.Layout(
-                    title={'text': f'Total Damage per Sector <br> - Regional Level - {hazard}', 'font': {'size': 15}},
+                    title={'text': f'Total Damage per Sector <br> - Regional Level - {selected_hazard}', 'font': {'size': 15}},
                     barmode='stack',
                     xaxis_title="Region",
                     yaxis_title="Damage (USD)",
@@ -377,16 +343,31 @@ def update_damage_summary_graph(selected_hazards, selected_aggregation):
         return fig
 
     else:
+        # return go.Figure(
+        #     data=[],
+        #     layout=go.Layout(
+        #         title={'text': 'Total Damage per Sector', 'font': {'size': 15}},
+        #         annotations=[{
+        #             "text": "Invalid aggregation level.",
+        #             "xref": "paper",
+        #             "yref": "paper",
+        #             "showarrow": False,
+        #             "font": {"size": 14}
+        #         }]
+        #     )
+        # )
         return go.Figure(
             data=[],
             layout=go.Layout(
-                title={'text': 'Total Damage per Sector', 'font': {'size': 15}},
+                title={'text':"Total Damage per sector", 'font': {'size': 15}},
+                xaxis_title="Hazard",
+                yaxis_title="Damage (USD)",
                 annotations=[{
-                    "text": "Invalid aggregation level.",
+                    "text": "Please select only one hazard.",
                     "xref": "paper",
                     "yref": "paper",
                     "showarrow": False,
-                    "font": {"size": 14}
+                    "font": {"size": 10}
                 }]
             )
         )
@@ -451,7 +432,7 @@ layout = html.Div(children=[
                                     # chart_exposure
                                     dcc.Graph(
                                         id='exposure',
-                                        style={'height': '35vh'}
+                                        style={'height': '33vh'}
                                     )
                                 ])
                             ], style={'height':'37vh'})
@@ -463,7 +444,7 @@ layout = html.Div(children=[
                                 dbc.CardBody([
                                     dcc.Graph(
                                         id='loss-and-damage',
-                                        style={'height': '35vh'}
+                                        style={'height': '33vh'}
                                     )
                                 ])
                             ], style={'height':'37vh'})
