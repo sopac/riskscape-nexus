@@ -71,6 +71,9 @@ dropdown_hazard = dcc.Dropdown(
 # Base URL for the GeoServer WMS
 GEOSERVER_URL = "https://nexus.pacificdata.org/geoserver/geonode/wms"
 
+# temp track to avoid antemeridian issue during demo. Should otherwise be the one from PDIE project and/or PDIE one on GeoServer
+gdf_cylone_track = gpd.read_file("data/rsmc-tcwc/tc_harold_tonga/track.geojson")
+
 map = dl.Map([
     dl.LayersControl(
         [dl.BaseLayer(
@@ -103,13 +106,24 @@ map = dl.Map([
             checked=True),
          dl.Overlay(
             # cyclone track
-            dl.WMSTileLayer(
-                    url=GEOSERVER_URL,
-                    # layers="geonode:ref_tc_meena_cook_islands_cyclone_track",
-                    layers="geonode:to_cyclone_pdna_cyclone_track" ,	
-                    format="image/png",
-                    transparent=True,
-                    id="cyclone-track-layer"), 
+            # dl.WMSTileLayer(
+            #         url=GEOSERVER_URL,
+            #         # layers="geonode:ref_tc_meena_cook_islands_cyclone_track",
+            #         layers="geonode:to_cyclone_pdna_cyclone_track" ,	
+            #         format="image/png",
+            #         transparent=True,
+            #         id="cyclone-track-layer"), 
+            dl.GeoJSON(
+                data=json.loads(gdf_cylone_track["geometry"].to_json()),
+                # zoomToBounds=True,
+                # zoomToBoundsOnClick=True,
+                style=dict(
+                    weight=3,
+                    opacity=1,
+                    color="grey",
+                    fillOpacity=0.5
+                )
+            ),
             name='Cyclone track',
             checked = False),
          dl.Overlay(
