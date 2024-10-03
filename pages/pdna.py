@@ -14,6 +14,8 @@ import plotly.graph_objects as go
 
 dash.register_page(__name__, external_stylesheets=[dbc.themes.SLATE])
 
+load_figure_template('slate') # template for charts
+
 project_name = "tonga_pdia_harold"
 
 ############################### LOAD AND PREPARE RISKSCAPE DATA ###############################
@@ -50,6 +52,7 @@ dropdown_agg =  dcc.Dropdown(
     ],
     value="National",
     id="aggregation-select",
+    clearable=False
 )
 
 
@@ -61,7 +64,8 @@ dropdown_hazard = dcc.Dropdown(
         {"label": "Wind", "value": "Wind"},
     ],
     value="All hazards",
-    id="hazard-select"
+    id="hazard-select",
+    clearable=False
 )
 
 
@@ -147,247 +151,9 @@ map = dl.Map([
 
 
 
-############################### DASH CALLBACK FOR GRAPHS ###############################
-
-# Update graphs based on selected cluster and aggregation level
-# Cluster x National 
-# Cluster x Regional
-
-# #### Exposure Value Pie Chart
-
-# @callback(
-#     Output("exposure", "figure"),
-#     Input("aggregation-select", "value")
-# )
-# def update_exposure_graph(selected_aggregation):
-
-#     # Check if both selections are made
-#     if not selected_aggregation:
-#         return go.Figure(
-#             data=[],
-#             layout=go.Layout(
-#                 title={'text':"Total Exposed Value per sector ", 'font':{'size':15}},
-#                 xaxis_title="Sector",
-#                 yaxis_title="Value (USD)",
-#                 annotations=[{
-#                     "text": "Select Aggregation Level <br> to view the data",
-#                     "xref": "paper",
-#                     "yref": "paper",
-#                     "showarrow": False,
-#                     "font": {"size": 10}
-#                 }]
-#             )
-#         )
-    
-#     # Handle National Aggregation
-#     if selected_aggregation.lower() == "national":
-#         df = df_national_impact_by_sector.copy()
-        
-#         # Create Bar Chart
-#         fig = go.Figure(
-#             data=[
-#                 go.Bar(
-#                     x=df['Sector'],
-#                     y=df['Total_Exposed_Value'],
-#                     marker_color='indianred',
-#                 )
-#             ],
-#             layout=go.Layout(
-#                 title={
-#                     'text': 'Total Exposed Value per sector <br>- National Level',
-#                     'font': {
-#                         'size': 15  # Adjust the font size here
-#                     }
-#                 },
-#                 yaxis_title="Value (USD)",
-#                 xaxis_title = 'Sector',
-#                 template="plotly_white"
-#             )
-#         )
-#         return fig
-    
-#     # Handle Regional Aggregation
-#     elif selected_aggregation.lower() == "regional":
-#         # if clickData is not None:            
-#         #     print(json.dumps(clickData))
-#         df = df_regional_summary_by_sector.copy()
-        
-#         # Group by Region and Sector, then sum Total_Exposed_Value
-#         grouped_df = df.groupby(['Region', 'Sector'])['Total_Exposed_Value'].sum().unstack().fillna(0)
-        
-#         # Create a trace for each sector
-#         traces = []
-#         for sector in grouped_df.columns:
-#             traces.append(
-#                 go.Bar(
-#                     x=grouped_df.index,  # Regions on x-axis
-#                     y=grouped_df[sector],  # Total Exposed Values for each sector
-#                     name=sector
-#                 )
-#             )
-        
-#         # Create Stacked Bar Chart
-#         fig = go.Figure(
-#             data=traces,
-#             layout=go.Layout(
-#                 title={
-#                     'text': 'Total Exposed Value per Sector <br> - Regional Level',
-#                     'font': {
-#                         'size': 15  # Adjust the font size here
-#                     }
-#                 },
-#                 barmode='stack',
-#                 xaxis_title="Region",
-#                 yaxis_title="Value (USD)",
-#                 template="plotly_white"
-#             )
-#         )
-#         return fig
-    
 
 
 
-
-
-
-# Update damage summary graph based on selected hazard
-# Hazard x National 
-# Hazard x Regional
-
-# @callback(
-#     Output("loss-and-damage", "figure"),
-#     [Input("hazard-select", "value"),
-#      Input("aggregation-select", "value")
-#     ]
-# )
-# def update_damage_summary_graph(selected_hazard, selected_aggregation):
-#     # Validate that exactly one hazard is selected
-#     # if len(selected_hazards) != 1:
-
-#     row_title = ""
-
-#     if selected_hazard == "Wind":
-#         col_title = "Total_Wind_Loss"
-#     elif selected_hazard == "All hazards":
-#         col_title = "Total_Loss"
-#     elif selected_hazard == "Coastal Inundation":
-#         col_title = "Total_Coastal_Loss"
-#     else:
-#         return go.Figure(
-#             data=[],
-#             layout=go.Layout(
-#                 title="Hazard Summary",
-#                 annotations=[{
-#                     "text": "Select Aggregation Level <br> and hazard to view the data",
-#                     "xref": "paper",
-#                     "yref": "paper",
-#                     "showarrow": False,
-#                     "font": {"size": 10}
-#                 }]
-#             )
-#         )
-
-#     # Handle National Aggregation
-#     if selected_aggregation.lower() == "national":
-#         if col_title in df_national_impact_by_sector.columns:                                                    
-            
-#             fig = go.Figure(
-#                 data=[
-#                     go.Pie(
-#                         labels=df_national_impact_by_sector['Sector'],
-#                         values=df_national_impact_by_sector[col_title],
-#                     )
-#                 ],
-#                 layout=go.Layout(
-#                     # title=f'Total Damage (USD) per sector <br> - National Level - {hazard}',
-#                     title = {'text':f"Total Damage per sector <br> - National Level - {selected_hazard}", 'font': {'size': 15}},
-#                     template="plotly_white"
-#                 )
-#             )
-#             return fig
-#         else:
-#             return go.Figure(
-#                 data=[],
-#                 layout=go.Layout(
-#                     title = {'text':"Total Damage per sector", 'font': {'size': 15}},
-#                     annotations=[{
-#                         "text": "Data not available <br> for the selected hazard.",
-#                         "xref": "paper",
-#                         "yref": "paper",
-#                         "showarrow": False,
-#                         "font": {"size": 10}
-#                     }]
-#                 )
-#             )
-        
-#     # Handle Regional Aggregation
-#     elif selected_aggregation.lower() == "regional":
-#         # Check if the row title is present in the index
-#         if col_title in df_regional_summary_by_sector.columns:
-#             df = df_regional_summary_by_sector.copy()
-#         # Group by Region and Sector, then sum Total_Exposed_Value
-#             grouped_df = df.groupby(['Region', 'Sector'])[col_title].sum().unstack().fillna(0)
-        
-#             # Create a trace for each sector
-#             traces = []
-#             for sector in grouped_df.columns:
-#                 traces.append(
-#                     go.Bar(
-#                         x=grouped_df.index,  # Regions on x-axis
-#                         y=grouped_df[sector],  # Total Exposed Values for each sector
-#                         name=sector
-#                     )
-#                 )
-        
-#             # Create Stacked Bar Chart
-#             fig = go.Figure(
-#                 data=traces,
-#                 layout=go.Layout(
-#                     title={'text': f'Total Damage per Sector <br> - Regional Level - {selected_hazard}', 'font': {'size': 15}},
-#                     barmode='stack',
-#                     xaxis_title="Region",
-#                     yaxis_title="Damage (USD)",
-#                     template="plotly_white"
-#                 )
-#             )
-#         return fig
-
-#     else:
-#         # return go.Figure(
-#         #     data=[],
-#         #     layout=go.Layout(
-#         #         title={'text': 'Total Damage per Sector', 'font': {'size': 15}},
-#         #         annotations=[{
-#         #             "text": "Invalid aggregation level.",
-#         #             "xref": "paper",
-#         #             "yref": "paper",
-#         #             "showarrow": False,
-#         #             "font": {"size": 14}
-#         #         }]
-#         #     )
-#         # )
-#         return go.Figure(
-#             data=[],
-#             layout=go.Layout(
-#                 title={'text':"Total Damage per sector", 'font': {'size': 15}},
-#                 xaxis_title="Hazard",
-#                 yaxis_title="Damage (USD)",
-#                 annotations=[{
-#                     "text": "Please select only one hazard.",
-#                     "xref": "paper",
-#                     "yref": "paper",
-#                     "showarrow": False,
-#                     "font": {"size": 10}
-#                 }]
-#             )
-#         )
-
-
-
-#### streamlining attempt before Tonga demo
-
-### Exposure bar chart (for default at National aggregation)
-load_figure_template('slate')
 
 
 
@@ -423,10 +189,10 @@ layout = html.Div(children=[
                         dbc.Col([
                             dbc.Card([
                                 dbc.CardBody([
+                                    html.B("Total Value of exposed assets:"),
                                     dcc.Graph(
-                                        # figure=fig_exposure, 
                                         id='chart-exposure',
-                                        style={'height': '33vh'}
+                                        style={'height': '32vh'}
                                         )
                                 ])
                             ], style={'height':'37vh'})
@@ -436,15 +202,16 @@ layout = html.Div(children=[
                         dbc.Col([
                             dbc.Card([
                                 dbc.CardBody([
+                                    html.B("Total Damage of exposed assets:"),
                                     dcc.Graph(
                                         id='chart-damage',
-                                        style={'height': '33vh'}
+                                        style={'height': '32vh'}
                                     )
                                 ])
                             ], style={'height':'37vh'})
                         ])
                     ])
-                ], width=3),
+                ], width=3, style={"textAlign": "center"}),
                 dbc.Col([
                     dbc.Row([
                         dbc.Col([
@@ -537,8 +304,8 @@ def updateExposureChart(selected_aggregation):
             y='Total_Exposed_Value',
             color='Region',
             histfunc="sum",
-            hover_name='Sector',
-            hover_data={'Sector':False},
+            # hover_name='Sector',
+            # hover_data={'Sector':False},
             labels={'Total_Exposed_Value': 'exposed value (USD)'}
         )
 
@@ -555,10 +322,22 @@ def updateExposureChart(selected_aggregation):
         )
 
     fig.update_layout(
-        yaxis_title='Total Value of exposed assets (USD)',
-        margin=dict(l=25, r=25, t=20, b=33),
+        yaxis_title='USD',
+        margin=dict(l=22, r=20, t=20, b=33),
         font=dict(size= 11),
         showlegend=True,
+        title=selected_aggregation,
+        title_x=0.5
+    )
+
+    fig.update_xaxes(
+    tickangle=45,
+    tickfont={'size':12},
+    title_font = {"size": 14}
+    )
+
+    fig.update_yaxes(
+        title_font = {"size": 14}
     )
     
     return fig
@@ -589,7 +368,7 @@ def updateDamageChart(selected_aggregation, selected_hazard):
             y=col_title,
             color='Region',
             histfunc="sum",
-            # hover_name='Sector',
+            # hover_name='Region',
             # hover_data={'Sector':False},
 #             labels={'Total_Exposed_Value': 'exposed value (USD)'}
         )
@@ -607,10 +386,22 @@ def updateDamageChart(selected_aggregation, selected_hazard):
         )
 
     fig.update_layout(
-        yaxis_title='Total Value of exposed assets (USD)',
-        margin=dict(l=25, r=25, t=20, b=33),
+        yaxis_title='USD',
+        margin=dict(l=22, r=20, t=20, b=33),
         font=dict(size= 11),
         showlegend=True,
+        title=selected_hazard,
+        title_x=0.5
+    )
+
+    fig.update_xaxes(
+        tickangle=45,
+        tickfont={'size':12},
+        title_font = {"size": 14}
+        )
+    
+    fig.update_yaxes(
+        title_font = {"size": 14}
     )
     
     return fig
