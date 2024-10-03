@@ -5,18 +5,17 @@ import plotly.express as px
 import geopandas as gpd
 import pandas as pd
 import dash_leaflet as dl
-import dash_leaflet.express as dlx
-import dash_dangerously_set_inner_html
 import json
 from dash_bootstrap_templates import load_figure_template
-import plotly.graph_objects as go
 
 
 dash.register_page(__name__, external_stylesheets=[dbc.themes.SLATE])
 
 load_figure_template('slate') # template for charts
+project_name = "tonga_pdia_harold" # for selecting folder to read files
 
-project_name = "tonga_pdia_harold"
+color_map = ['#DBBF21', '#BD3539', '#57C560', '#F19502', '#81D6F6', '#5D6167', '#D169C1']
+
 
 ############################### LOAD AND PREPARE RISKSCAPE DATA ###############################
 
@@ -150,18 +149,6 @@ map = dl.Map([
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 ############################### DASHBOARD LAYOUT ###############################################
 layout = html.Div(children=[
         dbc.Row([
@@ -285,9 +272,6 @@ layout = html.Div(children=[
 
 
 
-
-
-
 ############################### CALLBACKS ######################################################
 
 ### CHART - exposure (update based on aggregation level dropdown)
@@ -304,9 +288,8 @@ def updateExposureChart(selected_aggregation):
             y='Total_Exposed_Value',
             color='Region',
             histfunc="sum",
-            # hover_name='Sector',
-            # hover_data={'Sector':False},
-            labels={'Total_Exposed_Value': 'exposed value (USD)'}
+            labels={'Total_Exposed_Value': 'exposed value (USD)'},
+            color_discrete_sequence=color_map
         )
 
     elif selected_aggregation == 'Regional':
@@ -316,9 +299,8 @@ def updateExposureChart(selected_aggregation):
             y='Total_Exposed_Value',
             color='Sector',
             histfunc="sum",
-            hover_name='Sector',
-            hover_data={'Sector':False},
-            labels={'Total_Exposed_Value': 'exposed value (USD)'}
+            labels={'Total_Exposed_Value': 'exposed value (USD)'},
+            color_discrete_sequence=color_map
         )
 
     fig.update_layout(
@@ -357,8 +339,6 @@ def updateDamageChart(selected_aggregation, selected_hazard):
         col_title = 'Total_Coastal_Loss'
     elif selected_hazard == 'Wind':
         col_title = 'Total_Wind_Loss'
-    # else:
-    #     fig = px.histogram()
 
 
     if selected_aggregation == 'National':
@@ -368,9 +348,7 @@ def updateDamageChart(selected_aggregation, selected_hazard):
             y=col_title,
             color='Region',
             histfunc="sum",
-            # hover_name='Region',
-            # hover_data={'Sector':False},
-#             labels={'Total_Exposed_Value': 'exposed value (USD)'}
+            color_discrete_sequence=color_map
         )
 
     elif selected_aggregation == 'Regional':
@@ -380,9 +358,7 @@ def updateDamageChart(selected_aggregation, selected_hazard):
             y=col_title,
             color='Sector',
             histfunc="sum",
-            # hover_name='Sector',
-            # hover_data={'Sector':False},
-            # labels={'Total_Exposed_Value': 'exposed value (USD)'}
+            color_discrete_sequence=color_map
         )
 
     fig.update_layout(
