@@ -268,7 +268,9 @@ layout = html.Div(children=[
                     ])
                 ])
         ])
-])
+    ],
+    style={"padding": "10px"}
+)
 
 
 
