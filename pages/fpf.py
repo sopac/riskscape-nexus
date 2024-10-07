@@ -14,8 +14,8 @@ load_figure_template('slate') # template for charts
 project_name = "vanuatu" 
 
 
-# """Vanuatu has a seperate flood layer per region,
-# while Samoa has one for the whole country (or at least the areas covered)"""
+# Vanuatu has a seperate flood layer per region,
+# while Samoa has one for the whole country (or at least the areas covered)
 
 
 ############################### LOAD DATA ###############################
@@ -52,7 +52,7 @@ dropdown_region =  dcc.Dropdown(
 
 
 ### DROPDOWN - ari
-    # define dropdown object
+# define dropdown object
 dropdown_ari = dcc.Dropdown(
     options=[
         {"label":'10 years', "value":'10'},
@@ -124,10 +124,7 @@ chart_buildings = px.bar(
     color='Region',
     hover_name='exposure.UseType',
     hover_data={'exposure.UseType':False},
-    labels={'exposureValue_sum': 'Total exposure (USD)', 'exposure.UseType':'Building use type'},
-    # category_orders={'exposure.UseType':pd.Series(list(df_building_impacts_summary['exposure.UseType'])).drop_duplicates().to_list()}, # NOT WORKING
-    # color_discrete_sequence=px.colors.sequential.Rainbow,
-    # template='seaborn'
+    labels={'exposureValue_sum': 'Total exposure (USD)', 'exposure.UseType':'Building use type'}
 )
 
 chart_buildings.update_layout(
@@ -189,74 +186,44 @@ def draw_chart_card(chart, title):
         ], style ={'marginBottom':'10px'})
 
 
-## CARDS in layout
-cards = html.Div(children=[
-    
-            dbc.Row([
-                dbc.Col([
-                    dbc.Card([
-                        dbc.CardBody([
-                            html.P("Region:"),
-                            dropdown_region,
-                            html.Br(),
-                            html.P('Average Recurrence Interval:'),
-                            dropdown_ari,
-                            html.Br(),
-                        ])
-                    ]),
-                    dbc.Card([
-                        dbc.CardBody([
-                            html.B('Rainfall event duration:'),
-                            html.P('12h'),
-                            html.B('Max rain depth:'),
-                            dbc.Row(id='rain_depth')
-                        ])
-                    ]),
-                ], width=2),
-                dbc.Col([
-                    dbc.Card([
-                        dbc.CardBody([
-                            map
-                        ])
-                    ]),
-                    # html.Br(),
-                    dbc.Row([
-                        dbc.Col([
-                            draw_text('Total Loss (USD):', '123 test')
-                        ]),
-                        dbc.Col([
-                            draw_text('Exposed Buildings (#):', '123 test')                          
-                        ]),
-                        dbc.Col([
-                            draw_text('Exposed Schools (#):', '123 test')
-                        ]) 
-                    ]),
-                    dbc.Row([
-                        dbc.Col([
-                            draw_text('Exposed Health Facilities (#):', '123 test')
-                        ]),
-                        dbc.Col([
-                            draw_text('Exposed Roads (km):', '123 test')                          
-                        ]),
-                        dbc.Col([
-                            draw_text('Exposed People (#):', '123 test')
-                        ]) 
-                    ]),
-                ], width=5),
-                dbc.Col([
-                    draw_chart_card(chart_buildings_fig, 'Share of exposed buildings by use type for selected Average Recurrence Interval'),
-                    draw_chart_card(chart_roads_fig, 'Share of exposed roads by use type for selected Average Recurrence Interval')
-                ])
-            ])  
-    ])
 
 ############################### DEFINE LAYOUT ###########################
 layout = html.Div(children=[
-
-cards
-    
- 
-]) 
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardBody([
+                    html.P("Region:"),
+                    dropdown_region,
+                    html.Br(),
+                    html.P('Average Recurrence Interval:'),
+                    dropdown_ari,
+                    html.Br(),
+                ])
+            ]),
+            dbc.Card([
+                dbc.CardBody([
+                    html.B('Rainfall event duration:'),
+                    html.P('12h'),
+                    html.B('Max rain depth:'),
+                    dbc.Row(id='rain_depth')
+                ])
+            ]),
+        ], width=2),
+        dbc.Col([
+            dbc.Card([
+                dbc.CardBody([
+                    map
+                ])
+            ]),
+            dbc.Row(id='stats')
+        ], width=5),
+        dbc.Col([
+            draw_chart_card(chart_buildings_fig, 'Share of exposed buildings by use type for selected Average Recurrence Interval'),
+            draw_chart_card(chart_roads_fig, 'Share of exposed roads by use type for selected Average Recurrence Interval')
+        ])
+    ])  
+])
 
 ############################## CALLBACKS ################################
 
@@ -271,17 +238,50 @@ def update_rain_depth_card(ari_value):
 
       return dbc.Row(html.P(rain_depth_text))
 
-# # callback text cards
-# @callback(
-#       Output(component_id='stats', component_property='children'),
-#       [Input('region-select-fluvial', 'value'),
-#        Input('ari-select-fluvial', 'value')]
-# )
-# def update_output_stats(region_value, ari_value):
-#     #  ari_col_names = {'10':'ARI', '50':'', '100':''}
-           
 
+# callback text cards
 
+# furhter dev - add case when 'All' regions selected - summing!
+@callback(
+      Output(component_id='stats', component_property='children'),
+      [Input('region-select-fluvial', 'value'),
+       Input('ari-select-fluvial', 'value')]
+)
+def update_output_stats(region_value, ari_value):
+      # create col names based on selected ARI
+      col_suffix = f'Impact.ARI{ari_value}'
+      col_total_loss = f'{col_suffix}.Total_Loss'
+      col_exp_build = f'{col_suffix}.Exposed_Buildings'
+      col_exp_schools = f'{col_suffix}.Exposed_Schools'
+      col_exp_hf = f'{col_suffix}.Exposed_Health_Facilties'
+      col_exp_roads = f'{col_suffix}.Exposed_Road_km'
+      col_exp_ppl = f'{col_suffix}.Exposed_Population'
+      # filter df based on selected region
+      filtered_df = gdf_regional_impacts[(gdf_regional_impacts['Region']==region_value)]
+      print(filtered_df)
 
-#      filtered_df = gdf_regional_impacts[(gdf_regional_impacts['Region']==region_value) & gdf_regional_impacts]
+      return dbc.Row([
+                dbc.Row([
+                    dbc.Col([
+                        draw_text('Total Loss (USD):', filtered_df[col_total_loss])
+                    ]),
+                    dbc.Col([
+                        draw_text('Exposed Buildings (#):', filtered_df[col_exp_build])                          
+                    ]),
+                    dbc.Col([
+                        draw_text('Exposed Schools (#):', filtered_df[col_exp_schools])
+                    ]) 
+                ]),
+                dbc.Row([
+                        dbc.Col([
+                            draw_text('Exposed Health Facilities (#):', filtered_df[col_exp_hf])
+                        ]),
+                        dbc.Col([
+                            draw_text('Exposed Roads (km):', filtered_df[col_exp_roads])                          
+                        ]),
+                        dbc.Col([
+                            draw_text('Exposed People (#):', filtered_df[col_exp_ppl])
+                        ]) 
+                ]),  
+            ])
 
