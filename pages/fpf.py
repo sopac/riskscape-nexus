@@ -46,7 +46,7 @@ dropdown_region =  dcc.Dropdown(
     options=[
         {"label": region, "value": region} for region in regions
     ],
-    value="",
+    value="All",
     id="region-select-fluvial"
 )
 
@@ -248,40 +248,42 @@ def update_rain_depth_card(ari_value):
        Input('ari-select-fluvial', 'value')]
 )
 def update_output_stats(region_value, ari_value):
-      # create col names based on selected ARI
-      col_suffix = f'Impact.ARI{ari_value}'
-      col_total_loss = f'{col_suffix}.Total_Loss'
-      col_exp_build = f'{col_suffix}.Exposed_Buildings'
-      col_exp_schools = f'{col_suffix}.Exposed_Schools'
-      col_exp_hf = f'{col_suffix}.Exposed_Health_Facilties'
-      col_exp_roads = f'{col_suffix}.Exposed_Road_km'
-      col_exp_ppl = f'{col_suffix}.Exposed_Population'
-      # filter df based on selected region
-      filtered_df = gdf_regional_impacts[(gdf_regional_impacts['Region']==region_value)]
-      print(filtered_df)
+    # create col names based on selected ARI
+    col_suffix = f'Impact.ARI{ari_value}'
+    col_total_loss = f'{col_suffix}.Total_Loss'
+    col_exp_build = f'{col_suffix}.Exposed_Buildings'
+    col_exp_schools = f'{col_suffix}.Exposed_Schools'
+    col_exp_hf = f'{col_suffix}.Exposed_Health_Facilties'
+    col_exp_roads = f'{col_suffix}.Exposed_Road_km'
+    col_exp_ppl = f'{col_suffix}.Exposed_Population'
+    # filter df based on selected region
+    if region_value == 'All':
+        filtered_df = gdf_regional_impacts[[col_total_loss, col_exp_build, col_exp_schools, col_exp_hf, col_exp_roads, col_exp_ppl]].sum()
+    else:
+        filtered_df = gdf_regional_impacts[(gdf_regional_impacts['Region']==region_value)]
 
-      return dbc.Row([
-                dbc.Row([
-                    dbc.Col([
-                        draw_text('Total Loss (USD):', filtered_df[col_total_loss])
-                    ]),
-                    dbc.Col([
-                        draw_text('Exposed Buildings (#):', filtered_df[col_exp_build])                          
-                    ]),
-                    dbc.Col([
-                        draw_text('Exposed Schools (#):', filtered_df[col_exp_schools])
-                    ]) 
+    return dbc.Row([
+            dbc.Row([
+                dbc.Col([
+                    draw_text('Total Loss (USD):', round(filtered_df[col_total_loss], 1))
                 ]),
-                dbc.Row([
-                        dbc.Col([
-                            draw_text('Exposed Health Facilities (#):', filtered_df[col_exp_hf])
-                        ]),
-                        dbc.Col([
-                            draw_text('Exposed Roads (km):', filtered_df[col_exp_roads])                          
-                        ]),
-                        dbc.Col([
-                            draw_text('Exposed People (#):', filtered_df[col_exp_ppl])
-                        ]) 
-                ]),  
-            ])
+                dbc.Col([
+                    draw_text('Exposed Buildings (#):', filtered_df[col_exp_build])                          
+                ]),
+                dbc.Col([
+                    draw_text('Exposed Schools (#):', filtered_df[col_exp_schools])
+                ]) 
+            ]),
+            dbc.Row([
+                    dbc.Col([
+                        draw_text('Exposed Health Facilities (#):', filtered_df[col_exp_hf])
+                    ]),
+                    dbc.Col([
+                        draw_text('Exposed Roads (km):', round(filtered_df[col_exp_roads], 1))                          
+                    ]),
+                    dbc.Col([
+                        draw_text('Exposed People (#):', filtered_df[col_exp_ppl])
+                    ]) 
+            ]),  
+        ])
 
