@@ -77,7 +77,11 @@ chart_aal_province = dcc.Graph(
             # "Average_Annual_Population_Exposed",
         ],
         histfunc="avg",
-    ).update_layout(xaxis_title="Province", yaxis_title="Avg. Loss USD"),
+    ).update_layout(
+        xaxis_title="Province", 
+        yaxis_title="Avg. Loss USD",
+        margin=dict(l=22, r=20, t=20, b=33)
+        ),
     style={"height": "35vh"},
 )
 
@@ -95,7 +99,11 @@ chart_aal_national = dcc.Graph(
             # "Average_Annual_Population_Exposed",
         ],
         markers=True,
-    ).update_layout(xaxis_title="Year", yaxis_title="Loss USD"),
+    ).update_layout(
+        xaxis_title="Year", 
+        yaxis_title="Loss USD",
+        margin=dict(l=22, r=20, t=20, b=33),
+        ),
     style={"height": "35vh"},
 )
 
@@ -490,6 +498,9 @@ def update_graph_regional_summary(value):
             # "Change.Population_Exposed",
         ],
         barmode="group",
-    ).update_layout(xaxis_title="Region", yaxis_title="Loss USD")
-    
+    ).update_layout(
+        xaxis_title="Region", 
+        yaxis_title="Loss USD",
+        margin=dict(l=22, r=20, t=20, b=33))
+
     return fig
