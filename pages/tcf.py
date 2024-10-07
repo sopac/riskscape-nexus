@@ -14,8 +14,10 @@ from shapely import LineString
 
 dash.register_page(__name__, external_stylesheets=[dbc.themes.SLATE])
 
-# load data
+load_figure_template('slate') # template for charts
 project_name = "tc_harold_tonga"
+
+color_map = ['#DBBF21', '#BD3539', '#57C560', '#F19502', '#81D6F6', '#5D6167', '#D169C1']
 
 ############################### LOAD AND PREPARE RISKSCAPE DATA ###############################
 
@@ -178,7 +180,6 @@ map = dl.Map([
     ),
 )
 
-load_figure_template('slate')
 
 ### CHART - no. of assets
 chart_asset_no = dcc.Graph(
@@ -248,8 +249,9 @@ layout = html.Div(children=[
         # ),
         # dbc.Row(html.Br()),
         dbc.Row([
-                dbc.Col(
-                    html.B("Tropical Cyclone : "), width=3),
+                dbc.Col([
+                    html.B("Tropical Cyclone : ")
+                ], width=3),
                 dbc.Col([
                     dropdown_tc
                 ], width=6),
@@ -281,7 +283,7 @@ layout = html.Div(children=[
                     ])
                 ])
             ]),
-    ], style={"textAlign": "center"}
+    ], style={"textAlign": "center", "padding": "10px"}
 )
 
 
